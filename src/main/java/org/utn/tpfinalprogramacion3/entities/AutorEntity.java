@@ -3,6 +3,8 @@ package org.utn.tpfinalprogramacion3.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "autores")
 @Data
@@ -19,7 +21,9 @@ public class AutorEntity {
     @Column(name="apellido", nullable = false, length = 100)
     private String apellido;
 
-    //@OneToMany(mappedBy = "autor")
-    //private List<AutorXLibro> libros;
+
+    @OneToMany(mappedBy = "autor")
+    private List<LibroEntity> libros;
+
 }
 

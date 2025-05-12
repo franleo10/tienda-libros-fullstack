@@ -29,8 +29,11 @@ public class LibroEntity {
     )
     private List<AutorEntity> autores;
 
+
     @ManyToMany(mappedBy = "libros")
     private List<GeneroEntity> generos;
+
+
 
 
 

@@ -6,16 +6,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Entity
+@Table(name = "credenciales")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
-@Entity
-@Table (name="libros")
-public class LibroEntity {
+
+public class CredencialEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idLibro;
-    @Column(name="titulo", nullable = false, length = 100)
-    private String titulo;
+    private Integer idCredencial;
+
+    @OneToOne
+    @JoinColumn(name = "id_usuario")
+    private UsuarioEntity usuario;
 }
+

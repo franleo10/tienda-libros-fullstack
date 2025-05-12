@@ -26,8 +26,11 @@ public class UsuarioEntity {
     private int edad;
     @Column (name="email", nullable = false, length = 100)
     private String email;
+
     @Column (name="roles", nullable = false, length = 25)
+    @Enumerated(EnumType.STRING)
     private Rol roles;
+
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
     private CredencialEntity credencialEntity;
     @OneToMany(mappedBy = "usuario")

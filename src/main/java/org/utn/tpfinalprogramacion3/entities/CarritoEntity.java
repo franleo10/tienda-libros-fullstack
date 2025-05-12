@@ -20,11 +20,14 @@ public class CarritoEntity {
     @ManyToOne
     @JoinColumn(name = "id_libro")
     private LibroEntity libro;
-
     @ManyToOne
     @JoinColumn(name = "id_usuario")
     private UsuarioEntity usuario;
 
+
     @OneToMany(mappedBy = "carrito")
     private List<FacturaEntity> facturas;
+
+
+
 }

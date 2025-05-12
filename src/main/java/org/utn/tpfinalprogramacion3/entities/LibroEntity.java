@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -18,4 +20,18 @@ public class LibroEntity {
     private int idLibro;
     @Column(name="titulo", nullable = false, length = 100)
     private String titulo;
+
+    @ManyToMany
+    @JoinTable(
+            name="autorXlibro",
+            joinColumns = @JoinColumn(name = "id_libro"),
+            inverseJoinColumns = @JoinColumn(name = "id_autor")
+    )
+    private List<AutorEntity> autores;
+
+    @ManyToMany(mappedBy = "libros")
+    private List<GeneroEntity> generos;
+
+
+
 }

@@ -9,6 +9,9 @@ import org.utn.tpfinalprogramacion3.dtos.UsuarioCreateDTO;
 import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
 import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class UsuarioService {
 
@@ -30,6 +33,22 @@ public UsuarioService(UsuarioRepository repository, ModelMapper modelMapper) {
             e.printStackTrace(); // Esto imprimirá la excepción en la consola
             throw new RuntimeException("Error al crear el usuario: " + e.getMessage());
         }
+    }
+
+    public List<UsuarioEntity> findAll() {
+    return repository.findAll();
+    }
+
+    public Optional<UsuarioEntity> findByNombre(String nombre){
+    return repository.findByNombre(nombre);
+    }
+
+    public void delete(int id){
+    if (repository.existsById(id)) {
+        repository.deleteById(id);
+    }else {
+        throw new RuntimeException("El usuario no existe");
+    }
     }
 
 

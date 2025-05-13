@@ -10,6 +10,7 @@ import org.utn.tpfinalprogramacion3.enums.Rol;
 @Setter
 
 public class UsuarioCreateDTO {
+
     private String nombre;
     private String email;
     private int edad;

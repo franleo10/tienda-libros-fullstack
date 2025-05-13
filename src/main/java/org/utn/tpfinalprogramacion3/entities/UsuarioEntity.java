@@ -30,18 +30,13 @@ public class UsuarioEntity {
 
     @Column (name="roles", nullable = true, length = 25)
     @Enumerated(EnumType.STRING)
-    private Rol roles;
+    private Rol roles=Rol.USUARIO;
 
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
     private CredencialEntity credencialEntity;
     @OneToMany(mappedBy = "usuario")
     private List<BibliotecaEntity> biblioteca;
 
-    @PostConstruct
-    private void init() {
-        if (this.roles == null) {
-            this.roles = Rol.USUARIO; // Asigna el rol por defecto si es nulo
-        }
-    }
+
 
 }

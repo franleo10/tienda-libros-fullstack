@@ -22,5 +22,9 @@ public Optional<UsuarioEntity> findByNombre(String nombre);
     @Override
     Optional<UsuarioEntity> findById(Integer integer);
 
+
+    boolean existsByEmail(String email);
+    boolean existsByNombre(String nombre);
+
 }
 

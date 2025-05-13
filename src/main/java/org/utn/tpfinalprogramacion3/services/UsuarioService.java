@@ -51,6 +51,15 @@ public UsuarioService(UsuarioRepository repository, ModelMapper modelMapper) {
     }
     }
 
+    public String verificar_nombre(String nombre){
+    if (repository.existsByNombre(nombre)) {
+        return"El usuario existe";
+    }
+    else {
+        return "El usuario no existe";
+    }
+    }
+
 
 
 }

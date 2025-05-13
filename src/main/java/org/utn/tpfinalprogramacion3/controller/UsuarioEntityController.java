@@ -46,5 +46,12 @@ public class UsuarioEntityController {
     }
 
 
+    @GetMapping("/verificar_nombre/{nombre}")
+    public ResponseEntity<String> verificarUsuarioPorNombre(@PathVariable String nombre) {
+        String mensaje = usuarioService.verificar_nombre(nombre);
+        return ResponseEntity.ok(mensaje);
+    }
+
+
 
 }

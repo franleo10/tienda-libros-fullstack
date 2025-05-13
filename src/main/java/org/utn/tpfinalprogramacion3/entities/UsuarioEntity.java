@@ -1,5 +1,6 @@
 package org.utn.tpfinalprogramacion3.entities;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,14 +21,14 @@ public class UsuarioEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "nombre", nullable = false, length = 50)
+    @Column(name = "nombre", nullable = false, length = 50, unique = true)
     private String nombre;
     @Column (name = "edad", nullable = false)
     private int edad;
     @Column (name="email", nullable = false, length = 100)
     private String email;
 
-    @Column (name="roles", nullable = false, length = 25)
+    @Column (name="roles", nullable = true, length = 25)
     @Enumerated(EnumType.STRING)
     private Rol roles;
 
@@ -35,4 +36,12 @@ public class UsuarioEntity {
     private CredencialEntity credencialEntity;
     @OneToMany(mappedBy = "usuario")
     private List<BibliotecaEntity> biblioteca;
+
+    @PostConstruct
+    private void init() {
+        if (this.roles == null) {
+            this.roles = Rol.USUARIO; // Asigna el rol por defecto si es nulo
+        }
+    }
+
 }

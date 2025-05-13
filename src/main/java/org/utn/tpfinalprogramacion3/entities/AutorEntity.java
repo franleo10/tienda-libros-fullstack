@@ -22,7 +22,7 @@ public class AutorEntity {
     private String apellido;
 
 
-    @OneToMany(mappedBy = "autor")
+    @ManyToMany(mappedBy = "autores")
     private List<LibroEntity> libros;
 
 }

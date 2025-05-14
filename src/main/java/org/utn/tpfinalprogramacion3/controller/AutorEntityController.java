@@ -46,7 +46,6 @@ public class AutorEntityController {
             String mensaje = "No se encontro el autor con el id " + id;
             return new ResponseEntity<>(mensaje, HttpStatus.NOT_FOUND);
         }
-
         autorRepository.deleteById(id);
         return new ResponseEntity<>("Autor eliminado.", HttpStatus.OK);
     }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @NoArgsConstructor
@@ -20,6 +22,15 @@ public class LibroEntity {
     private int idLibro;
     @Column(name="titulo", nullable = false, length = 100)
     private String titulo;
+    @Column(name = "sinopsis", nullable = false, length = 100)
+    private String sinopsis;
+    @Column(name = "fecha_lanzamiento", nullable = false)
+    private LocalDate fecha_lanzamiento;
+    @Column(name = "precio", nullable = false)
+    private Float precio;
+    @Column(name = "reseñas", nullable = true, length = 4)
+    @OneToMany(mappedBy = "libros", cascade = CascadeType.ALL, orphanRemoval = true)
+
 
     @ManyToMany
     @JoinTable(

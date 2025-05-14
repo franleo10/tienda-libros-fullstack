@@ -29,10 +29,8 @@ public class LibroEntity {
     @Column(name = "precio", nullable = false)
     private Float precio;
     @Column(name = "reseñas", nullable = true, length = 4)
-    @OneToMany(mappedBy = "libros", cascade = CascadeType.ALL, orphanRemoval = true)
 
 
-    @ManyToMany
     @JoinTable(
             name="autorXlibro",
             joinColumns = @JoinColumn(name = "id_libro"),

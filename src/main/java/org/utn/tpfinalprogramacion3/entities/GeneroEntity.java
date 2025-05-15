@@ -1,11 +1,13 @@
 package org.utn.tpfinalprogramacion3.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,12 +26,7 @@ public class GeneroEntity {
     private String nombre;
 
 
-    @ManyToMany
-    @JoinTable(
-            name = "libroXgenero",
-            joinColumns = @JoinColumn(name = "id_genero"),
-            inverseJoinColumns = @JoinColumn(name = "id_libro")
-    )
-    private List<LibroEntity> libros;
-
+    @ManyToMany(mappedBy = "generos", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<LibroEntity> libros = new ArrayList<>();
 }

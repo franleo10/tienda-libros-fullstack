@@ -1,5 +1,6 @@
 package org.utn.tpfinalprogramacion3.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class AutorEntity {
 
 
     @ManyToMany(mappedBy = "autores")
+    @JsonBackReference
     private List<LibroEntity> libros;
 
 }

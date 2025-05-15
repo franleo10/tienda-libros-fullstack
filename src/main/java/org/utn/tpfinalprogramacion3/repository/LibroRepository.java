@@ -8,9 +8,5 @@ import java.util.Optional;
 
 public interface LibroRepository extends JpaRepository<LibroEntity, Integer> {
 
-    public Optional<LibroEntity> findById();
-    public List<LibroEntity> findAll();
-    public void deleteById();
-    public Optional<LibroEntity> findByNombre();
-
+    Optional<LibroEntity> findByTitulo(String titulo);
 }

@@ -1,5 +1,6 @@
 package org.utn.tpfinalprogramacion3.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,18 +32,23 @@ public class LibroEntity {
     private Float precio;
     @Column(name = "reseñas", nullable = true, length = 4)
 
-
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name="autorXlibro",
+            name = "autorXlibro",
             joinColumns = @JoinColumn(name = "id_libro"),
             inverseJoinColumns = @JoinColumn(name = "id_autor")
     )
-    private List<AutorEntity> autores;
+    @JsonManagedReference
+    private List<AutorEntity> autores = new ArrayList<>();
 
-
-    @ManyToMany(mappedBy = "libros")
-    private List<GeneroEntity> generos;
-
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "libro_xgenero",
+            joinColumns = @JoinColumn(name = "id_libro"),
+            inverseJoinColumns = @JoinColumn(name = "id_genero")
+    )
+    @JsonManagedReference
+    private List<GeneroEntity> generos = new ArrayList<>();
 
 
 

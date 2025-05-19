@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "autores")
@@ -12,6 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class AutorEntity {
 
     @Id
@@ -26,6 +29,19 @@ public class AutorEntity {
     @ManyToMany(mappedBy = "autores")
     @JsonBackReference
     private List<LibroEntity> libros;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AutorEntity that = (AutorEntity) o;
+        return idAutor == that.idAutor;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idAutor);
+    }
 
 }
 

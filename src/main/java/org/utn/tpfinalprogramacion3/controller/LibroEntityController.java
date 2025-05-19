@@ -43,12 +43,17 @@ public ResponseEntity<List<LibroEntity>> obtenerLibros() {
     @CrossOrigin(origins = "*")
     @PutMapping("/{idLibro}/agregar_genero/{idGenero}")
     public ResponseEntity<?> AgregarGeneroALibro(@PathVariable int idLibro, @PathVariable int idGenero) {
-        try {
-            libroService.agregarGeneroALibro(idLibro, idGenero);
-            return ResponseEntity.ok("Género agregado correctamente al libro.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+       return libroService.agregarGeneroALibro(idLibro,idGenero);
+    }
+    @CrossOrigin(origins = "*")
+    @PutMapping("/{idLibro}/agregar_autor/{idAutor}")
+    public ResponseEntity<?>AgregarAutorALibro(@PathVariable int idLibro, @PathVariable int idAutor) {
+    return libroService.agregarAutorALibro(idLibro, idAutor);
+    }
+    @CrossOrigin(origins = "*")
+    @DeleteMapping("/{idLibro}/eliminar_autor/{idAutor}")
+    public ResponseEntity<?>EliminarAutorALibro(@PathVariable int idLibro, @PathVariable int idAutor) {
+    return libroService.eliminarAutorALibro(idLibro, idAutor);
     }
 
 

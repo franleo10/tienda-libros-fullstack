@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface LibroRepository extends JpaRepository<LibroEntity, Integer> {
 
     Optional<LibroEntity> findByTitulo(String titulo);
+
 }

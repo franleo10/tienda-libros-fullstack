@@ -8,9 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,7 +37,7 @@ public class LibroEntity {
             inverseJoinColumns = @JoinColumn(name = "id_autor")
     )
     @JsonManagedReference
-    private List<AutorEntity> autores = new ArrayList<>();
+    private Set<AutorEntity> autores = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -48,7 +46,7 @@ public class LibroEntity {
             inverseJoinColumns = @JoinColumn(name = "id_genero")
     )
     @JsonManagedReference
-    private List<GeneroEntity> generos = new ArrayList<>();
+    private Set<GeneroEntity> generos = new HashSet<>();
 
 
 

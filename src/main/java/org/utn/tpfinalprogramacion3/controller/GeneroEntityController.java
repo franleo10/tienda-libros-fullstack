@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/generos")
-public class GeneroEntityController {
+public class    GeneroEntityController {
     private GeneroRepository generoRepository;
     private GeneroService generoService;
 

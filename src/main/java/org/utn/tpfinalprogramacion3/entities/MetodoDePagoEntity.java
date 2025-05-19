@@ -22,4 +22,9 @@ public class MetodoDePagoEntity {
 
     @OneToMany(mappedBy = "metodoDePago")
     private List<FacturaEntity> facturas;
+
+    @ManyToOne
+    @JoinColumn(name = "id_usuario",nullable = false)
+    private UsuarioEntity usuario;
+
 }

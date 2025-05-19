@@ -27,4 +27,10 @@ public class ReseñaEntity {
     @ManyToOne
     @JoinColumn(name = "nombre_usuario",nullable = false)
     private UsuarioEntity usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "id_libro",nullable = false)
+    private LibroEntity libro;
+
+
 }

@@ -1,5 +1,6 @@
 package org.utn.tpfinalprogramacion3.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,11 @@ public class UsuarioEntity {
     private CredencialEntity credencialEntity;
     @OneToMany(mappedBy = "usuario")
     private List<BibliotecaEntity> biblioteca;
+
+
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private CarritoEntity carrito;
 
 
 

@@ -6,7 +6,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.dtos.UsuarioCreateDTO;
+import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
 import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
+import org.utn.tpfinalprogramacion3.enums.Rol;
 import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
 
 import java.util.List;
@@ -23,14 +25,28 @@ public UsuarioService(UsuarioRepository repository, ModelMapper modelMapper) {
     this.repository = repository;
     this.modelMapper = modelMapper;
 }
-@Transactional
+    @Transactional
     public UsuarioCreateDTO createUsuario(UsuarioCreateDTO dto) {
         try {
+
             UsuarioEntity usuarioEntity = modelMapper.map(dto, UsuarioEntity.class);
-            UsuarioEntity usuarioEntity1 = repository.save(usuarioEntity);
-            return modelMapper.map(usuarioEntity1, UsuarioCreateDTO.class);
+            usuarioEntity.setRoles(Rol.USUARIO);
+
+
+            CarritoEntity carrito = CarritoEntity.builder()
+                    .precio(0.0)
+                    .usuario(usuarioEntity)
+                    .build();
+
+            usuarioEntity.setCarrito(carrito);
+
+
+            UsuarioEntity usuarioGuardado = repository.save(usuarioEntity);
+
+
+            return modelMapper.map(usuarioGuardado, UsuarioCreateDTO.class);
         } catch (Exception e) {
-            e.printStackTrace(); // Esto imprimirá la excepción en la consola
+            e.printStackTrace();
             throw new RuntimeException("Error al crear el usuario: " + e.getMessage());
         }
     }

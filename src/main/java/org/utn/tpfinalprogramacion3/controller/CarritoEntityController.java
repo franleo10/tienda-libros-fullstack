@@ -23,13 +23,6 @@ public class CarritoEntityController {
     }
 
 
-    @PostMapping("/crear/{id_usuario}")
-    public ResponseEntity<CarritoDTO>crearCarrito(@RequestBody CarritoDTO carritoDTO, @PathVariable Integer id_usuario) {
-        if(this.carritoService.createCarrito(carritoDTO,id_usuario).isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(carritoDTO, HttpStatus.CREATED);
-    }
 
 
     @PostMapping("/agregar-libro/{idCarrito}/{idLibro}")

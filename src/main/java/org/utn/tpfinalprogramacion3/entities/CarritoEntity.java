@@ -1,5 +1,6 @@
 package org.utn.tpfinalprogramacion3.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,8 +22,9 @@ public class CarritoEntity {
     @Column(name ="precio")
     private Double precio;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario")
+    @OneToOne
+    @JoinColumn(name = "id_usuario", unique = true)
+    @JsonManagedReference
     private UsuarioEntity usuario;
 
     @ManyToMany

@@ -3,10 +3,8 @@ package org.utn.tpfinalprogramacion3.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.utn.tpfinalprogramacion3.dtos.ReseniaCreateDTO;
 import org.utn.tpfinalprogramacion3.dtos.ReseniaDTO;
 import org.utn.tpfinalprogramacion3.repository.ReseniaRepository;
 import org.utn.tpfinalprogramacion3.services.ReseniaService;
@@ -22,9 +20,8 @@ public class ReseniaEntityController {
         this.reseniaService = reseniaService;
     }
     @PostMapping("/crear")
-    public ResponseEntity<ReseniaDTO> crearResenia(@RequestBody ReseniaDTO resenia) {
-        reseniaService.crearResenia(resenia);
-        return new ResponseEntity<>(resenia, HttpStatus.CREATED);
+    public ResponseEntity<ReseniaDTO> crearResenia(@RequestBody ReseniaCreateDTO resenia) {
+        return new ResponseEntity<>(reseniaService.crearResenia(resenia), HttpStatus.CREATED);
     }
 
 

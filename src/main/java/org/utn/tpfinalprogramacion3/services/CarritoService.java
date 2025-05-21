@@ -6,7 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.dtos.CarritoDTO;
-import org.utn.tpfinalprogramacion3.dtos.LibroDTO;
+import org.utn.tpfinalprogramacion3.dtos.UsuarioCarritoDTO;
 import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
 import org.utn.tpfinalprogramacion3.entities.LibroEntity;
 import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
@@ -31,31 +31,35 @@ public class CarritoService {
     public CarritoService(CarritoRepository carritoRepository, LibroRepository libroRepository, UsuarioRepository usuarioRepository, UsuarioService usuarioService, ModelMapper modelMapper) {
         this.carritoRepository = carritoRepository;
         this.libroRepository = libroRepository;
+        this.usuarioRepository = usuarioRepository;
         this.modelMapper = modelMapper;
-        this.usuarioRepository  = usuarioRepository;
     }
 
     public Optional<CarritoDTO> createCarrito(CarritoDTO carritoDTO, Integer idUsuario) {
         UsuarioEntity usuarioEntity = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
-        // Buscar si el usuario ya tiene un carrito
         Optional<CarritoEntity> carritoExistente = carritoRepository.findByUsuarioId(usuarioEntity.getId());
+        if (carritoExistente.isPresent()) {
+            return carritoExistente.map(this::mapCarritoToDto);
+        }
 
-
-        // Si no tiene, creamos uno nuevo vacío
         CarritoEntity nuevoCarrito = new CarritoEntity();
         nuevoCarrito.setUsuario(usuarioEntity);
-        nuevoCarrito.setLibros(List.of()); // vacío
+        nuevoCarrito.setLibros(List.of()); // carrito vacío
 
-        carritoRepository.save(nuevoCarrito);
+        CarritoEntity guardado = carritoRepository.save(nuevoCarrito);
 
-        return Optional.of(modelMapper.map(carritoExistente, CarritoDTO.class));
+        return Optional.of(mapCarritoToDto(guardado));
     }
 
-    public List<CarritoEntity> listarTodos() {
-        return carritoRepository.findAll();
+    public List<CarritoDTO> listarTodos() {
+        return carritoRepository.findAll()
+                .stream()
+                .map(this::mapCarritoToDto)
+                .collect(Collectors.toList());
     }
+
 
     public Optional<CarritoEntity> buscarPorId(Integer id) {
         return carritoRepository.findById(id);
@@ -65,7 +69,6 @@ public class CarritoService {
         carritoRepository.deleteById(id);
     }
 
-
     public CarritoEntity agregarLibro(Integer idCarrito, Integer idLibro) {
         CarritoEntity carrito = carritoRepository.findById(idCarrito)
                 .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
@@ -73,23 +76,23 @@ public class CarritoService {
         LibroEntity libro = libroRepository.findById(idLibro)
                 .orElseThrow(() -> new RuntimeException("Libro no encontrado: " + idLibro));
 
-        // Verificar si el libro ya está en el carrito
         if (carrito.getLibros().contains(libro)) {
             throw new RuntimeException("El libro ya está en el carrito");
         }
 
         carrito.getLibros().add(libro);
-        CarritoEntity actualizado = carritoRepository.save(carrito);
-
-        return actualizado;
+        return carritoRepository.save(carrito);
     }
-
 
     public Optional<CarritoEntity> buscarPorIdUsuario(Integer idUsuario) {
         return carritoRepository.findByUsuarioId(idUsuario);
     }
 
-
-
+    private CarritoDTO mapCarritoToDto(CarritoEntity carrito) {
+        CarritoDTO dto = modelMapper.map(carrito, CarritoDTO.class);
+        UsuarioCarritoDTO usuarioDTO = modelMapper.map(carrito.getUsuario(), UsuarioCarritoDTO.class);
+        dto.setUsuario(usuarioDTO);
+        return dto;
+    }
 }
 

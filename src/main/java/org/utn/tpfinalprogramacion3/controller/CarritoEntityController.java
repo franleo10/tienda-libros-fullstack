@@ -23,8 +23,6 @@ public class CarritoEntityController {
     }
 
 
-
-
     @PostMapping("/agregar-libro/{idCarrito}/{idLibro}")
     public ResponseEntity<CarritoEntity> agregarLibro(
             @PathVariable Integer idCarrito,
@@ -44,8 +42,8 @@ public class CarritoEntityController {
 
 
     @GetMapping("/listar")
-    public ResponseEntity<List<CarritoEntity>> obtenerTodos() {
-        List<CarritoEntity> carritos = carritoService.listarTodos();
+    public ResponseEntity<List<CarritoDTO>> obtenerTodos() {
+        List<CarritoDTO> carritos = carritoService.listarTodos();
         return ResponseEntity.ok(carritos);
     }
 

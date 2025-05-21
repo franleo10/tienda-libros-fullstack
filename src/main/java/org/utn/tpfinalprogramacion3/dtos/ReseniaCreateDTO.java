@@ -4,14 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Getter
 @Setter
-public class ReseniaDTO {
+public class ReseniaCreateDTO {
+
     private String texto;
     private BigDecimal calificacion;
-    private LocalDate fecha;
     private UsuarioReseniaDTO usuario;
     private LibroReseniaIdTitulo libro;
+
 }

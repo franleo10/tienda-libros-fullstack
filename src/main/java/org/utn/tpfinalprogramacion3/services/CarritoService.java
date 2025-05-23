@@ -94,5 +94,28 @@ public class CarritoService {
         dto.setUsuario(usuarioDTO);
         return dto;
     }
+
+    public Optional<CarritoEntity> obtenerCarritoConPrecioActualizadoPorUsuario(Integer idUsuario) {
+        Optional<CarritoEntity> carritoOpt = carritoRepository.findByUsuarioId(idUsuario);
+
+        if (carritoOpt.isPresent()) {
+            CarritoEntity carrito = carritoOpt.get();
+
+
+            double total = carrito.getLibros()
+                    .stream()
+                    .mapToDouble(LibroEntity::getPrecio)
+                    .sum();
+
+
+            carrito.setPrecio(total);
+
+            return Optional.of(carrito);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+
 }
 

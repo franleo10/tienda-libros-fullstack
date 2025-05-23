@@ -10,6 +10,7 @@ import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
 import org.utn.tpfinalprogramacion3.services.CarritoService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/carrito")
@@ -32,12 +33,7 @@ public class CarritoEntityController {
         return ResponseEntity.ok(actualizado);
     }
 
-    @GetMapping("/usuario/{id_usuario}")
-    public ResponseEntity<CarritoEntity> obtenerPorIdUsuario(@PathVariable("id_usuario") Integer idUsuario) {
-        return carritoService.buscarPorIdUsuario(idUsuario)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+
 
 
 
@@ -59,4 +55,17 @@ public class CarritoEntityController {
         carritoService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/usuario/{id_usuario}")
+    public ResponseEntity<CarritoEntity> obtenerPorIdUsuario(@PathVariable("id_usuario") Integer idUsuario) {
+        Optional<CarritoEntity> carritoOpt = carritoService.obtenerCarritoConPrecioActualizadoPorUsuario(idUsuario);
+
+        if (carritoOpt.isPresent()) {
+            return new ResponseEntity<>(carritoOpt.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 }

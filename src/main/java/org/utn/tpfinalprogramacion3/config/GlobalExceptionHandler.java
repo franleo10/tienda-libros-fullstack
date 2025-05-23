@@ -2,14 +2,15 @@ package org.utn.tpfinalprogramacion3.config;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.utn.tpfinalprogramacion3.Exceptions.DenegarPermisoEliminarReseniaException;
+import org.utn.tpfinalprogramacion3.Exceptions.NoHayReseniasException;
+import org.utn.tpfinalprogramacion3.Exceptions.ReseniaExistenteException;
 
 
 @RestControllerAdvice
@@ -51,5 +52,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
+    // Maneja el caso en que no existan resenias en el sistema. (404)
+    public ResponseEntity<String> manejarNoHayResenias(NoHayReseniasException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 
+    // Maneja el caso en el que el usuario ya hiciera una resenia a ese libro. (409)
+    public ResponseEntity<String> manejarReseniaDuplicada(ReseniaExistenteException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    // Maneja el caso en el que el usuario quierea eliminar una resenia no realizada por el. (403)
+    public ResponseEntity<String> manejarEliminacionDeResenias(DenegarPermisoEliminarReseniaException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
 }

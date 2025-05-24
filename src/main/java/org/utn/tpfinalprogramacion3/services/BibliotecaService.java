@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.dtos.AgregarLibroDTO;
 import org.utn.tpfinalprogramacion3.dtos.BibliotecaDTO;
+import org.utn.tpfinalprogramacion3.dtos.LibroBibliotecaDTO;
 import org.utn.tpfinalprogramacion3.dtos.LibroDTO;
 import org.utn.tpfinalprogramacion3.entities.BibliotecaEntity;
-import org.utn.tpfinalprogramacion3.entities.BibliotecaId;
 import org.utn.tpfinalprogramacion3.entities.LibroEntity;
 import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
 import org.utn.tpfinalprogramacion3.repository.BibliotecaRepository;
@@ -53,7 +53,7 @@ public class BibliotecaService {
         for (UsuarioEntity usuario : usuarioRepository.findAll()) {
             BibliotecaEntity biblioteca = usuario.getBiblioteca();
             if (biblioteca != null && biblioteca.getLibros() != null) {
-                List<LibroDTO> librosDTO = biblioteca.getLibros().stream()
+                List<LibroBibliotecaDTO> librosDTO = biblioteca.getLibros().stream()
                         .map(this::toLibroDTO)
                         .collect(Collectors.toList());
 
@@ -77,7 +77,7 @@ public class BibliotecaService {
                             .map(BibliotecaEntity::getLibros)
                             .orElse(Collections.emptySet());
 
-                    List<LibroDTO> librosDTO = libros.stream()
+                    List<LibroBibliotecaDTO> librosDTO = libros.stream()
                             .map(this::toLibroDTO)
                             .collect(Collectors.toList());
 
@@ -90,13 +90,16 @@ public class BibliotecaService {
     }
 
 
-    public void deleteById(int idUsuario, int idLibro) {
-        BibliotecaId id = new BibliotecaId(idUsuario, idLibro);
+    public void deleteById(int id) {
+        if (!bibliotecaRepository.existsById(id)) {
+            throw new RuntimeException("La biblioteca con ID " + id + " no existe.");
+        }
         bibliotecaRepository.deleteById(id);
     }
 
-    private LibroDTO toLibroDTO(LibroEntity entity) {
-        return LibroDTO.builder()
+
+    private LibroBibliotecaDTO toLibroDTO(LibroEntity entity) {
+        return LibroBibliotecaDTO.builder()
                 .idLibro(entity.getIdLibro())
                 .titulo(entity.getTitulo())
                 .precio(entity.getPrecio())

@@ -12,6 +12,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class BibliotecaId implements Serializable {
     private Integer idUsuario;
     private Integer idLibro;

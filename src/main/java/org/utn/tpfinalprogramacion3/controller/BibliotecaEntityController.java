@@ -1,6 +1,7 @@
 package org.utn.tpfinalprogramacion3.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.utn.tpfinalprogramacion3.dtos.AgregarLibroDTO;
@@ -39,9 +40,14 @@ public class BibliotecaEntityController {
     }
 
 
-    @DeleteMapping("/eliminar/{idUsuario}/{idLibro}")
-    public ResponseEntity<Void> delete(@PathVariable int idUsuario, @PathVariable int idLibro) {
-        bibliotecaService.deleteById(idUsuario, idLibro);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<String> deleteBiblioteca(@PathVariable int id) {
+        try {
+            bibliotecaService.deleteById(id);
+            return ResponseEntity.ok("Biblioteca eliminada correctamente.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
+
 }

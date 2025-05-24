@@ -1,16 +1,22 @@
 package org.utn.tpfinalprogramacion3.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.utn.tpfinalprogramacion3.entities.AutorEntity;
+import org.utn.tpfinalprogramacion3.entities.GeneroEntity;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
+
 public class LibroDTO {
-    private int idLibro;
     private String titulo;
+    private String sinopsis;
     private Float precio;
+    private LocalDate fecha_lanzamiento;
+    private List<AutorDTO> autores=new ArrayList<>();
+    private List<GeneroDTO> generos=new ArrayList<>();
 }

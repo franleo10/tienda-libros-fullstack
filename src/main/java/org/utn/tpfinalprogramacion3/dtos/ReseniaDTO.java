@@ -1,11 +1,13 @@
 package org.utn.tpfinalprogramacion3.dtos;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@NoArgsConstructor
 @Getter
 @Setter
 public class ReseniaDTO {
@@ -13,5 +15,5 @@ public class ReseniaDTO {
     private BigDecimal calificacion;
     private LocalDate fecha;
     private UsuarioReseniaDTO usuario;
-    private LibroReseniaIdTitulo libro;
+    private LibroTituloDTO libro;
 }

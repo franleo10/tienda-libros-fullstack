@@ -7,8 +7,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UsuarioReseniaDTO {
-
+public class UsuarioCreateReseniaDTO {
+    private int id;
     private String nombre;
-
 }

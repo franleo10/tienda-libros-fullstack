@@ -1,6 +1,7 @@
 package org.utn.tpfinalprogramacion3.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,9 +35,13 @@ public class UsuarioEntity {
     private Rol roles=Rol.USUARIO;
 
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private CredencialEntity credencialEntity;
-    @OneToMany(mappedBy = "usuario")
-    private List<BibliotecaEntity> biblioteca;
+
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private BibliotecaEntity biblioteca;
+
 
 
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)

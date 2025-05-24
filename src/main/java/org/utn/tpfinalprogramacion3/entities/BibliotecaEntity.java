@@ -1,10 +1,14 @@
 package org.utn.tpfinalprogramacion3.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "bibliotecas")
@@ -12,23 +16,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class BibliotecaEntity {
 
-    @EmbeddedId
-    private BibliotecaId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    @ManyToOne
-    @MapsId("idUsuario")
+    @OneToOne
     @JoinColumn(name = "id_usuario")
+    @JsonBackReference
     private UsuarioEntity usuario;
 
-    @ManyToOne
-    @MapsId("idLibro")
-    @JoinColumn(name = "id_libro")
-    private LibroEntity libro;
-
-    @ManyToOne
-    @JoinColumn(name = "id_factura")
-    private FacturaEntity factura;
+    @ManyToMany
+    @JoinTable(
+            name = "biblioteca_libros",
+            joinColumns = @JoinColumn(name = "id_biblioteca"),
+            inverseJoinColumns = @JoinColumn(name = "id_libro")
+    )
+    private Set<LibroEntity> libros = new HashSet<>();
 }
+

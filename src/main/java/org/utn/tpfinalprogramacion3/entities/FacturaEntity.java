@@ -17,8 +17,10 @@ public class FacturaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idFactura;
+
     @Column(name="descripcion", length = 500)
     private String descripcion;
+
     @Column(name="fecha_compra", nullable = false, length = 100)
     private LocalDate fechaCompra;
 
@@ -30,10 +32,5 @@ public class FacturaEntity {
     @JoinColumn(name = "id_carrito")
     private CarritoEntity carrito;
 
-    @OneToMany(mappedBy = "factura")
-    private List<BibliotecaEntity> biblioteca;
-
-    @OneToOne(mappedBy = "factura")
-    private HistorialDeCompraEntity historial;
 }
 

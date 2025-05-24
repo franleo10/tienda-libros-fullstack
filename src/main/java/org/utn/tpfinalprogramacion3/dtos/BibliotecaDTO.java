@@ -5,12 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LibroDTO {
-    private int idLibro;
-    private String titulo;
-    private Float precio;
+public class BibliotecaDTO {
+    private int idUsuario;
+    private String nombreUsuario;
+    private List<LibroDTO> libros;
 }
+
+

@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.dtos.UsuarioCreateDTO;
+import org.utn.tpfinalprogramacion3.entities.BibliotecaEntity;
 import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
 import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
 import org.utn.tpfinalprogramacion3.enums.Rol;
@@ -39,7 +40,6 @@ public UsuarioService(UsuarioRepository repository, ModelMapper modelMapper) {
                     .build();
 
             usuarioEntity.setCarrito(carrito);
-
 
             UsuarioEntity usuarioGuardado = repository.save(usuarioEntity);
 

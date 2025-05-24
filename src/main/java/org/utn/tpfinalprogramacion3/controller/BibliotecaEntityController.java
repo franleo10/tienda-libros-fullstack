@@ -19,7 +19,7 @@ public class BibliotecaEntityController {
     @PostMapping("/agregar-libro/{idUsuario}")
     public ResponseEntity<String> agregarLibro(@PathVariable int idUsuario, @RequestBody AgregarLibroDTO dto) {
 
-        dto.setIdUsuario(idUsuario); // Lo inyectás en el DTO
+        dto.setIdUsuario(idUsuario);
         bibliotecaService.agregarLibro(dto);
         return ResponseEntity.ok("Libro agregado a la biblioteca del usuario");
     }

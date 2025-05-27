@@ -8,6 +8,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UsuarioCreateReseniaDTO {
-    private int id;
     private String nombre;
 }

@@ -8,9 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.utn.tpfinalprogramacion3.Exceptions.DenegarPermisoEliminarReseniaException;
-import org.utn.tpfinalprogramacion3.Exceptions.NoHayReseniasException;
-import org.utn.tpfinalprogramacion3.Exceptions.ReseniaExistenteException;
+import org.utn.tpfinalprogramacion3.Exceptions.*;
 
 
 @RestControllerAdvice
@@ -53,17 +51,32 @@ public class GlobalExceptionHandler {
     }
 
     // Maneja el caso en que no existan resenias en el sistema. (404)
+    @ExceptionHandler(NoHayReseniasException.class)
     public ResponseEntity<String> manejarNoHayResenias(NoHayReseniasException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     // Maneja el caso en el que el usuario ya hiciera una resenia a ese libro. (409)
+    @ExceptionHandler(ReseniaExistenteException.class)
     public ResponseEntity<String> manejarReseniaDuplicada(ReseniaExistenteException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     // Maneja el caso en el que el usuario quierea eliminar una resenia no realizada por el. (403)
+    @ExceptionHandler(DenegarPermisoEliminarReseniaException.class)
     public ResponseEntity<String> manejarEliminacionDeResenias(DenegarPermisoEliminarReseniaException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+    // Maneja el caso en el que el libro indicado por ID no exista. (404)
+    @ExceptionHandler(LibroInexistenteException.class)
+    public ResponseEntity<String> manejarLibroInexistente(LibroInexistenteException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    // Maneja el caso en el que el usuario indicado por ID no exista. (404)
+    @ExceptionHandler(UsuarioInexistenteException.class)
+    public ResponseEntity<String> manejarUsuarioInexistente(UsuarioInexistenteException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 }

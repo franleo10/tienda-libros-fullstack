@@ -1,6 +1,8 @@
 package org.utn.tpfinalprogramacion3.controller;
 
 import org.apache.coyote.Response;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,24 +24,24 @@ public class ReseniaEntityController {
     public ReseniaEntityController(ReseniaService reseniaService) {
         this.reseniaService = reseniaService;
     }
-    @PostMapping("/crear")
-    public ResponseEntity<ReseniaDTO> crearResenia(@RequestBody ReseniaCreateDTO resenia) {
-        return new ResponseEntity<>(reseniaService.crearResenia(resenia), HttpStatus.CREATED);
+    @PostMapping("/crear/usuario/{idUsuario}/libro/{idLibro}")
+    public ResponseEntity<ReseniaDTO> crearResenia(@RequestBody ReseniaCreateDTO resenia, @PathVariable int idUsuario, @PathVariable int idLibro) {
+        return new ResponseEntity<>(reseniaService.crearResenia(resenia, idLibro, idUsuario), HttpStatus.CREATED);
     }
 
-    @GetMapping("/listar/todas")
-    public ResponseEntity<List<ReseniaDTO>> listarResenias() {
-        return new ResponseEntity<>(reseniaService.listarResenias(), HttpStatus.OK);
+    @GetMapping("/listar/todas/{numeroPagina}")
+    public ResponseEntity<Page<ReseniaDTO>> listarResenias(@PathVariable int numeroPagina) {
+        return new ResponseEntity<>(reseniaService.listarResenias(numeroPagina), HttpStatus.OK);
     }
 
-    @GetMapping("/listar/{id_libro}")
-    public ResponseEntity<List<ReseniaDTO>> listarReseniasUnLibro(@PathVariable int id_libro) {
-        return new ResponseEntity<>(reseniaService.listarReseniasByLibro(id_libro), HttpStatus.OK);
+    @GetMapping("/listar/{id_libro}/pag/{NumeroPagina}")
+    public ResponseEntity<Page<ReseniaDTO>> listarReseniasUnLibro(@PathVariable int id_libro, @PathVariable int numeroPagina) {
+        return new ResponseEntity<>(reseniaService.listarReseniasByLibro(id_libro, numeroPagina), HttpStatus.OK);
     }
 
-    @GetMapping("/listar/usuario/{id}")
-    public ResponseEntity<List<ReseniaDTO>> listarReseniasByUser(@PathVariable int id) {
-        return new ResponseEntity<>(reseniaService.listarReseniasByUsuario(id), HttpStatus.OK);
+    @GetMapping("/listar/usuario/{id}/pag/{numeroPagina}")
+    public ResponseEntity<Page<ReseniaDTO>> listarReseniasByUser(@PathVariable int id, @PathVariable int numeroPagina) {
+        return new ResponseEntity<>(reseniaService.listarReseniasByUsuario(id, numeroPagina), HttpStatus.OK);
     }
 
     @DeleteMapping("/eliminar/usuario/{idUsuario}/resenia/{idResenia}")

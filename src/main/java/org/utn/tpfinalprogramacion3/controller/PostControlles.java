@@ -68,7 +68,7 @@ public class PostControlles {
         PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                 .items(items)
                 .backUrls(backUrls)
-                .notificationUrl("https://153e-2800-2242-4080-a5e-6d31-f30c-fc21-5141.ngrok-free.app/api/webhook")
+                .notificationUrl("https://fce8-181-116-43-201.ngrok-free.app/api/webhook")
                 .externalReference("carrito-" + carrito.getIdCarrito())
                 .build();
 
@@ -81,53 +81,41 @@ public class PostControlles {
     }
 
     @PostMapping("/webhook")
-    public ResponseEntity<String> recibirWebhook(HttpServletRequest request) throws IOException {
-        String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-        System.out.println("Webhook recibido: " + body);
+    public ResponseEntity<String> recibirWebhook(@RequestBody String body) {
+        try {
+            System.out.println("Webhook recibido: " + body);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(body);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(body);
 
-        if (jsonNode.has("type") && "payment".equals(jsonNode.get("type").asText())) {
-            JsonNode dataNode = jsonNode.get("data");
-            if (dataNode != null && dataNode.has("id")) {
-                Long paymentId = dataNode.get("id").asLong();
+            if (jsonNode.has("type") && "payment".equals(jsonNode.get("type").asText())) {
+                JsonNode dataNode = jsonNode.path("data");
+                String paymentIdStr = dataNode.path("id").asText();
 
-                // Aquí consultamos el pago con Mercado Pago
-                com.mercadopago.client.payment.PaymentClient paymentClient = new com.mercadopago.client.payment.PaymentClient();
-                com.mercadopago.resources.payment.Payment payment = null;
-                try {
-                    payment = paymentClient.get(paymentId);
-                } catch (MPException | MPApiException e) {
-                    e.printStackTrace();
-                    return ResponseEntity.status(500).body("Error al obtener pago");
-                }
+                if (paymentIdStr != null && !paymentIdStr.isEmpty()) {
+                    Long paymentId = Long.parseLong(paymentIdStr);
 
-                if ("approved".equalsIgnoreCase(payment.getStatus())) {
-                    // Extraer idCarrito del campo external_reference o metadata si lo configuraste
-                    // Por ejemplo, si pusiste "carrito-123" en external_reference:
-                    String externalRef = payment.getExternalReference(); // o metadata
+                    // Obtener el pago desde Mercado Pago
+                    var paymentClient = new com.mercadopago.client.payment.PaymentClient();
+                    var payment = paymentClient.get(paymentId);
 
-                    Integer idCarrito = null;
-                    if (externalRef != null && externalRef.startsWith("carrito-")) {
-                        try {
-                            idCarrito = Integer.parseInt(externalRef.split("-")[1]);
-                        } catch (NumberFormatException ex) {
-                            System.out.println("Error parseando idCarrito de external_reference");
+                    if ("approved".equalsIgnoreCase(payment.getStatus())) {
+                        String externalRef = payment.getExternalReference();
+                        if (externalRef != null && externalRef.startsWith("carrito-")) {
+                            int idCarrito = Integer.parseInt(externalRef.split("-")[1]);
+                            compraService.moverLibrosDelCarritoABiblioteca(idCarrito);
+                            System.out.println("✅ Compra procesada para carrito ID: " + idCarrito);
                         }
-                    }
-
-                    if (idCarrito != null) {
-                        compraService.moverLibrosDelCarritoABiblioteca(idCarrito);
-                        System.out.println("Compra procesada correctamente para carrito ID: " + idCarrito);
-                    } else {
-                        System.out.println("No se pudo obtener idCarrito para procesar compra.");
                     }
                 }
             }
-        }
 
-        return ResponseEntity.ok("OK");
+            return ResponseEntity.ok("OK");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error en webhook: " + e.getMessage());
+        }
     }
+
 
 }

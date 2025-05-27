@@ -2,10 +2,7 @@ package org.utn.tpfinalprogramacion3.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -15,10 +12,12 @@ import java.util.*;
 @Data
 @Builder
 @Entity
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table (name="libros")
 public class LibroEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private int idLibro;
     @Column(name="titulo", nullable = false, length = 100)
     private String titulo;

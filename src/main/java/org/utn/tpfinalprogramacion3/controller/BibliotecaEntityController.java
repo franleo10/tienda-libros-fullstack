@@ -34,20 +34,17 @@ public class BibliotecaEntityController {
 
     @GetMapping("/listar/{idUsuario}")
     public ResponseEntity<BibliotecaDTO> getByUsuario(@PathVariable int idUsuario) {
-        return bibliotecaService.findById(idUsuario)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        BibliotecaDTO dto = bibliotecaService.getByUsuarioId(idUsuario);
+        return ResponseEntity.ok(dto);
     }
+
 
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> deleteBiblioteca(@PathVariable int id) {
-        try {
-            bibliotecaService.deleteById(id);
-            return ResponseEntity.ok("Biblioteca eliminada correctamente.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        bibliotecaService.deleteById(id);
+        return ResponseEntity.ok("Biblioteca eliminada correctamente.");
     }
+
 
 }

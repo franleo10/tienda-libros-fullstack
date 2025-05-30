@@ -79,4 +79,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> manejarUsuarioInexistente(UsuarioInexistenteException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    // Maneja el caso en el que el usuario no tenga biblioteca asociada. (404)
+    @ExceptionHandler(BibliotecaNoEncontradaException.class)
+    public ResponseEntity<String> manejarBibliotecaInexistente(BibliotecaNoEncontradaException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }

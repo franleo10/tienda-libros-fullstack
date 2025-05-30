@@ -2,6 +2,8 @@ package org.utn.tpfinalprogramacion3.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.utn.tpfinalprogramacion3.Exceptions.BibliotecaNoEncontradaException;
+import org.utn.tpfinalprogramacion3.Exceptions.UsuarioInexistenteException;
 import org.utn.tpfinalprogramacion3.dtos.AgregarLibroDTO;
 import org.utn.tpfinalprogramacion3.dtos.BibliotecaDTO;
 import org.utn.tpfinalprogramacion3.dtos.LibroBibliotecaDTO;
@@ -70,7 +72,7 @@ public class BibliotecaService {
         return resultado;
     }
 
-    public Optional<BibliotecaDTO> findById(int idUsuario) {
+    public BibliotecaDTO getByUsuarioId(int idUsuario) {
         return usuarioRepository.findById(idUsuario)
                 .map(usuario -> {
                     Set<LibroEntity> libros = Optional.ofNullable(usuario.getBiblioteca())
@@ -86,16 +88,25 @@ public class BibliotecaService {
                             .nombreUsuario(usuario.getNombre())
                             .libros(librosDTO)
                             .build();
-                });
+                })
+                .orElseThrow(() -> new UsuarioInexistenteException("Usuario con ID " + idUsuario + " no encontrado"));
     }
 
 
-    public void deleteById(int id) {
-        if (!bibliotecaRepository.existsById(id)) {
-            throw new RuntimeException("La biblioteca con ID " + id + " no existe.");
+
+    public void deleteById(int idUsuario) {
+        UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new UsuarioInexistenteException("Usuario con ID " + idUsuario + " no encontrado"));
+
+
+        BibliotecaEntity biblioteca = usuario.getBiblioteca();
+        if (biblioteca == null) {
+            throw new BibliotecaNoEncontradaException("El usuario no tiene una biblioteca asociada.");
         }
-        bibliotecaRepository.deleteById(id);
+
+        bibliotecaRepository.delete(biblioteca);
     }
+
 
 
     private LibroBibliotecaDTO toLibroDTO(LibroEntity entity) {

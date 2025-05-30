@@ -115,6 +115,11 @@ public class CarritoService {
             return Optional.empty();
         }
     }
+    public UsuarioEntity obtenerUsuarioPorCarritoId(Integer idCarrito) {
+        CarritoEntity carrito = carritoRepository.findById(idCarrito)
+                .orElseThrow(() -> new RuntimeException("Carrito no encontrado con id: " + idCarrito));
+        return carrito.getUsuario();
+    }
 
 
 }

@@ -6,7 +6,7 @@ import org.utn.tpfinalprogramacion3.entities.FacturaEntity;
 import java.util.List;
 
 public interface FacturaRepository extends JpaRepository<FacturaEntity, Integer> {
-    List<FacturaEntity> findByCarritoUsuarioId(Integer usuarioId);
+    List<FacturaEntity> findByUsuarioId(Integer usuarioId);
 
 }
 

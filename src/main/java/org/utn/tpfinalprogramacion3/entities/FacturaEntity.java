@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -18,19 +19,24 @@ public class FacturaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idFactura;
 
-    @Column(name="descripcion", length = 500)
-    private String descripcion;
+    @Column(name = "monto", nullable = false)
+    private Double monto;
 
     @Column(name="fecha_compra", nullable = false, length = 100)
-    private LocalDate fechaCompra;
+    private LocalDateTime fechaCompra;
+
+    @Column(name = "metodo_pago", nullable = false, length = 50)
+    private String metodoPago;
+
+    @Column(name = "external_reference", nullable = false, length = 100)
+    private String externalReference;
 
     @ManyToOne
-    @JoinColumn(name = "id_metodo_pago")
-    private MetodoDePagoEntity metodoDePago;
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private UsuarioEntity usuario;
 
-    @ManyToOne
-    @JoinColumn(name = "id_carrito")
-    private CarritoEntity carrito;
+    @Column(name = "libros_comprados", length = 1000)
+    private String librosComprados;
 
 }
 

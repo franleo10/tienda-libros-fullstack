@@ -36,7 +36,6 @@ public class CarritoEntity {
     private List<LibroEntity> libros= new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "carrito")
-    private List<FacturaEntity> facturas;
+
 }
 

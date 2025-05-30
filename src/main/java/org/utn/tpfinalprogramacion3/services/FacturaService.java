@@ -4,13 +4,18 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.dtos.FacturaDTO;
+import org.utn.tpfinalprogramacion3.dtos.FacturaResponseDTO;
 import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
 import org.utn.tpfinalprogramacion3.entities.FacturaEntity;
 import org.utn.tpfinalprogramacion3.entities.MetodoDePagoEntity;
+import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
 import org.utn.tpfinalprogramacion3.repository.CarritoRepository;
 import org.utn.tpfinalprogramacion3.repository.FacturaRepository;
 import org.utn.tpfinalprogramacion3.repository.MetodoDePagoRepository;
+import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,59 +25,57 @@ import java.util.stream.Collectors;
 public class FacturaService {
 
     private final FacturaRepository facturaRepository;
-    private final MetodoDePagoRepository metodoDePagoRepository;
+    private final UsuarioRepository usuarioRepository;
     private final CarritoRepository carritoRepository;
-    private final ModelMapper modelMapper;
 
-    public FacturaDTO crearFactura(FacturaDTO dto) {
-        FacturaEntity entity = modelMapper.map(dto, FacturaEntity.class);
-
-        entity.setMetodoDePago(obtenerMetodo(dto.getMetodoDePagoId()));
-        entity.setCarrito(obtenerCarrito(dto.getCarritoId()));
-
-        return modelMapper.map(facturaRepository.save(entity), FacturaDTO.class);
-    }
-    public List<FacturaDTO> obtenerFacturasPorUsuario(Integer usuarioId) {
-        return facturaRepository.findByCarritoUsuarioId(usuarioId).stream()
-                .map(entity -> modelMapper.map(entity, FacturaDTO.class))
-                .collect(Collectors.toList());
-    }
+    public void generarFactura(Double monto, String externalReference, String metodoPago, Integer idUsuario, List<String> titulosLibros) {
+        UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + idUsuario));
 
 
-    public FacturaDTO obtenerFacturaPorId(Integer id) {
-        return facturaRepository.findById(id)
-                .map(entity -> modelMapper.map(entity, FacturaDTO.class))
-                .orElse(null);
+        String librosStr = String.join(", ", titulosLibros);
+
+        FacturaEntity factura = FacturaEntity.builder()
+                .monto(monto)
+                .fechaCompra(LocalDateTime.now())
+                .metodoPago(metodoPago)
+                .externalReference(externalReference)
+                .usuario(usuario)
+                .librosComprados(librosStr)
+                .build();
+
+        facturaRepository.save(factura);
     }
 
-    public List<FacturaDTO> obtenerTodas() {
-        return facturaRepository.findAll().stream()
-                .map(entity -> modelMapper.map(entity, FacturaDTO.class))
-                .collect(Collectors.toList());
+    public List<FacturaResponseDTO> obtenerFacturasPorUsuario(int idUsuario) {
+        return facturaRepository.findByUsuarioId(idUsuario)
+                .stream()
+                .map(this::mapFacturaToDTO)
+                .toList();
     }
 
-    public FacturaDTO actualizarFactura(Integer id, FacturaDTO dto) {
-        Optional<FacturaEntity> optional = facturaRepository.findById(id);
-        if (optional.isEmpty()) return null;
+    public FacturaResponseDTO mapFacturaToDTO(FacturaEntity factura) {
+        Integer idUsuario = factura.getUsuario().getId();
 
-        FacturaEntity entity = optional.get();
+        List<String> titulosLibrosComprados = List.of();
 
-        modelMapper.map(dto, entity); // actualiza los campos simples
-        entity.setMetodoDePago(obtenerMetodo(dto.getMetodoDePagoId()));
-        entity.setCarrito(obtenerCarrito(dto.getCarritoId()));
+        if (factura.getLibrosComprados() != null && !factura.getLibrosComprados().isEmpty()) {
+            titulosLibrosComprados = Arrays.asList(factura.getLibrosComprados().split(", "));
+        }
 
-        return modelMapper.map(facturaRepository.save(entity), FacturaDTO.class);
+        return FacturaResponseDTO.builder()
+                .idFactura(factura.getIdFactura())
+                .monto(factura.getMonto())
+                .fechaCompra(factura.getFechaCompra())
+                .metodoPago(factura.getMetodoPago())
+                .externalReference(factura.getExternalReference())
+                .idUsuario(idUsuario)
+                .titulosLibrosComprados(titulosLibrosComprados)
+                .build();
     }
 
-    public void eliminarFactura(Integer id) {
-        facturaRepository.deleteById(id);
-    }
 
-    private MetodoDePagoEntity obtenerMetodo(Integer id) {
-        return id != null ? metodoDePagoRepository.findById(id).orElse(null) : null;
-    }
 
-    private CarritoEntity obtenerCarrito(Integer id) {
-        return id != null ? carritoRepository.findById(id).orElse(null) : null;
-    }
+
+
 }

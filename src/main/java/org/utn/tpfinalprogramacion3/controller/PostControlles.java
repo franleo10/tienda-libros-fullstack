@@ -16,8 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
+import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
+import org.utn.tpfinalprogramacion3.repository.CarritoRepository;
 import org.utn.tpfinalprogramacion3.services.CarritoService;
 import org.utn.tpfinalprogramacion3.services.CompraService;
+import org.utn.tpfinalprogramacion3.services.FacturaService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -34,6 +37,10 @@ public class PostControlles {
     private CarritoService carritoService;
     @Autowired
     private CompraService compraService;
+    @Autowired
+    private FacturaService facturaService;
+    @Autowired
+    private CarritoRepository carritoRepository;
 
     @GetMapping("/mercado")
     public String mercado(@RequestParam int idUsuario) throws MPException, MPApiException {
@@ -68,7 +75,7 @@ public class PostControlles {
         PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                 .items(items)
                 .backUrls(backUrls)
-                .notificationUrl("https://fce8-181-116-43-201.ngrok-free.app/api/webhook")
+                .notificationUrl("https://ac2a-2800-2242-4080-a5e-e8bd-c26f-1d58-b491.ngrok-free.app/api/webhook")
                 .externalReference("carrito-" + carrito.getIdCarrito())
                 .build();
 
@@ -103,9 +110,23 @@ public class PostControlles {
                         String externalRef = payment.getExternalReference();
                         if (externalRef != null && externalRef.startsWith("carrito-")) {
                             int idCarrito = Integer.parseInt(externalRef.split("-")[1]);
+
+                            var carrito = carritoRepository.findById(idCarrito).orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
+
+                            List<String> titulosLibros = carrito.getLibros()
+                                    .stream()
+                                    .map(libro -> libro.getTitulo())
+                                    .toList();
+
                             compraService.moverLibrosDelCarritoABiblioteca(idCarrito);
                             System.out.println("✅ Compra procesada para carrito ID: " + idCarrito);
+
+                            UsuarioEntity usuario = carritoService.obtenerUsuarioPorCarritoId(idCarrito);
+                            facturaService.generarFactura(payment.getTransactionAmount().doubleValue(),payment.getExternalReference(),payment.getPaymentTypeId(), usuario.getId(),titulosLibros);
+
                         }
+
+
                     }
                 }
             }

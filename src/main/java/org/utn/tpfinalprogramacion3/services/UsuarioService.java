@@ -41,8 +41,15 @@ public UsuarioService(UsuarioRepository repository, ModelMapper modelMapper) {
 
             usuarioEntity.setCarrito(carrito);
 
-            UsuarioEntity usuarioGuardado = repository.save(usuarioEntity);
 
+
+            BibliotecaEntity bibliotecaEntity= BibliotecaEntity.builder()
+                    .usuario(usuarioEntity)
+                    .libros(null)
+                    .build();
+            usuarioEntity.setBiblioteca(bibliotecaEntity);
+
+            UsuarioEntity usuarioGuardado = repository.save(usuarioEntity);
 
             return modelMapper.map(usuarioGuardado, UsuarioCreateDTO.class);
         } catch (Exception e) {

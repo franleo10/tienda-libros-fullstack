@@ -1,6 +1,11 @@
 package org.utn.tpfinalprogramacion3.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,42 +21,36 @@ import java.util.Optional;
 public class UsuarioEntityController {
 
     private final UsuarioService usuarioService;
+
     public UsuarioEntityController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
     @PostMapping("/crear")
-    public UsuarioCreateDTO createUsuario(@RequestBody UsuarioCreateDTO usuarioDTO) {
-        return usuarioService.createUsuario(usuarioDTO);
+    public ResponseEntity<UsuarioCreateDTO> createUsuario(@RequestBody UsuarioCreateDTO usuarioDTO) {
+        return new ResponseEntity<>(usuarioService.createUsuario(usuarioDTO), HttpStatus.CREATED);
     }
 
-    @GetMapping("/listar")
-    public List<UsuarioEntity> listarUsuarios(){
-        return usuarioService.findAll();
+    @GetMapping("/listar/{numeroPagina}")
+    public ResponseEntity<Page<UsuarioCreateDTO>> listarUsuarios(@PathVariable int numeroPagina) {
+        return new ResponseEntity<>(usuarioService.findAll(numeroPagina), HttpStatus.OK);
     }
 
     @GetMapping("/buscar_nombre")
-    public Optional<UsuarioEntity> buscarNombre(@RequestParam String nombre){
-        return usuarioService.findByNombre(nombre);
+    public ResponseEntity<UsuarioCreateDTO> buscarNombre(@RequestParam String nombre) {
+        return new ResponseEntity<>(usuarioService.findByNombre(nombre), HttpStatus.OK);
     }
 
     @DeleteMapping("/borrar/{id}")
     public ResponseEntity<String> eliminarUsuario(@PathVariable int id) {
-        try {
-            usuarioService.delete(id);
-            return new ResponseEntity<>("Usuario eliminado con éxito", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(usuarioService.delete(id), HttpStatus.NO_CONTENT);
     }
 
-
+    // Para que esta esto aca?
     @GetMapping("/verificar_nombre/{nombre}")
     public ResponseEntity<String> verificarUsuarioPorNombre(@PathVariable String nombre) {
         String mensaje = usuarioService.verificar_nombre(nombre);
         return ResponseEntity.ok(mensaje);
     }
-
-
 
 }

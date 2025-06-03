@@ -1,5 +1,9 @@
 package org.utn.tpfinalprogramacion3.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -8,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.utn.tpfinalprogramacion3.Exceptions.NoHayLibrosException;
 import org.utn.tpfinalprogramacion3.dtos.LibroDTO;
 import org.utn.tpfinalprogramacion3.entities.AutorEntity;
 import org.utn.tpfinalprogramacion3.entities.GeneroEntity;
@@ -29,7 +34,8 @@ public class LibroService {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public LibroService(LibroRepository libroRepository, ModelMapper modelMapper, AutorRepository autorRepository, GeneroRepository generoRepository) {
+    public LibroService(LibroRepository libroRepository, ModelMapper modelMapper, AutorRepository autorRepository,
+            GeneroRepository generoRepository) {
         this.libroRepository = libroRepository;
         this.modelMapper = modelMapper;
         this.autorRepository = autorRepository;
@@ -57,9 +63,7 @@ public class LibroService {
             libro.getAutores().add(autor);
             libro.getGeneros().add(genero);
 
-
             libro = libroRepository.save(libro);
-
 
             return Optional.of(modelMapper.map(libro, LibroDTO.class));
         } catch (Exception e) {
@@ -68,18 +72,29 @@ public class LibroService {
         }
     }
 
+    public Page<LibroDTO> getAllLibros(int numeroPaginacion) {
 
-    public List<LibroEntity> getAllLibros() {
-        return libroRepository.findAll();
+        Pageable pageable = PageRequest.of(numeroPaginacion, 5);
+        Page<LibroEntity> paginaLibros = libroRepository.findAll(pageable);
+
+        if (paginaLibros.isEmpty()) {
+            throw new NoHayLibrosException("No hay libros cargados en el sistema.");
+        }
+
+        List<LibroDTO> listaLibros = paginaLibros.getContent().stream()
+                .map(i -> modelMapper.map(i, LibroDTO.class))
+                .toList();
+
+        return new PageImpl<>(listaLibros, pageable, paginaLibros.getTotalElements());
+
     }
 
-
-    public ResponseEntity<?> agregarGeneroALibro(int idLibro, int idGenero) {
+    public String agregarGeneroALibro(int idLibro, int idGenero) {
         LibroEntity libro = libroRepository.findById(idLibro)
-                .orElseThrow(()-> new EntityNotFoundException("Libro no encontrado con id: " + idLibro));
+                .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + idLibro));
 
-
-        GeneroEntity genero=generoRepository.findById(idGenero).orElseThrow(()->new EntityNotFoundException("Genero no encontrado con id: " + idGenero));
+        GeneroEntity genero = generoRepository.findById(idGenero)
+                .orElseThrow(() -> new EntityNotFoundException("Genero no encontrado con id: " + idGenero));
 
         if (!libro.getGeneros().contains(genero)) {
             libro.getGeneros().add(genero);
@@ -87,19 +102,19 @@ public class LibroService {
             libroRepository.save(libro);
             generoRepository.save(genero);
         } else {
-            throw  new IllegalArgumentException("La genero ya existe en el libro");
+            throw new IllegalArgumentException("La genero ya existe en el libro");
         }
 
-        return ResponseEntity.ok("Género agregado correctamente al libro.");
+        return "Genero agregado correctamente";
     }
 
-    public ResponseEntity<?> agregarAutorALibro(int idLibro, int idAutor) {
+    public String agregarAutorALibro(int idLibro, int idAutor) {
+
         LibroEntity libro = libroRepository.findById(idLibro)
-                .orElseThrow(()-> new EntityNotFoundException("Libro no encontrado con id: " + idLibro));
+                .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + idLibro));
 
-
-        AutorEntity autor=autorRepository.findById(idAutor)
-                .orElseThrow(()->new EntityNotFoundException("Autor no encontrado con id: " + idAutor));
+        AutorEntity autor = autorRepository.findById(idAutor)
+                .orElseThrow(() -> new EntityNotFoundException("Autor no encontrado con id: " + idAutor));
 
         if (!libro.getAutores().contains(autor)) {
             libro.getAutores().add(autor);
@@ -109,28 +124,28 @@ public class LibroService {
         } else {
             throw new IllegalArgumentException("Autor ya existe en el libro");
         }
-        return ResponseEntity.ok("Autor agregado correctamente al libro.");
+
+        return "Autor agregado correctamente al libro.";
     }
 
-    public ResponseEntity<?> eliminarAutorALibro(int idLibro, int idAutor) {
+    public String eliminarAutorALibro(int idLibro, int idAutor) {
 
         LibroEntity libro = libroRepository.findById(idLibro)
-                .orElseThrow(()-> new EntityNotFoundException("Libro no encontrado con id: " + idLibro));
+                .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + idLibro));
 
-
-        AutorEntity autor=autorRepository.findById(idAutor)
-                .orElseThrow(()->new EntityNotFoundException("Autor no encontrado con id: " + idAutor));
-
+        AutorEntity autor = autorRepository.findById(idAutor)
+                .orElseThrow(() -> new EntityNotFoundException("Autor no encontrado con id: " + idAutor));
 
         if (libro.getAutores().contains(autor)) {
-           libro.getAutores().remove(autor);
-           autor.getLibros().remove(libro);
+            libro.getAutores().remove(autor);
+            autor.getLibros().remove(libro);
             libroRepository.save(libro);
             autorRepository.save(autor);
         } else {
             throw new IllegalArgumentException("Autor no existe en el libro");
         }
-        return ResponseEntity.ok("Autor eliminado correctamente del libro.");
+
+        return "Autor eliminado correctamente del libro.";
 
     }
 }

@@ -24,8 +24,10 @@ public class ReseniaEntityController {
     public ReseniaEntityController(ReseniaService reseniaService) {
         this.reseniaService = reseniaService;
     }
+
     @PostMapping("/crear/usuario/{idUsuario}/libro/{idLibro}")
-    public ResponseEntity<ReseniaDTO> crearResenia(@RequestBody ReseniaCreateDTO resenia, @PathVariable int idUsuario, @PathVariable int idLibro) {
+    public ResponseEntity<ReseniaDTO> crearResenia(@RequestBody ReseniaCreateDTO resenia, @PathVariable int idUsuario,
+            @PathVariable int idLibro) {
         return new ResponseEntity<>(reseniaService.crearResenia(resenia, idLibro, idUsuario), HttpStatus.CREATED);
     }
 
@@ -35,7 +37,8 @@ public class ReseniaEntityController {
     }
 
     @GetMapping("/listar/{id_libro}/pag/{NumeroPagina}")
-    public ResponseEntity<Page<ReseniaDTO>> listarReseniasUnLibro(@PathVariable int id_libro, @PathVariable int numeroPagina) {
+    public ResponseEntity<Page<ReseniaDTO>> listarReseniasUnLibro(@PathVariable int id_libro,
+            @PathVariable int numeroPagina) {
         return new ResponseEntity<>(reseniaService.listarReseniasByLibro(id_libro, numeroPagina), HttpStatus.OK);
     }
 

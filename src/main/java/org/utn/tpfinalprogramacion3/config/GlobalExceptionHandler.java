@@ -56,14 +56,21 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    // Maneja el caso e el que no existan libros en el sistma. (404)
+    // Maneja el caso en el que no existan libros en el sistma. (404)
     @ExceptionHandler(NoHayLibrosException.class)
     public ResponseEntity<String> manejarNoHayLibros(NoHayLibrosException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    // Maneja el caso en el que no existan usuarios en el sistema. (404)
     @ExceptionHandler(NoHayUsuariosException.class)
     public ResponseEntity<String> manejarNoHayUsuarios(NoHayUsuariosException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    // Maneja el caso en el que no existan facturas en el sistema. (404)
+    @ExceptionHandler(NoHayFacturasException.class)
+    public ResponseEntity<String> manejarNoHayFacturas(NoHayFacturasException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 

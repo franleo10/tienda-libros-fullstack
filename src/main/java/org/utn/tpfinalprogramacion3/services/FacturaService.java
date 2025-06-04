@@ -1,8 +1,13 @@
 package org.utn.tpfinalprogramacion3.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.utn.tpfinalprogramacion3.Exceptions.NoHayFacturasException;
 import org.utn.tpfinalprogramacion3.dtos.FacturaDTO;
 import org.utn.tpfinalprogramacion3.dtos.FacturaResponseDTO;
 import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
@@ -27,11 +32,12 @@ public class FacturaService {
     private final FacturaRepository facturaRepository;
     private final UsuarioRepository usuarioRepository;
     private final CarritoRepository carritoRepository;
+    private final ModelMapper modelMapper;
 
-    public void generarFactura(Double monto, String externalReference, String metodoPago, Integer idUsuario, List<String> titulosLibros) {
+    public void generarFactura(Double monto, String externalReference, String metodoPago, Integer idUsuario,
+            List<String> titulosLibros) {
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + idUsuario));
-
 
         String librosStr = String.join(", ", titulosLibros);
 
@@ -47,11 +53,20 @@ public class FacturaService {
         facturaRepository.save(factura);
     }
 
-    public List<FacturaResponseDTO> obtenerFacturasPorUsuario(int idUsuario) {
-        return facturaRepository.findByUsuarioId(idUsuario)
-                .stream()
-                .map(this::mapFacturaToDTO)
+    public Page<FacturaResponseDTO> obtenerFacturasPorUsuario(int idUsuario, int numeroPaginacion) {
+
+        Pageable pageable = PageRequest.of(numeroPaginacion, 5);
+        Page<FacturaEntity> paginaFacturas = facturaRepository.findByUsuarioId(idUsuario, pageable);
+
+        if (paginaFacturas.isEmpty()) {
+            throw new NoHayFacturasException("El usuario no tiene facturas.");
+        }
+
+        List<FacturaResponseDTO> listaFacturasDTO = paginaFacturas.getContent().stream()
+                .map(i -> modelMapper.map(i, FacturaResponseDTO.class))
                 .toList();
+
+        return new PageImpl<>(listaFacturasDTO, pageable, paginaFacturas.getTotalElements());
     }
 
     public FacturaResponseDTO mapFacturaToDTO(FacturaEntity factura) {
@@ -73,9 +88,5 @@ public class FacturaService {
                 .titulosLibrosComprados(titulosLibrosComprados)
                 .build();
     }
-
-
-
-
 
 }

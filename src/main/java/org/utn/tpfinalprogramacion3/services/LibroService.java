@@ -1,7 +1,5 @@
 package org.utn.tpfinalprogramacion3.services;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -10,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.web.client.RestTemplate;
 import org.utn.tpfinalprogramacion3.dtos.LibroDTO;
 import org.utn.tpfinalprogramacion3.entities.AutorEntity;
 import org.utn.tpfinalprogramacion3.entities.GeneroEntity;
@@ -59,7 +56,6 @@ public class LibroService {
 
             libro.getAutores().add(autor);
             libro.getGeneros().add(genero);
-            libro.setUrlPdf(null);
 
 
             libro = libroRepository.save(libro);
@@ -71,39 +67,10 @@ public class LibroService {
             throw new RuntimeException("Error al crear el libro");
         }
     }
-    private String buscarUrlOpenLibrary(String titulo) {
-        try {
-            String query = titulo.replace(" ", "+");
-            String url = "https://openlibrary.org/search.json?title=" + query;
-            RestTemplate restTemplate = new RestTemplate();
-            String jsonResponse = restTemplate.getForObject(url, String.class);
-
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(jsonResponse);
-            JsonNode docs = root.path("docs");
-
-            if (docs.isArray() && docs.size() > 0) {
-                JsonNode primerDoc = docs.get(0);
-                String key = primerDoc.path("key").asText(); // ej: "/works/OL12345W"
-                if (!key.isEmpty()) {
-                    // URL para leer online o detalles
-                    return "https://openlibrary.org" + key;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null; // no encontrada
-    }
 
 
     public List<LibroEntity> getAllLibros() {
-        List<LibroEntity> libros = libroRepository.findAll();
-        for (LibroEntity libro : libros) {
-            String url = buscarUrlOpenLibrary(libro.getTitulo());
-            libro.setUrlPdf(url); // seteamos la URL obtenida (puede ser null)
-        }
-        return libros;
+        return libroRepository.findAll();
     }
 
 

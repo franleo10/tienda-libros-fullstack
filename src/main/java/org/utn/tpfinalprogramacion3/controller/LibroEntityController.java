@@ -25,7 +25,7 @@ public class LibroEntityController {
 
     @PostMapping("/crear/{idAutor}/{idGenero}")
     public ResponseEntity<LibroDTO> crearLibro(@RequestBody LibroDTO libro, @PathVariable int idAutor,
-            @PathVariable int idGenero) {
+                                               @PathVariable int idGenero) {
         if (this.libroService.crearLibro(libro, idAutor, idGenero).isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -40,7 +40,7 @@ public class LibroEntityController {
     @CrossOrigin(origins = "*")
     @PutMapping("/{idLibro}/agregar_genero/{idGenero}")
     public ResponseEntity<String> AgregarGeneroALibro(@PathVariable int idLibro, @PathVariable int idGenero) {
-        return new ResponseEntity<>(libroService.agregarGeneroALibro(idLibro, idGenero), HttpStatus.CREATED);
+        return new ResponseEntity<>(libroService.agregarGeneroALibro(idLibro, idGenero), HttpStatus.OK);
     }
 
     @CrossOrigin(origins = "*")
@@ -56,3 +56,4 @@ public class LibroEntityController {
     }
 
 }
+

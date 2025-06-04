@@ -29,6 +29,7 @@ public class LibroEntity {
     private Float precio;
     @Column(name = "reseñas", nullable = true, length = 4)
 
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "autorXlibro",
@@ -46,6 +47,16 @@ public class LibroEntity {
     )
     @JsonManagedReference
     private Set<GeneroEntity> generos = new HashSet<>();
+    @Column(name = "url_pdf", length = 500)
+    private String urlPdf;
+    @Column(name = "activo", nullable = false)
+    private boolean activo;
+
+
+    @PrePersist
+    public void actividad(){
+        this.activo = true;
+    }
 
 
 

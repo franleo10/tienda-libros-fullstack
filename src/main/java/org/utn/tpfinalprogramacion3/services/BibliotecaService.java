@@ -1,6 +1,7 @@
 package org.utn.tpfinalprogramacion3.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.BibliotecaNoEncontradaException;
 import org.utn.tpfinalprogramacion3.Exceptions.UsuarioInexistenteException;
@@ -25,6 +26,8 @@ public class BibliotecaService {
     private final BibliotecaRepository bibliotecaRepository;
     private final UsuarioRepository usuarioRepository;
     private final LibroRepository libroRepository;
+    @Autowired
+    private OpenLibraryService openLibraryService;
 
     public void agregarLibro(AgregarLibroDTO dto) {
         UsuarioEntity usuario = usuarioRepository.findById(dto.getIdUsuario())
@@ -110,10 +113,14 @@ public class BibliotecaService {
 
 
     private LibroBibliotecaDTO toLibroDTO(LibroEntity entity) {
+
+        String urlPdf = openLibraryService.obtenerUrlLibroPorTitulo(entity.getTitulo()).block();
+
         return LibroBibliotecaDTO.builder()
                 .idLibro(entity.getIdLibro())
                 .titulo(entity.getTitulo())
                 .precio(entity.getPrecio())
+                .urlPdf(urlPdf)
                 .build();
     }
 }

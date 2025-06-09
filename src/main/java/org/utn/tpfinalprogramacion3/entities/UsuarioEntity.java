@@ -2,15 +2,13 @@ package org.utn.tpfinalprogramacion3.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.utn.tpfinalprogramacion3.enums.Rol;
-
-import java.util.List;
+import org.utn.tpfinalprogramacion3.security.entities.CredencialEntity;
 
 @NoArgsConstructor
 @AllArgsConstructor

@@ -46,6 +46,19 @@ private final WebClient webClient;
                     return Mono.just("");
                 });
     }
+    public Mono<JsonNode> buscarDatosLibroPorTitulo(String titulo) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/search.json")
+                        .queryParam("title", titulo)
+                        .build())
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .onErrorResume(e -> {
+                    System.err.println("Error al obtener datos libro OpenLibrary: " + e.getMessage());
+                    return Mono.empty();
+                });
+    }
 
 
 }

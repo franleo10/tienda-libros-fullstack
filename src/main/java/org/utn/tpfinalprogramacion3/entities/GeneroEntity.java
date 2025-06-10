@@ -25,6 +25,9 @@ public class GeneroEntity {
     @Column(unique = true, name = "nombre", nullable = false, length = 50)
     private String nombre;
 
+    public GeneroEntity(String nombre) {
+        this.nombre = nombre;
+    }
 
     @ManyToMany(mappedBy = "generos", fetch = FetchType.LAZY)
     @JsonBackReference

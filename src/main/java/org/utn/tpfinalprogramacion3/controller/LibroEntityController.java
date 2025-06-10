@@ -55,5 +55,12 @@ public class LibroEntityController {
         return new ResponseEntity<>(libroService.eliminarAutorALibro(idLibro, idAutor), HttpStatus.NO_CONTENT);
     }
 
+    @PostMapping("/openlibrary")
+    public ResponseEntity<LibroDTO> crearLibroDesdeOpenLibrary(@RequestParam String titulo) {
+        LibroDTO libroDTO = new LibroDTO();
+        libroDTO.setTitulo(titulo);
+        return ResponseEntity.ok(libroService.crearLibro2(libroDTO));
+    }
+
 }
 

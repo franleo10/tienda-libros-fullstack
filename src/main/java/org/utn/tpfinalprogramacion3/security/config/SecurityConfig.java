@@ -47,6 +47,7 @@ public class SecurityConfig {
                         // Permite el acceso sin autenticación a cualquier ruta que comience con "/auth/**".
                         // Esto es ideal para endpoints de login, registro, etc.
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/webhook").permitAll()
                         // Cualquier otra solicitud HTTP debe estar autenticada.
                         .anyRequest().authenticated())
                 // Habilita la configuración por defecto de CORS (Cross-Origin Resource Sharing).

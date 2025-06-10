@@ -43,5 +43,9 @@ public class AutorEntity {
         return Objects.hash(idAutor);
     }
 
+    public AutorEntity(String nombre, String apellido) {
+        this.nombre = nombre;
+        this.apellido = apellido;
+    }
 }
 

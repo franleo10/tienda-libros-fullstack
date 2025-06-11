@@ -1,5 +1,6 @@
 package org.utn.tpfinalprogramacion3.controller;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +37,11 @@ public class UsuarioEntityController {
         return new ResponseEntity<>(usuarioService.findAll(numeroPagina), HttpStatus.OK);
     }
 
+    @GetMapping("/listar/inactivos/{numeroPagina}")
+    public ResponseEntity<Page<UsuarioCreateDTO>> listarUsuariosInactivos(@PathVariable int numeroPagina) {
+        return new ResponseEntity<>(usuarioService.findAllInactivos(numeroPagina), HttpStatus.OK);
+    }
+
     @GetMapping("/buscar_nombre")
     public ResponseEntity<UsuarioCreateDTO> buscarNombre(@RequestParam String nombre) {
         return new ResponseEntity<>(usuarioService.findByNombre(nombre), HttpStatus.OK);
@@ -44,6 +50,16 @@ public class UsuarioEntityController {
     @DeleteMapping("/borrar/{id}")
     public ResponseEntity<String> eliminarUsuario(@PathVariable int id) {
         return new ResponseEntity<>(usuarioService.delete(id), HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/baja/{id}")
+    public ResponseEntity<String> darDeBajaUsuario(@PathVariable int id) {
+        return new ResponseEntity<>(usuarioService.bajaUsuario(id), HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/alta/{id}")
+    public ResponseEntity<String> darDeAltaUsuario(@PathVariable int id) {
+        return new ResponseEntity<>(usuarioService.altaUsuario(id), HttpStatus.OK);
     }
 
     // Para que esta esto aca?

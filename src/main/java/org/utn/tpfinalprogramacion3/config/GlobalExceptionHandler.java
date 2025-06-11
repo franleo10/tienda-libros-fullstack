@@ -104,4 +104,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> manejarBibliotecaInexistente(BibliotecaNoEncontradaException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    // Maneja el caso en el que un usuario que esta dado de baja quierda ser dado de
+    // baja otra vez. (409)
+    @ExceptionHandler(UsuarioActualmenteDadoDeBajaException.class)
+    public ResponseEntity<String> manejarUusarioActualmenteDadoDeBajaException(
+            UsuarioActualmenteDadoDeBajaException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    // Maneja el caso en el que un usuario que esta dado de baja quierda ser dado de
+    // alta otra vez. (409)
+    @ExceptionHandler(UsuarioActualmenteDadoDeAltaException.class)
+    public ResponseEntity<String> manejarUusarioActualmenteDadoDeAltaException(
+            UsuarioActualmenteDadoDeAltaException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }

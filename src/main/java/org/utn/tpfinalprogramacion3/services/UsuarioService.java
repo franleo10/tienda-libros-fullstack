@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.NoHayUsuariosException;
+import org.utn.tpfinalprogramacion3.Exceptions.UsuarioActualmenteDadoDeAltaException;
+import org.utn.tpfinalprogramacion3.Exceptions.UsuarioActualmenteDadoDeBajaException;
 import org.utn.tpfinalprogramacion3.Exceptions.UsuarioInexistenteException;
 import org.utn.tpfinalprogramacion3.dtos.UsuarioCreateDTO;
 import org.utn.tpfinalprogramacion3.entities.BibliotecaEntity;
@@ -73,6 +75,24 @@ public class UsuarioService {
         }
 
         List<UsuarioCreateDTO> listaUsuariosDTO = paginaUsusarios.getContent().stream()
+                .filter(i -> i.isActivo() == true)
+                .map(i -> modelMapper.map(i, UsuarioCreateDTO.class))
+                .toList();
+
+        return new PageImpl<>(listaUsuariosDTO, pageable, paginaUsusarios.getTotalElements());
+    }
+
+    public Page<UsuarioCreateDTO> findAllInactivos(int numeroPaginacion) {
+
+        Pageable pageable = PageRequest.of(numeroPaginacion, 5);
+        Page<UsuarioEntity> paginaUsusarios = repository.findAll(pageable);
+
+        if (paginaUsusarios.isEmpty()) {
+            throw new NoHayUsuariosException("No hay usuarios cargados en el sistema.");
+        }
+
+        List<UsuarioCreateDTO> listaUsuariosDTO = paginaUsusarios.getContent().stream()
+                .filter(i -> i.isActivo() == false)
                 .map(i -> modelMapper.map(i, UsuarioCreateDTO.class))
                 .toList();
 
@@ -107,6 +127,41 @@ public class UsuarioService {
         }
     }
 
+    public String bajaUsuario(int idusuario) {
 
+        if (!repository.existsById(idusuario)) {
+            throw new UsuarioInexistenteException("No hay un usuario con el id indicado en el sistema");
+        }
 
+        UsuarioEntity usuarioBuscado = repository.findById(idusuario).get();
+
+        if (!usuarioBuscado.isActivo()) {
+            throw new UsuarioActualmenteDadoDeBajaException("El usuario ya se encuentra dado de baja.");
+        }
+
+        usuarioBuscado.setActivo(false);
+
+        repository.save(usuarioBuscado);
+
+        return "Usuario dado de baja existosamente";
+    }
+
+    public String altaUsuario(int idusuario) {
+
+        if (!repository.existsById(idusuario)) {
+            throw new UsuarioInexistenteException("No hay un usuario con el id indicado en el sistema");
+        }
+
+        UsuarioEntity usuarioBuscado = repository.findById(idusuario).get();
+
+        if (usuarioBuscado.isActivo()) {
+            throw new UsuarioActualmenteDadoDeAltaException("El usuario ya se encuentra dado de alta.");
+        }
+
+        usuarioBuscado.setActivo(true);
+
+        repository.save(usuarioBuscado);
+
+        return "Usuario dado de alta existosamente";
+    }
 }

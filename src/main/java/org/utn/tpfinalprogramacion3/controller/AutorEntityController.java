@@ -25,37 +25,23 @@ public class AutorEntityController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<?> createAutor(@RequestBody AutorDTO autorDTO) {
-        if(autorService.createAutor(autorDTO).isEmpty()){
-            return new ResponseEntity<>("ERROR al crear autor, este ya existe en el sistema", HttpStatus.CONFLICT);
-        }
-        return new ResponseEntity<>(autorDTO, HttpStatus.CREATED);
+    public ResponseEntity<AutorDTO> createAutor(@RequestBody AutorDTO autorDTO) {
+        return autorService.createAutor(autorDTO);
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<List<AutorEntity>> getAutores(){
-        if(autorRepository.findAll().isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return ResponseEntity.ok(autorRepository.findAll());
+    public ResponseEntity<List<AutorEntity>> getAutores() {
+        return autorService.listarAutores();
     }
 
     @DeleteMapping("/borrar/{id}")
-    public ResponseEntity<?> deleteAutor(@PathVariable int id){
-        if(autorRepository.findById(id).isEmpty()){
-            String mensaje = "No se encontro el autor con el id " + id;
-            return new ResponseEntity<>(mensaje, HttpStatus.NOT_FOUND);
-        }
-        autorRepository.deleteById(id);
-        return new ResponseEntity<>("Autor eliminado.", HttpStatus.OK);
+    public ResponseEntity<String> deleteAutor(@PathVariable int id) {
+        return autorService.borrarAutor(id);
     }
 
     @GetMapping("/listar/nombre/{nombre}")
-    public ResponseEntity<List<AutorEntity>> getAutoresByName(@PathVariable String nombre){
-        if(autorRepository.findAllByNombre(nombre).isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return ResponseEntity.ok(autorRepository.findAllByNombre(nombre));
+    public ResponseEntity<List<AutorEntity>> getAutoresByName(@PathVariable String nombre) {
+        return autorService.listarPorNombre(nombre);
     }
 
 }

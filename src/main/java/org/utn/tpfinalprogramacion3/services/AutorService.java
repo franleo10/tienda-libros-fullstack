@@ -2,6 +2,8 @@ package org.utn.tpfinalprogramacion3.services;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.dtos.AutorDTO;
 import org.utn.tpfinalprogramacion3.entities.AutorEntity;
@@ -22,17 +24,42 @@ public class AutorService {
         this.modelMapper = modelMapper;
     }
 
-    public Optional<AutorDTO> createAutor(AutorDTO autorDTO) {
-
-        AutorEntity autorEntity = modelMapper.map(autorDTO, AutorEntity.class);
-
-        if(autorRepository.findByNombreAndApellido(autorDTO.getNombre(), autorDTO.getApellido()).isPresent()){
-            return Optional.empty();
+    public ResponseEntity<AutorDTO> createAutor(AutorDTO autorDTO) {
+        if (autorRepository.findByNombreAndApellido(autorDTO.getNombre(), autorDTO.getApellido()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
 
-        autorRepository.save(autorEntity);
-
-        return Optional.of(modelMapper.map(autorEntity, AutorDTO.class));
+        AutorEntity autorEntity = modelMapper.map(autorDTO, AutorEntity.class);
+        autorEntity = autorRepository.save(autorEntity);
+        AutorDTO resultado = modelMapper.map(autorEntity, AutorDTO.class);
+        return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
     }
+
+    public ResponseEntity<List<AutorEntity>> listarAutores() {
+        List<AutorEntity> autores = autorRepository.findAll();
+        if (autores.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(autores);
+    }
+    public ResponseEntity<String> borrarAutor(int id) {
+        Optional<AutorEntity> autorOptional = autorRepository.findById(id);
+        if (autorOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró el autor con el id " + id);
+        }
+        autorRepository.deleteById(id);
+        return ResponseEntity.ok("Autor eliminado.");
+    }
+    public ResponseEntity<List<AutorEntity>> listarPorNombre(String nombre) {
+        List<AutorEntity> autores = autorRepository.findAllByNombre(nombre);
+        if (autores.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(autores);
+    }
+
+
+
 
 }

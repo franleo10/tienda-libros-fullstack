@@ -39,6 +39,10 @@ public class FacturaService {
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + idUsuario));
 
+        // Eliminar títulos duplicados
+        List<String> titulosUnicos = titulosLibros.stream()
+                .distinct()
+                .toList();
         String librosStr = String.join(", ", titulosLibros);
 
         FacturaEntity factura = FacturaEntity.builder()
@@ -63,9 +67,8 @@ public class FacturaService {
         }
 
         List<FacturaResponseDTO> listaFacturasDTO = paginaFacturas.getContent().stream()
-                .map(i -> modelMapper.map(i, FacturaResponseDTO.class))
+                .map(this::mapFacturaToDTO)
                 .toList();
-
         return new PageImpl<>(listaFacturasDTO, pageable, paginaFacturas.getTotalElements());
     }
 

@@ -75,7 +75,7 @@ public class PostControlles {
         PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                 .items(items)
                 .backUrls(backUrls)
-                .notificationUrl("https://f6f1-2800-2242-40c0-c60a-2d78-85ff-8b87-fe1d.ngrok-free.app/api/webhook")
+                .notificationUrl("https://3a89-2800-2242-40c0-c60a-3956-d206-95d2-9ed7.ngrok-free.app/api/webhook")
                 .externalReference("carrito-" + carrito.getIdCarrito())
                 .build();
 
@@ -111,7 +111,8 @@ public class PostControlles {
                         if (externalRef != null && externalRef.startsWith("carrito-")) {
                             int idCarrito = Integer.parseInt(externalRef.split("-")[1]);
 
-                            var carrito = carritoRepository.findById(idCarrito).orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
+                            var carrito = carritoRepository.findByIdConLibros(idCarrito)
+                                    .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
 
                             List<String> titulosLibros = carrito.getLibros()
                                     .stream()

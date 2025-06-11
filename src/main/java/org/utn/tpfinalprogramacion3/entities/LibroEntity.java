@@ -21,8 +21,11 @@ public class LibroEntity {
     private int idLibro;
     @Column(name="titulo", nullable = false, length = 100)
     private String titulo;
-    @Column(name = "sinopsis", nullable = false, length = 100)
+
+    @Lob
+    @Column(name = "sinopsis", nullable = false,columnDefinition = "TEXT")
     private String sinopsis;
+
     @Column(name = "fecha_lanzamiento", nullable = false)
     private LocalDate fecha_lanzamiento;
     @Column(name = "precio", nullable = false)

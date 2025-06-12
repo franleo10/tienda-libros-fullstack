@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.utn.tpfinalprogramacion3.Exceptions.GeneroNoEncontrado;
 import org.utn.tpfinalprogramacion3.dtos.LibroDTO;
 import org.utn.tpfinalprogramacion3.entities.AutorEntity;
 import org.utn.tpfinalprogramacion3.entities.GeneroEntity;
@@ -22,6 +23,10 @@ import org.utn.tpfinalprogramacion3.mapper.ModelMapperConfig;
 import org.utn.tpfinalprogramacion3.repository.AutorRepository;
 import org.utn.tpfinalprogramacion3.repository.GeneroRepository;
 import org.utn.tpfinalprogramacion3.repository.LibroRepository;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -150,7 +155,7 @@ public class LibroService {
     }
 
     @Transactional
-    public LibroDTO crearLibro2(LibroDTO libroDTO) {
+    public LibroDTO crearLibro2(LibroDTO libroDTO, Integer generoId) {
         try {
             LibroEntity libro = modelMapper.map(libroDTO, LibroEntity.class);
 
@@ -169,11 +174,6 @@ public class LibroService {
             String nombreAutorCompleto = null;
             if (primerDoc.has("author_name") && primerDoc.get("author_name").isArray() && primerDoc.get("author_name").size() > 0) {
                 nombreAutorCompleto = primerDoc.get("author_name").get(0).asText();
-            }
-
-            String nombreGenero = "Sin género";
-            if (primerDoc.has("subject") && primerDoc.get("subject").isArray() && primerDoc.get("subject").size() > 0) {
-                nombreGenero = primerDoc.get("subject").get(0).asText();
             }
 
             if (nombreAutorCompleto == null) {
@@ -195,10 +195,9 @@ public class LibroService {
             AutorEntity autor = autorRepository.findByNombre(nombre)
                     .orElseGet(() -> autorRepository.save(new AutorEntity(finalNombre, finalApellido)));
 
-            // Buscar o crear género
-            String finalNombreGenero = nombreGenero;
-            GeneroEntity genero = generoRepository.findByNombre(nombreGenero)
-                    .orElseGet(() -> generoRepository.save(new GeneroEntity(finalNombreGenero)));
+            // Buscar género por ID recibido
+            GeneroEntity genero = generoRepository.findById(generoId)
+                    .orElseThrow(() -> new GeneroNoEncontrado("Género no encontrado con id " + generoId));
 
             libro.getAutores().clear();
             libro.getAutores().add(autor);
@@ -219,10 +218,10 @@ public class LibroService {
                 libro.setPrecio((float) precioAleatorio);
             }
 
-            // ➤ NUEVO BLOQUE: obtener sinopsis desde /works/{key}.json
+            // ➤ Obtener sinopsis
             String sinopsis = "Sin sinopsis disponible";
             if (primerDoc.has("key")) {
-                String workKey = primerDoc.get("key").asText(); // ej: "/works/OL82536W"
+                String workKey = primerDoc.get("key").asText();
                 String workUrl = "https://openlibrary.org" + workKey + ".json";
 
                 JsonNode workResponse = WebClient.create()
@@ -234,15 +233,20 @@ public class LibroService {
 
                 if (workResponse != null && workResponse.has("description")) {
                     JsonNode descriptionNode = workResponse.get("description");
-
                     if (descriptionNode.isTextual()) {
                         sinopsis = descriptionNode.asText();
-                    } else if (descriptionNode.isObject() && descriptionNode.has("value")) {
+                    } else if (descriptionNode.has("value")) {
                         sinopsis = descriptionNode.get("value").asText();
+                    }
+                } else {
+                    // Si no hay descripción en JSON, probar scraping HTML
+                    String workUrlHtml = "https://openlibrary.org" + primerDoc.get("key").asText();
+                    String sinopsisHtml = obtenerSinopsisDesdeHtml(workUrlHtml);
+                    if (sinopsisHtml != null && !sinopsisHtml.isEmpty()) {
+                        sinopsis = sinopsisHtml;
                     }
                 }
             }
-
             libro.setSinopsis(sinopsis);
 
             libro = libroRepository.save(libro);
@@ -251,6 +255,62 @@ public class LibroService {
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Error al crear el libro: " + e.getMessage());
+        }
+    }
+
+
+    private String obtenerSinopsisDesdeHtml(String workUrl) {
+        try {
+            String html = WebClient.create()
+                    .get()
+                    .uri(workUrl)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            if (html == null || html.isEmpty()) {
+                System.out.println("No se obtuvo contenido HTML de " + workUrl);
+                return null;
+            }
+
+            Document doc = Jsoup.parse(html);
+
+            String[] posiblesSelectores = {
+                    "div#description span[itemprop=description]",
+                    "div#description",
+                    "meta[name=description]",
+                    "div.work-description",
+                    "section#description" // agrego otro común
+            };
+
+            for (String selector : posiblesSelectores) {
+                if (selector.startsWith("meta")) {
+                    // Para meta tag, obtener contenido del atributo content
+                    Elements metaTags = doc.select(selector);
+                    for (Element metaTag : metaTags) {
+                        String content = metaTag.attr("content");
+                        if (content != null && !content.isEmpty()) {
+                            System.out.println("Sinopsis encontrada en selector META: " + selector);
+                            return content;
+                        }
+                    }
+                } else {
+                    Element descElement = doc.selectFirst(selector);
+                    if (descElement != null) {
+                        String text = descElement.text();
+                        if (text != null && !text.isEmpty()) {
+                            System.out.println("Sinopsis encontrada en selector: " + selector);
+                            return text;
+                        }
+                    }
+                }
+            }
+
+            System.out.println("No se encontró sinopsis en el HTML de " + workUrl);
+            return null;
+        } catch (Exception e) {
+            System.err.println("Error al obtener sinopsis desde HTML: " + e.getMessage());
+            return null;
         }
     }
 

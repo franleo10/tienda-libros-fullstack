@@ -55,11 +55,16 @@ public class LibroEntityController {
         return new ResponseEntity<>(libroService.eliminarAutorALibro(idLibro, idAutor), HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/openlibrary")
-    public ResponseEntity<LibroDTO> crearLibroDesdeOpenLibrary(@RequestParam String titulo) {
+    @PostMapping("/openlibrary/{generoId}")
+    public ResponseEntity<LibroDTO> crearLibroConGenero(
+            @RequestParam String titulo,
+            @PathVariable Integer generoId) {
+
         LibroDTO libroDTO = new LibroDTO();
         libroDTO.setTitulo(titulo);
-        return ResponseEntity.ok(libroService.crearLibro2(libroDTO));
+
+        LibroDTO creado = libroService.crearLibro2(libroDTO, generoId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
 }

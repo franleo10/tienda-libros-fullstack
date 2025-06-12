@@ -120,4 +120,21 @@ public class GlobalExceptionHandler {
             UsuarioActualmenteDadoDeAltaException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
+
+    //MANEJA EN EL CASO DE QUE NO HAYA ENCONTRADO EL AUTOR...
+    @ExceptionHandler(AutorNoEncontrado.class)
+    public ResponseEntity<String>manejarAutorNoEncontrado(AutorNoEncontrado ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+    //Maneja si no encuentra el carrito
+    @ExceptionHandler(CarritoInexistente.class)
+    public ResponseEntity<String>manejarCarritoInexistente(CarritoInexistente ex){
+        return new ResponseEntity<>(ex.getMessage(),HttpStatus.NOT_FOUND);
+    }
+    /// Maneja si no encuentra el genero
+    @ExceptionHandler(GeneroNoEncontrado.class)
+    public ResponseEntity<String>manejarGeneroNoEncontrado(GeneroNoEncontrado ex){
+        return new ResponseEntity<>(ex.getMessage(),HttpStatus.NOT_FOUND);
+    }
+
 }

@@ -17,4 +17,5 @@ public interface AutorRepository extends JpaRepository<AutorEntity, Integer> {
     public void deleteByidAutor(int id);
     Optional<AutorEntity> findByNombreAndApellido(String nombre, String apellido);
     Optional<AutorEntity> findByNombre(String nombre);
+    Optional<AutorEntity> findByNombreIgnoreCase(String nombre);
 }

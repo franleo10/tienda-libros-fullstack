@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface GeneroRepository extends JpaRepository<GeneroEntity,Integer> {
 
     Optional<GeneroEntity> findByNombre(String nombre);
+    Optional<GeneroEntity> findByNombreIgnoreCase(String nombre);
 }

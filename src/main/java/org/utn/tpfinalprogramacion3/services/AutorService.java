@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.utn.tpfinalprogramacion3.Exceptions.AutorNoEncontrado;
 import org.utn.tpfinalprogramacion3.dtos.AutorDTO;
 import org.utn.tpfinalprogramacion3.entities.AutorEntity;
+import org.utn.tpfinalprogramacion3.entities.LibroEntity;
 import org.utn.tpfinalprogramacion3.repository.AutorRepository;
 
 import java.util.List;
@@ -43,11 +45,8 @@ public class AutorService {
         return ResponseEntity.ok(autores);
     }
     public ResponseEntity<String> borrarAutor(int id) {
-        Optional<AutorEntity> autorOptional = autorRepository.findById(id);
-        if (autorOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No se encontró el autor con el id " + id);
-        }
+        AutorEntity autorOptional = autorRepository.findById(id).orElseThrow(() -> new AutorNoEncontrado("Autor " + id + " no existe"));
+
         autorRepository.deleteById(id);
         return ResponseEntity.ok("Autor eliminado.");
     }
@@ -57,6 +56,21 @@ public class AutorService {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(autores);
+    }
+
+    public List<LibroEntity>obtenerLibrosPorNombreAutor(String nombre) {
+        AutorEntity autorEntity=autorRepository.findByNombreIgnoreCase(nombre).orElseThrow(()->new AutorNoEncontrado("Autor: "+nombre+" no existe"));
+        return autorEntity.getLibros();
+    }
+
+    public AutorEntity actualizarAutor(Integer id, AutorEntity nuevoAutor) {
+        AutorEntity autorExistente = autorRepository.findById(id)
+                .orElseThrow(() -> new AutorNoEncontrado("Autor con ID " + id + " no encontrado"));
+
+        autorExistente.setNombre(nuevoAutor.getNombre());
+        autorExistente.setApellido(nuevoAutor.getApellido());
+
+        return autorRepository.save(autorExistente);
     }
 
 

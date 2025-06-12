@@ -1,10 +1,12 @@
 package org.utn.tpfinalprogramacion3.services;
 
 import jakarta.transaction.Transactional;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.utn.tpfinalprogramacion3.Exceptions.GeneroNoEncontrado;
 import org.utn.tpfinalprogramacion3.dtos.GeneroDTO;
 import org.utn.tpfinalprogramacion3.entities.GeneroEntity;
 import org.utn.tpfinalprogramacion3.entities.LibroEntity;
@@ -42,7 +44,12 @@ public class GeneroService {
         return generoRepository.findAll();
     }
 
+    public List<LibroEntity> obtenerLibrosPorNombreGenero(String nombreGenero) {
+        GeneroEntity genero = generoRepository.findByNombreIgnoreCase(nombreGenero)
+                .orElseThrow(() -> new GeneroNoEncontrado("Genero con nombre: "+nombreGenero+" no encontrado!"));
 
+        return genero.getLibros();
+    }
 
 
 }

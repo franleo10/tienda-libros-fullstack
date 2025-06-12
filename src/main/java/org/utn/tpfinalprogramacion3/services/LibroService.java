@@ -234,9 +234,10 @@ public class LibroService {
 
                 if (workResponse != null && workResponse.has("description")) {
                     JsonNode descriptionNode = workResponse.get("description");
+
                     if (descriptionNode.isTextual()) {
                         sinopsis = descriptionNode.asText();
-                    } else if (descriptionNode.has("value")) {
+                    } else if (descriptionNode.isObject() && descriptionNode.has("value")) {
                         sinopsis = descriptionNode.get("value").asText();
                     }
                 }

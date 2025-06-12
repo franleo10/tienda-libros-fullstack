@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.utn.tpfinalprogramacion3.dtos.AutorDTO;
 import org.utn.tpfinalprogramacion3.entities.AutorEntity;
+import org.utn.tpfinalprogramacion3.entities.LibroEntity;
 import org.utn.tpfinalprogramacion3.repository.AutorRepository;
 import org.utn.tpfinalprogramacion3.services.AutorService;
 
@@ -43,5 +44,18 @@ public class AutorEntityController {
     public ResponseEntity<List<AutorEntity>> getAutoresByName(@PathVariable String nombre) {
         return autorService.listarPorNombre(nombre);
     }
+
+    @GetMapping("/nombre")
+    public ResponseEntity<List<LibroEntity>> obtenerLibrosPorAutor(@RequestParam String nombre) {
+        List<LibroEntity> libros = autorService.obtenerLibrosPorNombreAutor(nombre);
+        return ResponseEntity.ok(libros);
+    }
+
+    @PutMapping("/actualizar-autor/{id}")
+    public ResponseEntity<AutorEntity> actualizarAutor(@PathVariable Integer id, @RequestBody AutorEntity nuevoAutor) {
+        AutorEntity actualizado = autorService.actualizarAutor(id, nuevoAutor);
+        return ResponseEntity.ok(actualizado);
+    }
+
 
 }

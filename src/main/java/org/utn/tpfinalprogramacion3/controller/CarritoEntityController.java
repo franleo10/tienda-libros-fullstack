@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.utn.tpfinalprogramacion3.dtos.CarritoDTO;
+import org.utn.tpfinalprogramacion3.dtos.CarritoDTO2;
 import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
 import org.utn.tpfinalprogramacion3.services.CarritoService;
 
@@ -43,12 +44,13 @@ public class    CarritoEntityController {
         return ResponseEntity.ok(carritos);
     }
 
-    @GetMapping("/{id_carrito}")
-    public ResponseEntity<CarritoEntity> obtenerPorId(@PathVariable Integer id) {
-        return carritoService.buscarPorId(id)
+    @GetMapping("/id/{id_carrito}")
+    public ResponseEntity<CarritoEntity> obtenerPorId(@PathVariable("id_carrito") Integer id_carrito) {
+        return carritoService.buscarPorId(id_carrito)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
@@ -66,6 +68,14 @@ public class    CarritoEntityController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+
+    @GetMapping("/listar/usuario/{idUsuario}")
+    public ResponseEntity<CarritoDTO2> obtenerCarritoPorUsuario(@PathVariable Integer idUsuario) {
+        return carritoService.MostrarDTOcarrito(idUsuario);
+    }
+
+
 
 
 }

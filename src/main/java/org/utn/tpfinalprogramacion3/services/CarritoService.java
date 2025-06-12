@@ -4,9 +4,10 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.utn.tpfinalprogramacion3.dtos.CarritoDTO;
-import org.utn.tpfinalprogramacion3.dtos.UsuarioCarritoDTO;
+import org.utn.tpfinalprogramacion3.Exceptions.CarritoInexistente;
+import org.utn.tpfinalprogramacion3.dtos.*;
 import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
 import org.utn.tpfinalprogramacion3.entities.LibroEntity;
 import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
@@ -121,6 +122,44 @@ public class CarritoService {
         return carrito.getUsuario();
     }
 
+    public ResponseEntity<CarritoDTO2> MostrarDTOcarrito(Integer idUsuario) {
+        CarritoEntity carritoOpt = carritoRepository.findByUsuarioId(idUsuario).orElseThrow(()-> new CarritoInexistente("Carrito no encontrado con id: " + idUsuario));
+
+
+            // Mapear libros a DTO liviano
+            List<LibroCarritoDTO> librosDTO = carritoOpt.getLibros().stream()
+                    .map(libro -> {
+                        LibroCarritoDTO dto = new LibroCarritoDTO();
+                        dto.setTitulo(libro.getTitulo());
+                        dto.setPrecio(libro.getPrecio());
+                        dto.setFechaLanzamiento(libro.getFecha_lanzamiento());
+                        return dto;
+                    })
+                    .toList();
+
+            // Calcular el total
+            double total = librosDTO.stream()
+                    .mapToDouble(LibroCarritoDTO::getPrecio)
+                    .sum();
+
+            // Mapear usuario a DTO
+            UsuarioEntity usuario = carritoOpt.getUsuario();
+            UsuarioCarritoDTO usuarioDTO = new UsuarioCarritoDTO();
+            usuarioDTO.setId(usuario.getId());
+            usuarioDTO.setNombre(usuario.getNombre());
+            usuarioDTO.setEmail(usuario.getEmail());
+
+            // Crear CarritoDTO
+            CarritoDTO2 carritoDTO = new CarritoDTO2();
+            carritoDTO.setIdCarrito(carritoOpt.getIdCarrito());
+            carritoDTO.setPrecio(total);
+            carritoDTO.setLibros(librosDTO);
+            carritoDTO.setUsuario(usuarioDTO);
+
+            return ResponseEntity.ok(carritoDTO);
+
+
+    }
 
 }
 

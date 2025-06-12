@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.utn.tpfinalprogramacion3.dtos.GeneroDTO;
 import org.utn.tpfinalprogramacion3.entities.GeneroEntity;
+import org.utn.tpfinalprogramacion3.entities.LibroEntity;
 import org.utn.tpfinalprogramacion3.repository.GeneroRepository;
 import org.utn.tpfinalprogramacion3.services.GeneroService;
 
@@ -31,7 +32,11 @@ public class    GeneroEntityController {
         return ResponseEntity.ok(generoService.findAll());
     }
 
-
+    @GetMapping("/libros")
+    public ResponseEntity<List<LibroEntity>> obtenerLibrosPorGenero(@RequestParam String nombre) {
+        List<LibroEntity> libros = generoService.obtenerLibrosPorNombreGenero(nombre);
+        return ResponseEntity.ok(libros);
+    }
 
 
 }

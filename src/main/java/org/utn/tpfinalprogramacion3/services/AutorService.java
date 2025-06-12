@@ -1,11 +1,16 @@
 package org.utn.tpfinalprogramacion3.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.AutorNoEncontrado;
+import org.utn.tpfinalprogramacion3.Exceptions.NoHayLibrosException;
 import org.utn.tpfinalprogramacion3.dtos.AutorDTO;
 import org.utn.tpfinalprogramacion3.entities.AutorEntity;
 import org.utn.tpfinalprogramacion3.entities.LibroEntity;
@@ -37,13 +42,25 @@ public class AutorService {
         return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
     }
 
-    public ResponseEntity<List<AutorEntity>> listarAutores() {
-        List<AutorEntity> autores = autorRepository.findAll();
-        if (autores.isEmpty()) {
-            return ResponseEntity.noContent().build();
+    public Page<AutorDTO> listarAutores(int numeroPagina) {
+
+        int tamañoPagina = 5;  // o el tamaño que quieras fijo
+        Pageable pageable = PageRequest.of(numeroPagina, tamañoPagina);
+
+        Page<AutorEntity> paginaAutores = autorRepository.findAll(pageable);
+        
+        if(paginaAutores.isEmpty()){
+            throw new NoHayLibrosException("No existen libros en el sistema.");
         }
-        return ResponseEntity.ok(autores);
+
+        List<AutorDTO> listaAutorDTO = paginaAutores.getContent()
+        .stream()
+        .map(i -> modelMapper.map(i, AutorDTO.class))
+        .toList();
+
+        return new PageImpl<>(listaAutorDTO, pageable, paginaAutores.getTotalElements());
     }
+
     public ResponseEntity<String> borrarAutor(int id) {
         AutorEntity autorOptional = autorRepository.findById(id).orElseThrow(() -> new AutorNoEncontrado("Autor " + id + " no existe"));
 

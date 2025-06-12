@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.utn.tpfinalprogramacion3.Exceptions.GeneroNoEncontrado;
+import org.utn.tpfinalprogramacion3.Exceptions.LibroActualmenteDadoDeAltaException;
+import org.utn.tpfinalprogramacion3.Exceptions.LibroActualmenteDadoDeBajaException;
+import org.utn.tpfinalprogramacion3.Exceptions.LibroInexistenteException;
 import org.utn.tpfinalprogramacion3.dtos.LibroDTO;
 import org.utn.tpfinalprogramacion3.entities.AutorEntity;
 import org.utn.tpfinalprogramacion3.entities.GeneroEntity;
@@ -94,12 +97,66 @@ public class LibroService {
         }
 
         List<LibroDTO> listaLibrosDTO = paginaLibros.getContent().stream()
+                .filter(i -> i.isActivo() == true)
                 .map(libro -> modelMapper.map(libro, LibroDTO.class))
                 .toList();
 
         return new PageImpl<>(listaLibrosDTO, pageable, paginaLibros.getTotalElements());
     }
 
+    public Page<LibroDTO> getAllLibrosInactivos(int numeroPagina) {
+        int tamañoPagina = 5;  // o el tamaño que quieras fijo
+        Pageable pageable = PageRequest.of(numeroPagina, tamañoPagina);
+
+        Page<LibroEntity> paginaLibros = libroRepository.findAll(pageable);
+
+        if (paginaLibros.isEmpty()) {
+            throw new RuntimeException("No hay libros disponibles."); // O la excepción que quieras
+        }
+
+        List<LibroDTO> listaLibrosDTO = paginaLibros.getContent().stream()
+                .filter(i -> i.isActivo() == false)
+                .map(libro -> modelMapper.map(libro, LibroDTO.class))
+                .toList();
+
+        return new PageImpl<>(listaLibrosDTO, pageable, paginaLibros.getTotalElements());
+    }
+
+    public String bajaLogicaLibro(int idLibro){
+
+        if(libroRepository.findById(idLibro).isEmpty()){
+            throw new LibroInexistenteException("El libro indicado no existe.");
+        }
+
+        LibroEntity libroBuscado = libroRepository.findById(idLibro).get();
+
+        if(!libroBuscado.isActivo()){
+            throw new LibroActualmenteDadoDeBajaException("El libro indicado ya se encuentra dado de baja.");
+        }
+
+        libroBuscado.setActivo(false);
+        libroRepository.save(libroBuscado);
+
+        return "Libro dado de baja correctamente";
+    }
+
+    public String altaLogicaLibro(int idLibro){
+
+        if(libroRepository.findById(idLibro).isEmpty()){
+            throw new LibroInexistenteException("El libro indicado no existe.");
+        }
+
+        LibroEntity libroBuscado = libroRepository.findById(idLibro).get();
+
+        if(libroBuscado.isActivo()){
+            throw new LibroActualmenteDadoDeAltaException("El libro indicado ya se encuentra dado de alta.");
+        }
+
+        libroBuscado.setActivo(true);
+        libroRepository.save(libroBuscado);
+
+        return "Libro dado de alta correctamente";
+    }
 
     public String agregarGeneroALibro(int idLibro, int idGenero) {
         LibroEntity libro = libroRepository.findById(idLibro)
@@ -136,6 +193,7 @@ public class LibroService {
             throw new IllegalArgumentException("El autor ya existe en el libro");
         }
     }
+
     public String eliminarAutorALibro(int idLibro, int idAutor) {
         LibroEntity libro = libroRepository.findById(idLibro)
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + idLibro));

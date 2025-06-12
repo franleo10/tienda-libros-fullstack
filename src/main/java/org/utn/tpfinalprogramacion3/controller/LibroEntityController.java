@@ -1,5 +1,7 @@
 package org.utn.tpfinalprogramacion3.controller;
 
+import org.apache.http.protocol.ResponseServer;
+import org.hibernate.validator.cfg.defs.pl.REGONDef;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -37,6 +39,11 @@ public class LibroEntityController {
         return new ResponseEntity<>(libroService.getAllLibros(numeroPagina), HttpStatus.OK);
     }
 
+    @GetMapping("/listar/inactivos/{numeroPagina}")
+    public ResponseEntity<Page<LibroDTO>> obtenerLibrosInactivos(@PathVariable int numeroPagina) {
+        return new ResponseEntity<>(libroService.getAllLibrosInactivos(numeroPagina), HttpStatus.OK);
+    }
+
     @CrossOrigin(origins = "*")
     @PutMapping("/{idLibro}/agregar_genero/{idGenero}")
     public ResponseEntity<String> AgregarGeneroALibro(@PathVariable int idLibro, @PathVariable int idGenero) {
@@ -65,6 +72,16 @@ public class LibroEntityController {
 
         LibroDTO creado = libroService.crearLibro2(libroDTO, generoId);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+    }
+
+    @PutMapping("/baja/{idLibro}")
+    public ResponseEntity<String> bajaLogicaLibro(@PathVariable int idLibro){
+        return new ResponseEntity<>(libroService.bajaLogicaLibro(idLibro), HttpStatus.OK);
+    }
+
+    @PutMapping("/alta/{idLibro}")
+    public ResponseEntity<String> altaLogicaLibro(@PathVariable int idLibro){
+        return new ResponseEntity<>(libroService.altaLogicaLibro(idLibro), HttpStatus.OK);
     }
 
 }

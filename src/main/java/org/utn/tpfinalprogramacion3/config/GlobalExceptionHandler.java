@@ -1,5 +1,6 @@
 package org.utn.tpfinalprogramacion3.config;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -121,20 +122,36 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    //MANEJA EN EL CASO DE QUE NO HAYA ENCONTRADO EL AUTOR...
+    // Maneja el caso en el que un libro que se encuentra de baja quiera darse de
+    // baja nuevamente. (409)
+    @ExceptionHandler(LibroActualmenteDadoDeBajaException.class)
+    public ResponseEntity<String> manejarLibroActualmenteDadoDeBajaException(LibroActualmenteDadoDeBajaException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    // Maneja el caso en el que un libro que se encuentra de alta quiera darse de
+    // alta nuevamente. (409)
+    @ExceptionHandler(LibroActualmenteDadoDeAltaException.class)
+    public ResponseEntity<String> manejarLibroActualmenteDadoDeAltaException(LibroActualmenteDadoDeAltaException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    // MANEJA EN EL CASO DE QUE NO HAYA ENCONTRADO EL AUTOR...
     @ExceptionHandler(AutorNoEncontrado.class)
-    public ResponseEntity<String>manejarAutorNoEncontrado(AutorNoEncontrado ex) {
+    public ResponseEntity<String> manejarAutorNoEncontrado(AutorNoEncontrado ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
-    //Maneja si no encuentra el carrito
+
+    // Maneja si no encuentra el carrito
     @ExceptionHandler(CarritoInexistente.class)
-    public ResponseEntity<String>manejarCarritoInexistente(CarritoInexistente ex){
-        return new ResponseEntity<>(ex.getMessage(),HttpStatus.NOT_FOUND);
+    public ResponseEntity<String> manejarCarritoInexistente(CarritoInexistente ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
     /// Maneja si no encuentra el genero
     @ExceptionHandler(GeneroNoEncontrado.class)
-    public ResponseEntity<String>manejarGeneroNoEncontrado(GeneroNoEncontrado ex){
-        return new ResponseEntity<>(ex.getMessage(),HttpStatus.NOT_FOUND);
+    public ResponseEntity<String> manejarGeneroNoEncontrado(GeneroNoEncontrado ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
 }

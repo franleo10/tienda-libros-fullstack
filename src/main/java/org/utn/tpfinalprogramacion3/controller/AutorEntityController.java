@@ -1,6 +1,10 @@
 package org.utn.tpfinalprogramacion3.controller;
 
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +34,9 @@ public class AutorEntityController {
         return autorService.createAutor(autorDTO);
     }
 
-    @GetMapping("/listar")
-    public ResponseEntity<List<AutorEntity>> getAutores() {
-        return autorService.listarAutores();
+    @GetMapping("/listar/{numeroPagina}")
+    public ResponseEntity<Page<AutorDTO>> getAutores(@PathVariable int numeroPagina) {
+        return new ResponseEntity<>(autorService.listarAutores(numeroPagina), HttpStatus.OK);
     }
 
     @DeleteMapping("/borrar/{id}")

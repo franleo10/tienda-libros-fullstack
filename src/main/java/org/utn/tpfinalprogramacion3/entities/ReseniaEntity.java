@@ -10,6 +10,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,6 +45,7 @@ public class ReseniaEntity {
 
     @ManyToOne
     @JoinColumn(name = "id_libro",nullable = false)
+    @JsonBackReference
     private LibroEntity libro;
 
 

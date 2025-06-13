@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 public class ReseniaDTOLibro {
     private Long id;
-    private String comentario;
+    private String texto;
     private int calificacion;
     private String nombreUsuario;
 }

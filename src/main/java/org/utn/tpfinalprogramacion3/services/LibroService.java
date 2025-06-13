@@ -26,6 +26,7 @@ import org.utn.tpfinalprogramacion3.mapper.ModelMapperConfig;
 import org.utn.tpfinalprogramacion3.repository.AutorRepository;
 import org.utn.tpfinalprogramacion3.repository.GeneroRepository;
 import org.utn.tpfinalprogramacion3.repository.LibroRepository;
+import org.utn.tpfinalprogramacion3.repository.ReseniaRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -44,14 +45,16 @@ public class LibroService {
     private final GeneroRepository generoRepository;
     private final ModelMapper modelMapper;
     private final OpenLibraryService openLibraryService;
+    private final ReseniaRepository reseniaRepository;
 
     @Autowired
-    public LibroService(LibroRepository libroRepository, ModelMapper modelMapper, AutorRepository autorRepository, GeneroRepository generoRepository, OpenLibraryService openLibraryService) {
+    public LibroService(LibroRepository libroRepository,ReseniaRepository reseniaRepository, ModelMapper modelMapper, AutorRepository autorRepository, GeneroRepository generoRepository, OpenLibraryService openLibraryService) {
         this.libroRepository = libroRepository;
         this.modelMapper = modelMapper;
         this.autorRepository = autorRepository;
         this.generoRepository = generoRepository;
         this.openLibraryService = openLibraryService;
+        this.reseniaRepository = reseniaRepository;
     }
 
     @Transactional
@@ -101,6 +104,8 @@ public class LibroService {
                 .filter(i -> i.isActivo() == true)
                 .map(libro -> modelMapper.map(libro, LibroDTO.class))
                 .toList();
+
+        
 
         return new PageImpl<>(listaLibrosDTO, pageable, paginaLibros.getTotalElements());
     }

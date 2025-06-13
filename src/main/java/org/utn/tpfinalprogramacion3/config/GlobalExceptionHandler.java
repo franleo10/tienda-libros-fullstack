@@ -158,5 +158,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String>manejarDenegadoReseña(DenegarReseña ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
+    
+    // Maneja el caso en el que se quiera crear un autor que ya existe en el sistema. (409)
+    @ExceptionHandler(AutorExistenteException.class)
+    public ResponseEntity<String> manejarAutorExistenteException(AutorExistenteException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }

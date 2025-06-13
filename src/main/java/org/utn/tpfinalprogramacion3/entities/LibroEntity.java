@@ -30,8 +30,10 @@ public class LibroEntity {
     private LocalDate fecha_lanzamiento;
     @Column(name = "precio", nullable = false)
     private Float precio;
-    @Column(name = "reseñas", nullable = true, length = 4)
-
+    
+    @OneToMany(mappedBy = "libro", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<ReseniaEntity> listaResenias = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.utn.tpfinalprogramacion3.dtos.AutorDTO;
+import org.utn.tpfinalprogramacion3.dtos.LibroDTO;
 import org.utn.tpfinalprogramacion3.entities.AutorEntity;
 import org.utn.tpfinalprogramacion3.entities.LibroEntity;
 import org.utn.tpfinalprogramacion3.repository.AutorRepository;
@@ -30,8 +31,8 @@ public class AutorEntityController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<AutorDTO> createAutor(@RequestBody AutorDTO autorDTO) {
-        return autorService.createAutor(autorDTO);
+    public ResponseEntity<String> createAutor(@RequestBody AutorDTO autorDTO) {
+        return new ResponseEntity<>(autorService.createAutor(autorDTO), HttpStatus.CREATED);
     }
 
     @GetMapping("/listar/{numeroPagina}")
@@ -41,24 +42,22 @@ public class AutorEntityController {
 
     @DeleteMapping("/borrar/{id}")
     public ResponseEntity<String> deleteAutor(@PathVariable int id) {
-        return autorService.borrarAutor(id);
+        return new ResponseEntity<>(autorService.borrarAutor(id), HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/listar/nombre/{nombre}")
-    public ResponseEntity<List<AutorEntity>> getAutoresByName(@PathVariable String nombre) {
-        return autorService.listarPorNombre(nombre);
+    @GetMapping("/listar/nombre/{nombre}/{numeroPagina}")
+    public ResponseEntity<Page<AutorDTO>> getAutoresByName(@PathVariable String nombre, @PathVariable int numeroPagina) {
+        return new ResponseEntity<>(autorService.listarPorNombre(nombre, numeroPagina), HttpStatus.OK);
     }
 
-    @GetMapping("/nombre")
-    public ResponseEntity<List<LibroEntity>> obtenerLibrosPorAutor(@RequestParam String nombre) {
-        List<LibroEntity> libros = autorService.obtenerLibrosPorNombreAutor(nombre);
-        return ResponseEntity.ok(libros);
+    @GetMapping("/nombre/{numeroPagina}")
+    public ResponseEntity<Page<LibroDTO>> obtenerLibrosPorAutor(@RequestParam String nombre, @PathVariable int numeroPagina) {
+        return new ResponseEntity<>(autorService.obtenerLibrosPorNombreAutor(nombre, numeroPagina), HttpStatus.OK);
     }
 
     @PutMapping("/actualizar-autor/{id}")
-    public ResponseEntity<AutorEntity> actualizarAutor(@PathVariable Integer id, @RequestBody AutorEntity nuevoAutor) {
-        AutorEntity actualizado = autorService.actualizarAutor(id, nuevoAutor);
-        return ResponseEntity.ok(actualizado);
+    public ResponseEntity<String> actualizarAutor(@PathVariable Integer id, @RequestBody AutorEntity nuevoAutor) {
+        return new ResponseEntity<>(autorService.actualizarAutor(id, nuevoAutor), HttpStatus.OK);
     }
 
 

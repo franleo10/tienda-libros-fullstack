@@ -28,5 +28,8 @@ public interface ReseniaRepository extends JpaRepository<ReseniaEntity, Integer>
     @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM ReseniaEntity r WHERE r.idResenia = :idResenia AND r.usuario.id = :idUsuario")
     Boolean findByReseniaIdAndIdUsuario(@Param("idResenia") int idResenia, @Param("idUsuario") int idUsuario);
 
+    @Query("SELECT r FROM ReseniaEntity r WHERE r.libro.idLibro = :idLibro")
+    List<ReseniaEntity> findByLibroId(@Param("idLibro") int idLibro);
+
     int usuario(UsuarioEntity usuario);
 }

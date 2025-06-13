@@ -1,9 +1,11 @@
 package org.utn.tpfinalprogramacion3.services;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.BibliotecaNoEncontradaException;
+import org.utn.tpfinalprogramacion3.Exceptions.LibroInexistenteException;
 import org.utn.tpfinalprogramacion3.Exceptions.UsuarioInexistenteException;
 import org.utn.tpfinalprogramacion3.dtos.AgregarLibroDTO;
 import org.utn.tpfinalprogramacion3.dtos.BibliotecaDTO;
@@ -31,10 +33,10 @@ public class BibliotecaService {
 
     public void agregarLibro(AgregarLibroDTO dto) {
         UsuarioEntity usuario = usuarioRepository.findById(dto.getIdUsuario())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsuarioInexistenteException("Usuario no encontrado"));
 
         LibroEntity libro = libroRepository.findById(dto.getIdLibro())
-                .orElseThrow(() -> new RuntimeException("Libro no encontrado"));
+                .orElseThrow(() -> new LibroInexistenteException("Libro no encontrado"));
 
         BibliotecaEntity biblioteca = usuario.getBiblioteca();
 
@@ -59,7 +61,7 @@ public class BibliotecaService {
             BibliotecaEntity biblioteca = usuario.getBiblioteca();
             if (biblioteca != null && biblioteca.getLibros() != null) {
                 List<LibroBibliotecaDTO> librosDTO = biblioteca.getLibros().stream()
-                        .map(this::toLibroDTO)
+                        .map(libro -> toLibroDTO(biblioteca, libro))  // PASO AMBOS PARAMETROS
                         .collect(Collectors.toList());
 
                 BibliotecaDTO dto = BibliotecaDTO.builder()
@@ -78,12 +80,17 @@ public class BibliotecaService {
     public BibliotecaDTO getByUsuarioId(int idUsuario) {
         return usuarioRepository.findById(idUsuario)
                 .map(usuario -> {
-                    Set<LibroEntity> libros = Optional.ofNullable(usuario.getBiblioteca())
-                            .map(BibliotecaEntity::getLibros)
+                    BibliotecaEntity biblioteca = usuario.getBiblioteca();
+
+                    if (biblioteca == null) {
+                        throw new BibliotecaNoEncontradaException("El usuario no tiene biblioteca");
+                    }
+
+                    Set<LibroEntity> libros = Optional.ofNullable(biblioteca.getLibros())
                             .orElse(Collections.emptySet());
 
                     List<LibroBibliotecaDTO> librosDTO = libros.stream()
-                            .map(this::toLibroDTO)
+                            .map(libro -> toLibroDTO(biblioteca, libro))  // acá le paso biblioteca y libro
                             .collect(Collectors.toList());
 
                     return BibliotecaDTO.builder()
@@ -111,16 +118,64 @@ public class BibliotecaService {
     }
 
 
-
-    private LibroBibliotecaDTO toLibroDTO(LibroEntity entity) {
+    private LibroBibliotecaDTO toLibroDTO(BibliotecaEntity biblioteca,LibroEntity entity) {
 
         String urlPdf = openLibraryService.obtenerUrlLibroPorTitulo(entity.getTitulo()).block();
+
+        boolean esFavorito = biblioteca.getLibrosFavoritos().contains(entity);
 
         return LibroBibliotecaDTO.builder()
                 .idLibro(entity.getIdLibro())
                 .titulo(entity.getTitulo())
                 .precio(entity.getPrecio())
                 .urlPdf(urlPdf)
+                .esFavorito(esFavorito)
                 .build();
     }
+
+
+    @Transactional
+    public void marcarLibroFavorito(int idUsuario, int idLibro) {
+        BibliotecaEntity biblioteca = bibliotecaRepository.findByUsuarioId(idUsuario)
+                .orElseThrow(() -> new BibliotecaNoEncontradaException("Biblioteca no encontrada"));
+
+
+        Optional<LibroEntity> libroOpt = biblioteca.getLibros().stream()
+                .filter(libro -> libro.getIdLibro() == idLibro)
+                .findFirst();
+
+        if (libroOpt.isEmpty()) {
+            throw new LibroInexistenteException("El libro no está en la biblioteca");
+        }
+
+        biblioteca.getLibrosFavoritos().add(libroOpt.get());
+        bibliotecaRepository.save(biblioteca);
+    }
+
+    @Transactional
+    public void desmarcarLibroFavorito(int idUsuario, int idLibro) {
+        BibliotecaEntity biblioteca = bibliotecaRepository.findByUsuarioId(idUsuario)
+                .orElseThrow(() -> new BibliotecaNoEncontradaException("Biblioteca no encontrada"));
+        Optional<LibroEntity> libroOpt = biblioteca.getLibros().stream()
+                .filter(libro -> libro.getIdLibro() == idLibro)
+                .findFirst();
+
+        if (libroOpt.isEmpty()) {
+            throw new LibroInexistenteException("El libro no está en la biblioteca");
+        }
+
+        biblioteca.getLibrosFavoritos().removeIf(libro -> libro.getIdLibro() == idLibro);
+        bibliotecaRepository.save(biblioteca);
+    }
+
+    public List<LibroBibliotecaDTO> getLibrosFavoritos(int idUsuario) {
+        BibliotecaEntity biblioteca = bibliotecaRepository.findByUsuarioId(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Biblioteca no encontrada"));
+
+        return biblioteca.getLibrosFavoritos().stream()
+                .map(libro -> toLibroDTO(biblioteca, libro))
+                .collect(Collectors.toList());
+    }
+
+
 }

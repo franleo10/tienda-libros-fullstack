@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface BibliotecaRepository extends JpaRepository<BibliotecaEntity, Integer> {
     Optional<BibliotecaEntity> findByUsuario(UsuarioEntity usuario);
+    Optional<BibliotecaEntity> findByUsuarioId(int idUsuario);
 }

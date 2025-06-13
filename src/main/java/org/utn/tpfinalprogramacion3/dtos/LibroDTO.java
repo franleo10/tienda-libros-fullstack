@@ -19,4 +19,6 @@ public class LibroDTO {
     private LocalDate fecha_lanzamiento;
     private List<AutorDTO> autores=new ArrayList<>();
     private List<GeneroDTO> generos=new ArrayList<>();
+    private List<ReseniaDTOLibro>resenias=new ArrayList<>();
+
 }

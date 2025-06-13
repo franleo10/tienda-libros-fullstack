@@ -17,6 +17,7 @@ public class LibroBibliotecaDTO {
         private String titulo;
         private Float precio;
         private String urlPdf;
+        private boolean esFavorito;
 
 
 }

@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.*;
 import org.utn.tpfinalprogramacion3.dtos.ReseniaCreateDTO;
 import org.utn.tpfinalprogramacion3.dtos.ReseniaDTO;
+import org.utn.tpfinalprogramacion3.entities.BibliotecaEntity;
 import org.utn.tpfinalprogramacion3.entities.LibroEntity;
 import org.utn.tpfinalprogramacion3.entities.ReseniaEntity;
 import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
+import org.utn.tpfinalprogramacion3.repository.BibliotecaRepository;
 import org.utn.tpfinalprogramacion3.repository.LibroRepository;
 import org.utn.tpfinalprogramacion3.repository.ReseniaRepository;
 import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
@@ -28,23 +30,29 @@ public class ReseniaService {
     private final LibroRepository libroRepository;
     private final ReseniaRepository reseniaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final BibliotecaRepository bibliotecaRepository;
     private ModelMapper modelMapper;
 
     public ReseniaService(ReseniaRepository repository, ModelMapper modelMapper, LibroRepository libroRepository,
-            ReseniaRepository reseniaRepository, UsuarioRepository usuarioRepository) {
+            ReseniaRepository reseniaRepository, UsuarioRepository usuarioRepository,  BibliotecaRepository bibliotecaRepository) {
         this.modelMapper = modelMapper;
         this.libroRepository = libroRepository;
         this.reseniaRepository = reseniaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.bibliotecaRepository = bibliotecaRepository;
     }
 
     public ReseniaDTO crearResenia(ReseniaCreateDTO dto, int idLibro, int idUsuario) {
 
         try {
+            BibliotecaEntity biblioteca=bibliotecaRepository.findByUsuarioId(idUsuario).orElseThrow(()-> new BibliotecaNoEncontradaException("No existe tal usuario con ese id..."));
 
             Optional<LibroEntity> libroBuscado = libroRepository.findById(idLibro);
             if (libroBuscado.isEmpty()) {
                 throw new LibroInexistenteException("No existe un libro con el id " + idLibro + " asignado");
+            }
+            if (!biblioteca.getLibros().contains(libroBuscado.get())) {
+                throw new DenegarReseña("Reseña denegada ya que no tenes el libro en la biblioteca como para realizar la reseña");
             }
 
             Optional<UsuarioEntity> usuarioBuscado = usuarioRepository.findById(idUsuario);

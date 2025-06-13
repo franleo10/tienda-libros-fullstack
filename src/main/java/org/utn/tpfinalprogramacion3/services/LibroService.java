@@ -30,6 +30,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -369,6 +370,26 @@ public class LibroService {
         } catch (Exception e) {
             System.err.println("Error al obtener sinopsis desde HTML: " + e.getMessage());
             return null;
+        }
+    }
+
+    public ResponseEntity<LibroDTO> buscarLibroPorNombre(String titulo) {
+        Optional<LibroEntity> libroOpt = libroRepository.findByTitulo(titulo);
+        if (libroOpt.isPresent()) {
+            LibroDTO dto = modelMapper.map(libroOpt.get(), LibroDTO.class);
+            return ResponseEntity.ok(dto);
+        } else {
+            throw  new LibroInexistenteException("No existe el libro con ese nombre");
+        }
+    }
+
+    public ResponseEntity<LibroDTO> buscarLibroPorId(int idLibro) {
+        Optional<LibroEntity> libroOpt = libroRepository.findById(idLibro);
+        if (libroOpt.isPresent()) {
+            LibroDTO dto = modelMapper.map(libroOpt.get(), LibroDTO.class);
+            return ResponseEntity.ok(dto);
+        } else {
+            throw new LibroInexistenteException("No existe el libro con ese identificador: " + idLibro);
         }
     }
 

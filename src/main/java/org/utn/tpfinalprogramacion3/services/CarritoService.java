@@ -104,7 +104,7 @@ public class CarritoService {
         carritoRepository.deleteById(id);
     }
 
-    @PreAuthorize("hasAuthority('AGREGAR_LIBRO_AL_CARRITO')")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public String agregarLibro(Integer idCarrito, Integer idLibro) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CredencialEntity credencial = (CredencialEntity) authentication.getPrincipal();
@@ -131,21 +131,39 @@ public class CarritoService {
     }
 
 
-  /*  public CarritoEntity agregarLibro(Integer idCarrito, Integer idLibro) {
-        CarritoEntity carrito = carritoRepository.findById(idCarrito)
-                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
 
+    @PreAuthorize("hasAuthority('AGREGAR_LIBRO_AL_CARRITO')")
+    public String agregarLibroAMiCarrito(Integer idLibro) {
+        // Obtener ID del usuario logueado
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CredencialEntity credencial = (CredencialEntity) authentication.getPrincipal();
+        Long userId = credencial.getId();
+
+        // Buscar el carrito asociado al usuario
+        CarritoEntity carrito = carritoRepository.findByUsuarioId(Math.toIntExact(userId))
+                .orElseThrow(() -> new CarritoInexistente("No se encontró un carrito para el usuario con ID: " + userId));
+
+        // Buscar el libro a agregar
         LibroEntity libro = libroRepository.findById(idLibro)
-                .orElseThrow(() -> new RuntimeException("Libro no encontrado: " + idLibro));
+                .orElseThrow(() -> new LibroInexistenteException("Libro no encontrado: " + idLibro));
 
-        if (carrito.getLibros().contains(libro)) {
+        // Validar que el libro no esté ya en el carrito
+        boolean yaEnCarrito = carrito.getLibros().stream()
+                .anyMatch(l -> l.getIdLibro() == idLibro);
+
+        if (yaEnCarrito) {
             throw new RuntimeException("El libro ya está en el carrito");
         }
 
+        // Agregar el libro
         carrito.getLibros().add(libro);
-        return carritoRepository.save(carrito);
+        carritoRepository.save(carrito);
+
+        return "Libro agregado al carrito correctamente.";
     }
-*/
+
+
+
     @PreAuthorize("hasAuthority('VER_CARRITO')")
     public Optional<CarritoEntity> buscarPorIdUsuario(Integer idUsuario) {
         return carritoRepository.findByUsuarioId(idUsuario);
@@ -228,6 +246,8 @@ public class CarritoService {
 
     }
 
+
+    @PreAuthorize("hasAuthority('VER_CARRITO')")
     public CarritoDTO2 MostrarDTOcarrito() {
         // Obtener el usuario logueado
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -269,6 +289,37 @@ public class CarritoService {
         carritoDTO.setUsuario(usuarioDTO);
 
         return carritoDTO;
+    }
+
+
+
+
+    @PreAuthorize("hasAuthority('VER_CARRITO')")
+    public String eliminarLibroDelCarrito( int idLibro) {
+        // Obtener el usuario logueado
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CredencialEntity credencial = (CredencialEntity) authentication.getPrincipal();
+        Long userId = credencial.getId();
+
+        // Buscar el carrito del usuario
+        CarritoEntity carrito = carritoRepository.findByUsuarioId(Math.toIntExact(userId))
+                .orElseThrow(() -> new CarritoInexistente("Carrito no encontrado para el usuario con ID: " + userId));
+
+        Optional<LibroEntity> libroAEliminar = carrito.getLibros().stream()
+                .filter(libro -> libro.getIdLibro() == idLibro)
+                .findFirst();
+
+        if (libroAEliminar.isEmpty()) {
+            throw new LibroInexistenteException("El libro con ID " + idLibro + " no está en tu carrito.");
+        }
+
+        // Eliminar el libro
+        carrito.getLibros().remove(libroAEliminar.get());
+
+        // Guardar cambios
+        carritoRepository.save(carrito);
+
+       return "Libro eliminado del carrito con exito...";
     }
 
 }

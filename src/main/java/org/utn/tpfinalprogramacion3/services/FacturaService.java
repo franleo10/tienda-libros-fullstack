@@ -6,6 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.NoHayFacturasException;
 import org.utn.tpfinalprogramacion3.dtos.FacturaDTO;
@@ -18,6 +20,8 @@ import org.utn.tpfinalprogramacion3.repository.CarritoRepository;
 import org.utn.tpfinalprogramacion3.repository.FacturaRepository;
 import org.utn.tpfinalprogramacion3.repository.MetodoDePagoRepository;
 import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
+import org.springframework.security.core.Authentication;
+import org.utn.tpfinalprogramacion3.security.entities.CredencialEntity;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -57,7 +61,34 @@ public class FacturaService {
         facturaRepository.save(factura);
     }
 
-    public Page<FacturaResponseDTO> obtenerFacturasPorUsuario(int idUsuario, int numeroPaginacion) {
+    @PreAuthorize("hasAuthority('VER_SU_FACTURA')")
+    public Page<FacturaResponseDTO> obtenerFacturasPorUsuario(int numeroPaginacion) {
+
+        // Obtener ID del usuario logueado desde el token
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CredencialEntity credencial = (CredencialEntity) authentication.getPrincipal();
+        Long userId = credencial.getId();
+
+        Pageable pageable = PageRequest.of(numeroPaginacion, 5);
+        Page<FacturaEntity> paginaFacturas = facturaRepository.findByUsuarioId(Math.toIntExact(userId), pageable);
+
+        if (paginaFacturas.isEmpty()) {
+            throw new NoHayFacturasException("El usuario no tiene facturas.");
+        }
+
+        List<FacturaResponseDTO> listaFacturasDTO = paginaFacturas.getContent().stream()
+                .map(this::mapFacturaToDTO)
+                .toList();
+        return new PageImpl<>(listaFacturasDTO, pageable, paginaFacturas.getTotalElements());
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public Page<FacturaResponseDTO> obtenerFacturasPorUsuarioParaAdmin(int idUsuario, int numeroPaginacion) {
+
+        // Obtener ID del usuario logueado desde el token
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CredencialEntity credencial = (CredencialEntity) authentication.getPrincipal();
+        Long userId = credencial.getId();
 
         Pageable pageable = PageRequest.of(numeroPaginacion, 5);
         Page<FacturaEntity> paginaFacturas = facturaRepository.findByUsuarioId(idUsuario, pageable);
@@ -71,6 +102,15 @@ public class FacturaService {
                 .toList();
         return new PageImpl<>(listaFacturasDTO, pageable, paginaFacturas.getTotalElements());
     }
+
+
+
+
+
+
+
+
+
 
     public FacturaResponseDTO mapFacturaToDTO(FacturaEntity factura) {
         Integer idUsuario = factura.getUsuario().getId();

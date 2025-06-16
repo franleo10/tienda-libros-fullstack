@@ -35,6 +35,14 @@ public class    CarritoEntityController {
       return new ResponseEntity<>(carritoService.agregarLibro(idCarrito,idLibro),HttpStatus.OK);
     }
 
+    //Agregar libro al carrito del usuario...
+    @PostMapping("/libro/{idLibro}")
+    public ResponseEntity<String> agregarLibroAMiCarrito(@PathVariable Integer idLibro) {
+        return ResponseEntity.ok(carritoService.agregarLibroAMiCarrito(idLibro));
+    }
+
+
+
 
     @GetMapping("/listar")
     public ResponseEntity<List<CarritoDTO>> obtenerTodos() {
@@ -76,6 +84,11 @@ public class    CarritoEntityController {
     @GetMapping("/listar/usuario")
     public ResponseEntity<CarritoDTO2> obtenerCarritoDelUsuarioLogueado() {
         return new ResponseEntity<>(carritoService.MostrarDTOcarrito(), HttpStatus.OK);
+    }
+
+    @PutMapping("/eliminar-libro/{idLibro}")
+    public ResponseEntity<String>eliminarLibroCarrito(@PathVariable Integer idLibro) {
+        return new ResponseEntity<>(carritoService.eliminarLibroDelCarrito(idLibro),HttpStatus.OK);
     }
 
 

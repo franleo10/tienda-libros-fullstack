@@ -33,9 +33,15 @@ public class BibliotecaEntityController {
         return ResponseEntity.ok(bibliotecaService.findAll());
     }
 
+    @GetMapping("/usuario")
+    public ResponseEntity<BibliotecaDTO> getByUsuario() {
+        BibliotecaDTO dto = bibliotecaService.getByUsuarioId();
+        return ResponseEntity.ok(dto);
+    }
+
     @GetMapping("/listar/{idUsuario}")
     public ResponseEntity<BibliotecaDTO> getByUsuario(@PathVariable int idUsuario) {
-        BibliotecaDTO dto = bibliotecaService.getByUsuarioId(idUsuario);
+        BibliotecaDTO dto = bibliotecaService.getByUsuarioIdForAdmin(idUsuario);
         return ResponseEntity.ok(dto);
     }
 

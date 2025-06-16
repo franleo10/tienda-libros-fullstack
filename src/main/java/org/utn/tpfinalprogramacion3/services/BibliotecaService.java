@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.BibliotecaNoEncontradaException;
 import org.utn.tpfinalprogramacion3.Exceptions.LibroInexistenteException;
@@ -18,6 +19,8 @@ import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
 import org.utn.tpfinalprogramacion3.repository.BibliotecaRepository;
 import org.utn.tpfinalprogramacion3.repository.LibroRepository;
 import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
+import org.springframework.security.core.Authentication;
+import org.utn.tpfinalprogramacion3.security.entities.CredencialEntity;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,7 +58,7 @@ public class BibliotecaService {
         bibliotecaRepository.save(biblioteca);
     }
 
-    @PreAuthorize("hasAuthority('VER_BIBLIOTECA')")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public List<BibliotecaDTO> findAll() {
         List<BibliotecaDTO> resultado = new ArrayList<>();
 
@@ -80,7 +83,38 @@ public class BibliotecaService {
     }
 
     @PreAuthorize("hasAuthority('VER_BIBLIOTECA')")
-    public BibliotecaDTO getByUsuarioId(int idUsuario) {
+    public BibliotecaDTO getByUsuarioId() {
+        // Obtener ID del usuario autenticado desde el token
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CredencialEntity credencial = (CredencialEntity) authentication.getPrincipal();
+        Long userId = credencial.getId();
+
+        return usuarioRepository.findById(userId.intValue())  // si userId es Long
+                .map(usuario -> {
+                    BibliotecaEntity biblioteca = usuario.getBiblioteca();
+
+                    if (biblioteca == null) {
+                        throw new BibliotecaNoEncontradaException("El usuario no tiene biblioteca");
+                    }
+
+                    Set<LibroEntity> libros = Optional.ofNullable(biblioteca.getLibros())
+                            .orElse(Collections.emptySet());
+
+                    List<LibroBibliotecaDTO> librosDTO = libros.stream()
+                            .map(libro -> toLibroDTO(biblioteca, libro))
+                            .collect(Collectors.toList());
+
+                    return BibliotecaDTO.builder()
+                            .idUsuario(usuario.getId())
+                            .nombreUsuario(usuario.getNombre())
+                            .libros(librosDTO)
+                            .build();
+                })
+                .orElseThrow(() -> new UsuarioInexistenteException("Usuario con ID " + userId + " no encontrado"));
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public BibliotecaDTO getByUsuarioIdForAdmin(int idUsuario) {
         return usuarioRepository.findById(idUsuario)
                 .map(usuario -> {
                     BibliotecaEntity biblioteca = usuario.getBiblioteca();

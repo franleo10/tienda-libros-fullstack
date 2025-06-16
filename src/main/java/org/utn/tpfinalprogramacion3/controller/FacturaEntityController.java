@@ -24,9 +24,16 @@ public class FacturaEntityController {
 
     private final FacturaService facturaService;
 
+    @GetMapping("/usuario/pag/{numeroPaginacion}")
+    public ResponseEntity<Page<FacturaResponseDTO>> obtenerFacturasPorUsuarioID(@PathVariable int numeroPaginacion) {
+        return ResponseEntity.ok(facturaService.obtenerFacturasPorUsuario(numeroPaginacion));
+    }
+
     @GetMapping("/usuario/{idUsuario}/pag/{numeroPaginacion}")
     public ResponseEntity<Page<FacturaResponseDTO>> obtenerFacturasPorUsuarioID(@PathVariable int idUsuario,
-            @PathVariable int numeroPaginacion) {
-        return ResponseEntity.ok(facturaService.obtenerFacturasPorUsuario(idUsuario, numeroPaginacion));
+                                                                                @PathVariable int numeroPaginacion) {
+        return ResponseEntity.ok(facturaService.obtenerFacturasPorUsuarioParaAdmin(idUsuario, numeroPaginacion));
     }
+
+
 }

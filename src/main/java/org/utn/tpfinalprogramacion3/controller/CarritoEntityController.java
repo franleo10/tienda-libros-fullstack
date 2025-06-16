@@ -4,6 +4,8 @@ package org.utn.tpfinalprogramacion3.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.utn.tpfinalprogramacion3.dtos.CarritoDTO;
 import org.utn.tpfinalprogramacion3.dtos.CarritoDTO2;
@@ -35,9 +37,6 @@ public class    CarritoEntityController {
     }
 
 
-
-
-
     @GetMapping("/listar")
     public ResponseEntity<List<CarritoDTO>> obtenerTodos() {
         List<CarritoDTO> carritos = carritoService.listarTodos();
@@ -53,9 +52,9 @@ public class    CarritoEntityController {
 
 
     @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         carritoService.eliminar(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Carrito eliminado correctamente.");
     }
 
     @GetMapping("/usuario/{id_usuario}")

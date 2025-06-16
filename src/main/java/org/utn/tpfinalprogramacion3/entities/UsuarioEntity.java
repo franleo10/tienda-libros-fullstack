@@ -27,11 +27,11 @@ public class UsuarioEntity {
     private int edad;
     @Column(name = "email", nullable = false, length = 100)
     private String email;
-
+/*
     @Column(name = "roles", nullable = true, length = 25)
     @Enumerated(EnumType.STRING)
     private Rol roles = Rol.USUARIO;
-
+*/
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
     @JsonManagedReference
     private CredencialEntity credencialEntity;

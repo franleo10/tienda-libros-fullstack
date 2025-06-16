@@ -5,6 +5,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.utn.tpfinalprogramacion3.entities.BibliotecaEntity;
+import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
 import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
 import org.utn.tpfinalprogramacion3.enums.Rol;
 import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
@@ -56,14 +58,26 @@ public class AuthService {
             throw new IllegalArgumentException("Ya existe un usuario con ese nombre o email");
         }
 
+
         UsuarioEntity usuario = UsuarioEntity.builder()
                 .nombre(request.nombre())
                 .edad(request.edad())
                 .email(request.email())
-                .roles(Rol.USUARIO)
                 .build();
 
+        CarritoEntity carrito = CarritoEntity.builder()
+                .precio(0.0)
+                .usuario(usuario)
+                .build();
 
+        usuario.setCarrito(carrito);
+
+        BibliotecaEntity bibliotecaEntity = BibliotecaEntity.builder()
+                .usuario(usuario)
+                .libros(null)
+                .build();
+
+        usuario.setBiblioteca(bibliotecaEntity);
 
         usuarioRepository.save(usuario);
 
@@ -82,7 +96,7 @@ public class AuthService {
         credentialsRepository.save(credencial);
 
         usuario.setCredencialEntity(credencial);
-        usuarioRepository.save(usuario); // por si es necesario actualizar la relación bidireccional
+        usuarioRepository.save(usuario);
 
         String jwt = jwtService.generateToken(credencial);
         return new AuthResponse(jwt);

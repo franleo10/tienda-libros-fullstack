@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.*;
 import org.utn.tpfinalprogramacion3.dtos.ReseniaCreateDTO;
@@ -38,6 +39,7 @@ public class ReseniaService {
         this.usuarioRepository = usuarioRepository;
     }
 
+    @PreAuthorize("hasAuthority('HACER_RESENIAS')")
     public ReseniaDTO crearResenia(ReseniaCreateDTO dto, int idLibro, int idUsuario) {
 
         try {
@@ -75,6 +77,7 @@ public class ReseniaService {
         }
     }
 
+    @PreAuthorize("hasAuthority('VER_RESENIAS')")
     public Page<ReseniaDTO> listarResenias(int numeroPaginacion) {
 
         Pageable pageable = PageRequest.of(numeroPaginacion, 5);
@@ -91,6 +94,7 @@ public class ReseniaService {
         return new PageImpl<>(listaReseniasDTO, pageable, paginaResenias.getTotalElements());
     }
 
+    @PreAuthorize("hasAuthority('VER_RESENIAS')")
     public Page<ReseniaDTO> listarReseniasByLibro(int idLibro, int numeroPaginacion) {
 
         if (libroRepository.findById(idLibro).isEmpty()) {
@@ -111,6 +115,7 @@ public class ReseniaService {
         return new PageImpl<>(listaResenias, pageable, paginaResenias.getTotalElements());
     }
 
+    @PreAuthorize("hasAuthority('VER_RESENIAS')")
     public Page<ReseniaDTO> listarReseniasByUsuario(int idUsuario, int numeroPaginacion) {
 
         if (usuarioRepository.findById(idUsuario).isEmpty()) {
@@ -131,6 +136,7 @@ public class ReseniaService {
         return new PageImpl<>(listaResenias, pageable, paginaResenias.getTotalElements());
     }
 
+    @PreAuthorize("hasAuthority('ELIMINAR_RESENIA_PROPIA') or hasAuthority('ELIMINAR_RESENIA')")
     public void eliminarResenia(int idResenia, int idUsuario) {
 
         if (reseniaRepository.findById(idResenia).isEmpty()) {

@@ -2,6 +2,7 @@ package org.utn.tpfinalprogramacion3.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.BibliotecaNoEncontradaException;
 import org.utn.tpfinalprogramacion3.Exceptions.UsuarioInexistenteException;
@@ -52,6 +53,7 @@ public class BibliotecaService {
         bibliotecaRepository.save(biblioteca);
     }
 
+    @PreAuthorize("hasAuthority('VER_BIBLIOTECA')")
     public List<BibliotecaDTO> findAll() {
         List<BibliotecaDTO> resultado = new ArrayList<>();
 
@@ -75,6 +77,7 @@ public class BibliotecaService {
         return resultado;
     }
 
+    @PreAuthorize("hasAuthority('VER_BIBLIOTECA')")
     public BibliotecaDTO getByUsuarioId(int idUsuario) {
         return usuarioRepository.findById(idUsuario)
                 .map(usuario -> {

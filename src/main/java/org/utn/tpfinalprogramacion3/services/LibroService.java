@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -53,6 +54,7 @@ public class LibroService {
         this.openLibraryService = openLibraryService;
     }
 
+    @PreAuthorize("hasAuthority('AGREGAR_LIBRO')")
     @Transactional
     public Optional<LibroDTO> crearLibro(LibroDTO libroDTO, int autor_id, int genero_id) {
         try {
@@ -85,7 +87,7 @@ public class LibroService {
         }
     }
 
-
+    @PreAuthorize("hasAuthority('VER_LIBROS')")
     public Page<LibroDTO> getAllLibros(int numeroPagina) {
         int tamañoPagina = 5;  // o el tamaño que quieras fijo
         Pageable pageable = PageRequest.of(numeroPagina, tamañoPagina);
@@ -122,6 +124,7 @@ public class LibroService {
         return new PageImpl<>(listaLibrosDTO, pageable, paginaLibros.getTotalElements());
     }
 
+    @PreAuthorize("hasAuthority('ELIMINAR_LIBRO')")
     public String bajaLogicaLibro(int idLibro){
 
         if(libroRepository.findById(idLibro).isEmpty()){
@@ -140,6 +143,7 @@ public class LibroService {
         return "Libro dado de baja correctamente";
     }
 
+    @PreAuthorize("hasAuthority('MODIFICAR_LIBRO')")
     public String altaLogicaLibro(int idLibro){
 
         if(libroRepository.findById(idLibro).isEmpty()){
@@ -158,6 +162,7 @@ public class LibroService {
         return "Libro dado de alta correctamente";
     }
 
+    @PreAuthorize("hasAuthority('AGREGAR_GENEROS')")
     public String agregarGeneroALibro(int idLibro, int idGenero) {
         LibroEntity libro = libroRepository.findById(idLibro)
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + idLibro));
@@ -176,6 +181,7 @@ public class LibroService {
         }
     }
 
+    @PreAuthorize("hasAuthority('AGREGAR_AUTOR')")
     public String agregarAutorALibro(int idLibro, int idAutor) {
         LibroEntity libro = libroRepository.findById(idLibro)
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + idLibro));
@@ -194,6 +200,7 @@ public class LibroService {
         }
     }
 
+    @PreAuthorize("hasAuthority('ELIMINAR_AUTOR')")
     public String eliminarAutorALibro(int idLibro, int idAutor) {
         LibroEntity libro = libroRepository.findById(idLibro)
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + idLibro));
@@ -212,6 +219,7 @@ public class LibroService {
         }
     }
 
+    @PreAuthorize("hasAuthority('AGREGAR_LIBRO')")
     @Transactional
     public LibroDTO crearLibro2(LibroDTO libroDTO, Integer generoId) {
         try {

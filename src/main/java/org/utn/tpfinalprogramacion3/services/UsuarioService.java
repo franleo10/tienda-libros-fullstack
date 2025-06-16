@@ -20,6 +20,7 @@ import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
 import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
 import org.utn.tpfinalprogramacion3.enums.Rol;
 import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
+import org.utn.tpfinalprogramacion3.security.entities.CredencialEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +42,6 @@ public class UsuarioService {
         try {
 
             UsuarioEntity usuarioEntity = modelMapper.map(dto, UsuarioEntity.class);
-            usuarioEntity.setRoles(Rol.USUARIO);
 
             CarritoEntity carrito = CarritoEntity.builder()
                     .precio(0.0)

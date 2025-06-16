@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.AutorNoEncontrado;
 import org.utn.tpfinalprogramacion3.Exceptions.NoHayLibrosException;
@@ -31,6 +32,8 @@ public class AutorService {
         this.modelMapper = modelMapper;
     }
 
+
+    @PreAuthorize("hasAuthority('AGREGAR_AUTOR')")
     public ResponseEntity<AutorDTO> createAutor(AutorDTO autorDTO) {
         if (autorRepository.findByNombreAndApellido(autorDTO.getNombre(), autorDTO.getApellido()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
@@ -41,7 +44,7 @@ public class AutorService {
         AutorDTO resultado = modelMapper.map(autorEntity, AutorDTO.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
     }
-
+    @PreAuthorize("hasAuthority('VER_AUTORES')")
     public Page<AutorDTO> listarAutores(int numeroPagina) {
 
         int tamañoPagina = 5;  // o el tamaño que quieras fijo
@@ -61,12 +64,14 @@ public class AutorService {
         return new PageImpl<>(listaAutorDTO, pageable, paginaAutores.getTotalElements());
     }
 
+    @PreAuthorize("hasAuthority('ELIMINAR_AUTOR')")
     public ResponseEntity<String> borrarAutor(int id) {
         AutorEntity autorOptional = autorRepository.findById(id).orElseThrow(() -> new AutorNoEncontrado("Autor " + id + " no existe"));
 
         autorRepository.deleteById(id);
         return ResponseEntity.ok("Autor eliminado.");
     }
+    @PreAuthorize("hasAuthority('VER_AUTORES')")
     public ResponseEntity<List<AutorEntity>> listarPorNombre(String nombre) {
         List<AutorEntity> autores = autorRepository.findAllByNombre(nombre);
         if (autores.isEmpty()) {
@@ -75,11 +80,13 @@ public class AutorService {
         return ResponseEntity.ok(autores);
     }
 
+    @PreAuthorize("hasAuthority('VER_AUTORES')")
     public List<LibroEntity>obtenerLibrosPorNombreAutor(String nombre) {
         AutorEntity autorEntity=autorRepository.findByNombreIgnoreCase(nombre).orElseThrow(()->new AutorNoEncontrado("Autor: "+nombre+" no existe"));
         return autorEntity.getLibros();
     }
 
+    @PreAuthorize("hasAuthority('MODIFICAR_AUTOR')")
     public AutorEntity actualizarAutor(Integer id, AutorEntity nuevoAutor) {
         AutorEntity autorExistente = autorRepository.findById(id)
                 .orElseThrow(() -> new AutorNoEncontrado("Autor con ID " + id + " no encontrado"));

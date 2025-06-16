@@ -5,6 +5,7 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.GeneroNoEncontrado;
 import org.utn.tpfinalprogramacion3.dtos.GeneroDTO;
@@ -40,6 +41,7 @@ public class GeneroService {
             throw new RuntimeException("Error al guardar el genero");
         }
     }
+    @PreAuthorize("hasAuthority('VER_GENEROS')")
     public List<GeneroEntity> findAll() {
         return generoRepository.findAll();
     }

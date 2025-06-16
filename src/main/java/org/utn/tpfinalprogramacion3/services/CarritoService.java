@@ -5,8 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.CarritoInexistente;
+import org.utn.tpfinalprogramacion3.Exceptions.UsuarioInexistenteException;
 import org.utn.tpfinalprogramacion3.dtos.*;
 import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
 import org.utn.tpfinalprogramacion3.entities.LibroEntity;
@@ -14,6 +16,7 @@ import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
 import org.utn.tpfinalprogramacion3.repository.CarritoRepository;
 import org.utn.tpfinalprogramacion3.repository.LibroRepository;
 import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +38,7 @@ public class CarritoService {
         this.usuarioRepository = usuarioRepository;
         this.modelMapper = modelMapper;
     }
-
+    @PreAuthorize("hasAuthority('VER_CARRITO')")
     public Optional<CarritoDTO> createCarrito(CarritoDTO carritoDTO, Integer idUsuario) {
         UsuarioEntity usuarioEntity = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
@@ -54,6 +57,7 @@ public class CarritoService {
         return Optional.of(mapCarritoToDto(guardado));
     }
 
+    @PreAuthorize("hasAuthority('VER_TODOS_LOS_CARRITOS')")
     public List<CarritoDTO> listarTodos() {
         return carritoRepository.findAll()
                 .stream()
@@ -61,15 +65,45 @@ public class CarritoService {
                 .collect(Collectors.toList());
     }
 
-
+    @PreAuthorize("hasAuthority('VER_CARRITO')")
     public Optional<CarritoEntity> buscarPorId(Integer id) {
+
         return carritoRepository.findById(id);
     }
 
+    @PreAuthorize("hasAuthority('VER_CARRITO')")
+    public Optional<CarritoEntity> buscarPorUsuario(Authentication authentication) {
+        String email = authentication.getName(); // extrae email del token
+        UsuarioEntity usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new UsuarioInexistenteException("Usuario no encontrado con email: " + email));
+
+        return carritoRepository.findByUsuarioId(usuario.getCarrito().getIdCarrito());
+    }
+
+
+    @PreAuthorize("hasAuthority('ELIMINAR_USUARIOS')")
     public void eliminar(Integer id) {
+        CarritoEntity carrito = carritoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
+
+        // eliminar libros
+        carrito.getLibros().clear();
+
+        // elimina usuario
+        UsuarioEntity usuario = carrito.getUsuario();
+        if (usuario != null) {
+            usuario.setCarrito(null);
+        }
+
+        carritoRepository.save(carrito);
+
+        // eliminar carrito
         carritoRepository.deleteById(id);
     }
 
+
+
+    @PreAuthorize("hasAuthority('AGREGAR_LIBRO_AL_CARRITO')")
     public CarritoEntity agregarLibro(Integer idCarrito, Integer idLibro) {
         CarritoEntity carrito = carritoRepository.findById(idCarrito)
                 .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
@@ -85,6 +119,7 @@ public class CarritoService {
         return carritoRepository.save(carrito);
     }
 
+    @PreAuthorize("hasAuthority('VER_CARRITO')")
     public Optional<CarritoEntity> buscarPorIdUsuario(Integer idUsuario) {
         return carritoRepository.findByUsuarioId(idUsuario);
     }
@@ -96,6 +131,7 @@ public class CarritoService {
         return dto;
     }
 
+    @PreAuthorize("hasAuthority('VER_CARRITO')")
     public Optional<CarritoEntity> obtenerCarritoConPrecioActualizadoPorUsuario(Integer idUsuario) {
         Optional<CarritoEntity> carritoOpt = carritoRepository.findByUsuarioId(idUsuario);
 
@@ -116,11 +152,13 @@ public class CarritoService {
             return Optional.empty();
         }
     }
+    @PreAuthorize("hasAuthority('VER_CARRITO')")
     public UsuarioEntity obtenerUsuarioPorCarritoId(Integer idCarrito) {
         CarritoEntity carrito = carritoRepository.findById(idCarrito)
                 .orElseThrow(() -> new RuntimeException("Carrito no encontrado con id: " + idCarrito));
         return carrito.getUsuario();
     }
+
 
     public ResponseEntity<CarritoDTO2> MostrarDTOcarrito(Integer idUsuario) {
         CarritoEntity carritoOpt = carritoRepository.findByUsuarioId(idUsuario).orElseThrow(()-> new CarritoInexistente("Carrito no encontrado con id: " + idUsuario));

@@ -1,21 +1,19 @@
 package org.utn.tpfinalprogramacion3.security.entities;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 import org.utn.tpfinalprogramacion3.enums.Rol;
+import org.utn.tpfinalprogramacion3.security.enums.Permits;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Table(name = "roles")
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
 public class RoleEntity {
 
     @Id
@@ -23,21 +21,12 @@ public class RoleEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, unique = true)
+    @Column(name = "role_name", unique = true, nullable = false)
     private Rol role;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "role_permits",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "permit_id"))
-    private final Set<PermitEntity> permits = new HashSet<>();
-
-    public RoleEntity(Rol name) {
-        this.role = name;
-    }
-
-    public void addPermit(PermitEntity permit) {
-        this.permits.add(permit);
-    }
+    @ElementCollection(targetClass = Permits.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "role_permits", joinColumns = @JoinColumn(name = "role_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "permit")
+    private Set<Permits> permits;
 }

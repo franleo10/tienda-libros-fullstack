@@ -49,11 +49,22 @@ public class CredencialEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
-        roles.forEach(rol -> authorities.add(
-                new SimpleGrantedAuthority(rol.getRole().name())));
+
+        for (RoleEntity rol : roles) {
+            // Agrega el nombre del rol como "ROLE_ADMINISTRADOR", por convención de Spring
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + rol.getRole().name()));
+
+            // Agrega cada permiso como autoridad individual
+            if (rol.getPermits() != null) {
+                for (var permiso : rol.getPermits()) {
+                    authorities.add(new SimpleGrantedAuthority(permiso.name()));
+                }
+            }
+        }
 
         return authorities;
     }
+
 
     @Override
     public String getPassword() {

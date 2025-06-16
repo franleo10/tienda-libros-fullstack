@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.*;
 import org.utn.tpfinalprogramacion3.dtos.ReseniaCreateDTO;
@@ -19,6 +20,9 @@ import org.utn.tpfinalprogramacion3.repository.BibliotecaRepository;
 import org.utn.tpfinalprogramacion3.repository.LibroRepository;
 import org.utn.tpfinalprogramacion3.repository.ReseniaRepository;
 import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
+import org.springframework.security.core.Authentication;
+import org.utn.tpfinalprogramacion3.security.entities.CredencialEntity;
+
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -44,45 +48,42 @@ public class ReseniaService {
     }
 
     @PreAuthorize("hasAuthority('HACER_RESENIAS')")
-    public ReseniaDTO crearResenia(ReseniaCreateDTO dto, int idLibro, int idUsuario) {
+    public ReseniaDTO crearResenia(ReseniaCreateDTO dto, int idLibro) {
 
-        try {
-            BibliotecaEntity biblioteca=bibliotecaRepository.findByUsuarioId(idUsuario).orElseThrow(()-> new BibliotecaNoEncontradaException("No existe tal usuario con ese id..."));
+        // Obtener ID del usuario logueado desde el token
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CredencialEntity credencial = (CredencialEntity) authentication.getPrincipal();
+        Long userId = credencial.getId();
 
-            Optional<LibroEntity> libroBuscado = libroRepository.findById(idLibro);
-            if (libroBuscado.isEmpty()) {
-                throw new LibroInexistenteException("No existe un libro con el id " + idLibro + " asignado");
-            }
-            if (!biblioteca.getLibros().contains(libroBuscado.get())) {
-                throw new DenegarReseña("Reseña denegada ya que no tenes el libro en la biblioteca como para realizar la reseña");
-            }
+        // Validar existencia de biblioteca y libro
+        BibliotecaEntity biblioteca = bibliotecaRepository.findByUsuarioId(Math.toIntExact(userId))
+                .orElseThrow(() -> new BibliotecaNoEncontradaException("No existe tal usuario con ese id..."));
 
-            Optional<UsuarioEntity> usuarioBuscado = usuarioRepository.findById(idUsuario);
+        LibroEntity libro = libroRepository.findById(idLibro)
+                .orElseThrow(() -> new LibroInexistenteException("No existe un libro con el id " + idLibro + " asignado"));
 
-            if (usuarioBuscado.isEmpty()) {
-                throw new UsuarioInexistenteException("No existe un usuario con el id " + idUsuario + " asignado");
-            }
-
-            if (reseniaRepository.existsByLibroIdAndUsuarioId(libroBuscado.get().getIdLibro(),
-                    usuarioBuscado.get().getId())) {
-                throw new ReseniaExistenteException("Ya asignaste una resenia a ese libro");
-            }
-
-            ReseniaEntity resenia = ReseniaEntity.builder()
-                    .calificacion(dto.getCalificacion())
-                    .usuario(usuarioBuscado.get())
-                    .texto(dto.getTexto())
-                    .libro(libroBuscado.get())
-                    .build();
-
-            ReseniaEntity reseniaGuardada = reseniaRepository.save(resenia);
-
-            return modelMapper.map(reseniaGuardada, ReseniaDTO.class);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error al crear el resenia");
+        if (!biblioteca.getLibros().contains(libro)) {
+            throw new DenegarReseña("Reseña denegada ya que no tenés el libro en la biblioteca como para realizar la reseña");
         }
+
+        UsuarioEntity usuario = usuarioRepository.findById(Math.toIntExact(userId))
+                .orElseThrow(() -> new UsuarioInexistenteException("No existe un usuario con el id " + userId + " asignado"));
+
+        if (reseniaRepository.existsByLibroIdAndUsuarioId(libro.getIdLibro(), Math.toIntExact(userId))) {
+            throw new ReseniaExistenteException("Ya asignaste una reseña a ese libro");
+        }
+
+        // Crear y guardar la reseña
+        ReseniaEntity resenia = ReseniaEntity.builder()
+                .calificacion(dto.getCalificacion())
+                .usuario(usuario)
+                .texto(dto.getTexto())
+                .libro(libro)
+                .build();
+
+        ReseniaEntity reseniaGuardada = reseniaRepository.save(resenia);
+
+        return modelMapper.map(reseniaGuardada, ReseniaDTO.class);
     }
 
     @PreAuthorize("hasAuthority('VER_RESENIAS')")

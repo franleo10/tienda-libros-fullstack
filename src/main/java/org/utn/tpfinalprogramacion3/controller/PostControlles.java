@@ -75,7 +75,7 @@ public class PostControlles {
         PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                 .items(items)
                 .backUrls(backUrls)
-                .notificationUrl("https://07af-2800-2242-40c0-c60a-4021-2a0b-43b-2430.ngrok-free.app/api/webhook")
+                .notificationUrl("https://bd47-2800-2242-40c0-c60a-78cd-ba52-f0b0-acfd.ngrok-free.app/api/webhook")
                 .externalReference("carrito-" + carrito.getIdCarrito())
                 .build();
 

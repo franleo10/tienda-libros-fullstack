@@ -32,10 +32,10 @@ public class ReseniaEntityController {
 
     @Operation(summary = "Crear una reseña", description = "Crea una nueva reseña asociada a un usuario y un libro específicos.")
     @ApiResponse(responseCode = "201", description = "CREATED", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ReseniaDTO.class)))
-    @PostMapping("/crear/usuario/{idUsuario}/libro/{idLibro}")
-    public ResponseEntity<ReseniaDTO> crearResenia(@RequestBody ReseniaCreateDTO resenia, @PathVariable int idUsuario,
+    @PostMapping("/crear/libro/{idLibro}")
+    public ResponseEntity<ReseniaDTO> crearResenia(@RequestBody ReseniaCreateDTO resenia,
             @PathVariable int idLibro) {
-        return new ResponseEntity<>(reseniaService.crearResenia(resenia, idLibro, idUsuario), HttpStatus.CREATED);
+        return new ResponseEntity<>(reseniaService.crearResenia(resenia, idLibro), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Listar todas las reseñas paginadas", description = "Devuelve una página con todas las reseñas disponibles, según el número de página solicitado.")

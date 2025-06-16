@@ -6,8 +6,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.CarritoInexistente;
+import org.utn.tpfinalprogramacion3.Exceptions.LibroInexistenteException;
 import org.utn.tpfinalprogramacion3.Exceptions.UsuarioInexistenteException;
 import org.utn.tpfinalprogramacion3.dtos.*;
 import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
@@ -17,6 +19,7 @@ import org.utn.tpfinalprogramacion3.repository.CarritoRepository;
 import org.utn.tpfinalprogramacion3.repository.LibroRepository;
 import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
 import org.springframework.security.core.Authentication;
+import org.utn.tpfinalprogramacion3.security.entities.CredencialEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -101,10 +104,34 @@ public class CarritoService {
         carritoRepository.deleteById(id);
     }
 
-
-
     @PreAuthorize("hasAuthority('AGREGAR_LIBRO_AL_CARRITO')")
-    public CarritoEntity agregarLibro(Integer idCarrito, Integer idLibro) {
+    public String agregarLibro(Integer idCarrito, Integer idLibro) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CredencialEntity credencial = (CredencialEntity) authentication.getPrincipal();
+        Long userId = credencial.getId();
+
+        CarritoEntity carrito = carritoRepository.findById(idCarrito)
+                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
+
+        // Verificar que el carrito pertenece al usuario
+        if (carrito.getUsuario().getId()!=(userId)) {
+            throw new CarritoInexistente("No tienes permiso para modificar este carrito");
+        }
+
+        LibroEntity libro = libroRepository.findById(idLibro)
+                .orElseThrow(() -> new LibroInexistenteException("Libro no encontrado: " + idLibro));
+
+        if (carrito.getLibros().contains(libro)) {
+            throw new RuntimeException("El libro ya está en el carrito");
+        }
+
+        carrito.getLibros().add(libro);
+        carritoRepository.save(carrito);
+        return "Agregado el libro al carrito";
+    }
+
+
+  /*  public CarritoEntity agregarLibro(Integer idCarrito, Integer idLibro) {
         CarritoEntity carrito = carritoRepository.findById(idCarrito)
                 .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
 
@@ -118,7 +145,7 @@ public class CarritoService {
         carrito.getLibros().add(libro);
         return carritoRepository.save(carrito);
     }
-
+*/
     @PreAuthorize("hasAuthority('VER_CARRITO')")
     public Optional<CarritoEntity> buscarPorIdUsuario(Integer idUsuario) {
         return carritoRepository.findByUsuarioId(idUsuario);
@@ -131,7 +158,7 @@ public class CarritoService {
         return dto;
     }
 
-    @PreAuthorize("hasAuthority('VER_CARRITO')")
+
     public Optional<CarritoEntity> obtenerCarritoConPrecioActualizadoPorUsuario(Integer idUsuario) {
         Optional<CarritoEntity> carritoOpt = carritoRepository.findByUsuarioId(idUsuario);
 
@@ -152,7 +179,7 @@ public class CarritoService {
             return Optional.empty();
         }
     }
-    @PreAuthorize("hasAuthority('VER_CARRITO')")
+
     public UsuarioEntity obtenerUsuarioPorCarritoId(Integer idCarrito) {
         CarritoEntity carrito = carritoRepository.findById(idCarrito)
                 .orElseThrow(() -> new RuntimeException("Carrito no encontrado con id: " + idCarrito));
@@ -160,7 +187,9 @@ public class CarritoService {
     }
 
 
-    public ResponseEntity<CarritoDTO2> MostrarDTOcarrito(Integer idUsuario) {
+
+    @PreAuthorize("hasAuthority('VER_TODOS_LOS_CARRITOS')")
+    public CarritoDTO2 MostrarDTOcarritoPorUsuario(Integer idUsuario) {
         CarritoEntity carritoOpt = carritoRepository.findByUsuarioId(idUsuario).orElseThrow(()-> new CarritoInexistente("Carrito no encontrado con id: " + idUsuario));
 
 
@@ -194,9 +223,52 @@ public class CarritoService {
             carritoDTO.setLibros(librosDTO);
             carritoDTO.setUsuario(usuarioDTO);
 
-            return ResponseEntity.ok(carritoDTO);
+            return carritoDTO;
 
 
+    }
+
+    public CarritoDTO2 MostrarDTOcarrito() {
+        // Obtener el usuario logueado
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CredencialEntity credencial = (CredencialEntity) authentication.getPrincipal();
+        Long userId = credencial.getId();
+
+        // Buscar el carrito del usuario
+        CarritoEntity carrito = carritoRepository.findByUsuarioId(Math.toIntExact(userId))
+                .orElseThrow(() -> new CarritoInexistente("Carrito no encontrado con id de usuario: " + userId));
+
+        // Mapear libros a DTO liviano
+        List<LibroCarritoDTO> librosDTO = carrito.getLibros().stream()
+                .map(libro -> {
+                    LibroCarritoDTO dto = new LibroCarritoDTO();
+                    dto.setTitulo(libro.getTitulo());
+                    dto.setPrecio(libro.getPrecio());
+                    dto.setFechaLanzamiento(libro.getFecha_lanzamiento());
+                    return dto;
+                })
+                .toList();
+
+        // Calcular el total
+        double total = librosDTO.stream()
+                .mapToDouble(LibroCarritoDTO::getPrecio)
+                .sum();
+
+        // Mapear usuario a DTO
+        UsuarioEntity usuario = carrito.getUsuario();
+        UsuarioCarritoDTO usuarioDTO = new UsuarioCarritoDTO();
+        usuarioDTO.setId(usuario.getId());
+        usuarioDTO.setNombre(usuario.getNombre());
+        usuarioDTO.setEmail(usuario.getEmail());
+
+        // Armar CarritoDTO2
+        CarritoDTO2 carritoDTO = new CarritoDTO2();
+        carritoDTO.setIdCarrito(carrito.getIdCarrito());
+        carritoDTO.setPrecio(total);
+        carritoDTO.setLibros(librosDTO);
+        carritoDTO.setUsuario(usuarioDTO);
+
+        return carritoDTO;
     }
 
 }

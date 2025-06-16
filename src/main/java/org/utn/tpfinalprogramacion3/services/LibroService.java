@@ -225,7 +225,7 @@ public class LibroService {
         }
     }
 
-    @PreAuthorize("hasAuthority('AGREGAR_LIBRO')")
+
     @Transactional
     public LibroDTO crearLibro2(LibroDTO libroDTO, Integer generoId) {
         try {

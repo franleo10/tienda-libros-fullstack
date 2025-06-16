@@ -57,6 +57,7 @@ public class SecurityConfig {
                         // Rutas públicas
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/webhook").permitAll()
+                        .requestMatchers("/api/mercado").authenticated()
 
                         // Otras rutas seguras
                         .anyRequest().authenticated()

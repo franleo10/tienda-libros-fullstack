@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.Exceptions.AutorExistenteException;
 import org.utn.tpfinalprogramacion3.Exceptions.AutorNoEncontrado;
@@ -33,6 +34,7 @@ public class AutorService {
         this.modelMapper = modelMapper;
     }
 
+    @PreAuthorize("hasAuthority('AGREGAR_AUTOR')")
     public String createAutor(AutorDTO autorDTO) {
 
         if (autorRepository.findByNombreAndApellido(autorDTO.getNombre(), autorDTO.getApellido()).isPresent()) {
@@ -45,6 +47,7 @@ public class AutorService {
         return "Autor agregado con exito.";
     }
 
+    @PreAuthorize("hasAuthority('VER_AUTORES')")
     public Page<AutorDTO> listarAutores(int numeroPagina) {
 
         int tamañoPagina = 5;  // o el tamaño que quieras fijo
@@ -64,6 +67,7 @@ public class AutorService {
         return new PageImpl<>(listaAutorDTO, pageable, paginaAutores.getTotalElements());
     }
 
+    @PreAuthorize("hasAuthority('ELIMINAR_AUTOR')")
     public String borrarAutor(int id) {
         
         if(autorRepository.findById(id).isEmpty()){
@@ -75,6 +79,7 @@ public class AutorService {
         return "Autor eliminado correctamente.";
     }
 
+    @PreAuthorize("hasAuthority('VER_AUTORES')")
     public Page<AutorDTO>  listarPorNombre(String nombre, int numeroPagina) {
 
         int tamañoPagina = 5;  // o el tamaño que quieras fijo
@@ -93,6 +98,7 @@ public class AutorService {
         return new PageImpl<>(listaAutorDTO, pageable, autores.getTotalElements());
     }
 
+    @PreAuthorize("hasAuthority('VER_AUTORES')")
     public Page<LibroDTO>obtenerLibrosPorNombreAutor(String nombre, int numeroPagina) {
 
         if(autorRepository.findByNombreIgnoreCase(nombre).isEmpty()){
@@ -124,6 +130,7 @@ public class AutorService {
         return new PageImpl<>(subLista, pageable, total);
     }
 
+    @PreAuthorize("hasAuthority('MODIFICAR_AUTOR')")
     public String actualizarAutor(Integer id, AutorEntity nuevoAutor) {
         AutorEntity autorExistente = autorRepository.findById(id)
                 .orElseThrow(() -> new AutorNoEncontrado("Autor con ID " + id + " no encontrado"));

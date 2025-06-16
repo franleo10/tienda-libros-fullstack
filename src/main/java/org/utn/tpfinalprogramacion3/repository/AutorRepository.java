@@ -3,6 +3,9 @@ package org.utn.tpfinalprogramacion3.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.utn.tpfinalprogramacion3.entities.AutorEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +14,7 @@ import java.util.Optional;
 public interface AutorRepository extends JpaRepository<AutorEntity, Integer> {
 
     public List<AutorEntity> findAllByNombre(String nombre);
+    public Page<AutorEntity> findAllByNombre(String nombre, Pageable pageable);
     public Optional<AutorEntity> findByidAutor(int id);
 
     public List<AutorEntity> findAll();

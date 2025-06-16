@@ -27,10 +27,12 @@ import org.utn.tpfinalprogramacion3.mapper.ModelMapperConfig;
 import org.utn.tpfinalprogramacion3.repository.AutorRepository;
 import org.utn.tpfinalprogramacion3.repository.GeneroRepository;
 import org.utn.tpfinalprogramacion3.repository.LibroRepository;
+import org.utn.tpfinalprogramacion3.repository.ReseniaRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -44,14 +46,16 @@ public class LibroService {
     private final GeneroRepository generoRepository;
     private final ModelMapper modelMapper;
     private final OpenLibraryService openLibraryService;
+    private final ReseniaRepository reseniaRepository;
 
     @Autowired
-    public LibroService(LibroRepository libroRepository, ModelMapper modelMapper, AutorRepository autorRepository, GeneroRepository generoRepository, OpenLibraryService openLibraryService) {
+    public LibroService(LibroRepository libroRepository,ReseniaRepository reseniaRepository, ModelMapper modelMapper, AutorRepository autorRepository, GeneroRepository generoRepository, OpenLibraryService openLibraryService) {
         this.libroRepository = libroRepository;
         this.modelMapper = modelMapper;
         this.autorRepository = autorRepository;
         this.generoRepository = generoRepository;
         this.openLibraryService = openLibraryService;
+        this.reseniaRepository = reseniaRepository;
     }
 
     @PreAuthorize("hasAuthority('AGREGAR_LIBRO')")
@@ -102,6 +106,8 @@ public class LibroService {
                 .filter(i -> i.isActivo() == true)
                 .map(libro -> modelMapper.map(libro, LibroDTO.class))
                 .toList();
+
+        
 
         return new PageImpl<>(listaLibrosDTO, pageable, paginaLibros.getTotalElements());
     }
@@ -377,6 +383,26 @@ public class LibroService {
         } catch (Exception e) {
             System.err.println("Error al obtener sinopsis desde HTML: " + e.getMessage());
             return null;
+        }
+    }
+
+    public ResponseEntity<LibroDTO> buscarLibroPorNombre(String titulo) {
+        Optional<LibroEntity> libroOpt = libroRepository.findByTitulo(titulo);
+        if (libroOpt.isPresent()) {
+            LibroDTO dto = modelMapper.map(libroOpt.get(), LibroDTO.class);
+            return ResponseEntity.ok(dto);
+        } else {
+            throw  new LibroInexistenteException("No existe el libro con ese nombre");
+        }
+    }
+
+    public ResponseEntity<LibroDTO> buscarLibroPorId(int idLibro) {
+        Optional<LibroEntity> libroOpt = libroRepository.findById(idLibro);
+        if (libroOpt.isPresent()) {
+            LibroDTO dto = modelMapper.map(libroOpt.get(), LibroDTO.class);
+            return ResponseEntity.ok(dto);
+        } else {
+            throw new LibroInexistenteException("No existe el libro con ese identificador: " + idLibro);
         }
     }
 

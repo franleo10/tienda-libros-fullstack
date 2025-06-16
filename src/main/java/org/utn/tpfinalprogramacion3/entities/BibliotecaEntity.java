@@ -34,5 +34,16 @@ public class BibliotecaEntity {
             inverseJoinColumns = @JoinColumn(name = "id_libro")
     )
     private Set<LibroEntity> libros = new HashSet<>();
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "biblioteca_libros_favoritos",
+            joinColumns = @JoinColumn(name = "id_biblioteca"),
+            inverseJoinColumns = @JoinColumn(name = "id_libro")
+    )
+    private Set<LibroEntity> librosFavoritos = new HashSet<>();
+
+
 }
 

@@ -2,7 +2,6 @@ package org.utn.tpfinalprogramacion3.config;
 
 import org.apache.catalina.connector.Response;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.http.HttpStatus;
@@ -11,8 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.utn.tpfinalprogramacion3.Exceptions.*;
-
-import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -157,13 +154,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<?> handleAuthorizationDenied(AuthorizationDeniedException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(Map.of(
-                        "error", "Acceso denegado",
-                        "mensaje", "Tu rol no te permite realizar esta accion"
-                ));
+    @ExceptionHandler(DenegarReseña.class)
+    public ResponseEntity<String>manejarDenegadoReseña(DenegarReseña ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
+    
+    // Maneja el caso en el que se quiera crear un autor que ya existe en el sistema. (409)
+    @ExceptionHandler(AutorExistenteException.class)
+    public ResponseEntity<String> manejarAutorExistenteException(AutorExistenteException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }

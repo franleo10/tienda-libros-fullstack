@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.utn.tpfinalprogramacion3.dtos.AgregarLibroDTO;
 import org.utn.tpfinalprogramacion3.dtos.BibliotecaDTO;
+import org.utn.tpfinalprogramacion3.dtos.LibroBibliotecaDTO;
 import org.utn.tpfinalprogramacion3.services.BibliotecaService;
 
 import java.util.List;
@@ -44,6 +45,25 @@ public class BibliotecaEntityController {
     public ResponseEntity<String> deleteBiblioteca(@PathVariable int id) {
         bibliotecaService.deleteById(id);
         return ResponseEntity.ok("Biblioteca eliminada correctamente.");
+    }
+
+
+    @GetMapping("/favoritos/{idUsuario}")
+    public ResponseEntity<List<LibroBibliotecaDTO>> getLibrosFavoritos(@PathVariable int idUsuario) {
+        List<LibroBibliotecaDTO> favoritos = bibliotecaService.getLibrosFavoritos(idUsuario);
+        return ResponseEntity.ok(favoritos);
+    }
+
+    @PostMapping("/favoritos/{idUsuario}/{idLibro}")
+    public ResponseEntity<String> marcarLibroFavorito(@PathVariable int idUsuario, @PathVariable int idLibro) {
+        bibliotecaService.marcarLibroFavorito(idUsuario, idLibro);
+        return ResponseEntity.ok("Libro marcado como favorito!!");
+    }
+
+    @DeleteMapping("/favoritos/{idUsuario}/{idLibro}")
+    public ResponseEntity<String> desmarcarLibroFavorito(@PathVariable int idUsuario, @PathVariable int idLibro) {
+        bibliotecaService.desmarcarLibroFavorito(idUsuario, idLibro);
+        return ResponseEntity.ok("Libro desmarcado como favorito!");
     }
 
 

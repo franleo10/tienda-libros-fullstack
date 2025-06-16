@@ -8,11 +8,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.utn.tpfinalprogramacion3.Exceptions.AutorExistenteException;
 import org.utn.tpfinalprogramacion3.Exceptions.AutorNoEncontrado;
 import org.utn.tpfinalprogramacion3.Exceptions.NoHayLibrosException;
 import org.utn.tpfinalprogramacion3.dtos.AutorDTO;
+import org.utn.tpfinalprogramacion3.dtos.LibroDTO;
 import org.utn.tpfinalprogramacion3.entities.AutorEntity;
 import org.utn.tpfinalprogramacion3.entities.LibroEntity;
 import org.utn.tpfinalprogramacion3.repository.AutorRepository;
@@ -32,19 +33,18 @@ public class AutorService {
         this.modelMapper = modelMapper;
     }
 
+    public String createAutor(AutorDTO autorDTO) {
 
-    @PreAuthorize("hasAuthority('AGREGAR_AUTOR')")
-    public ResponseEntity<AutorDTO> createAutor(AutorDTO autorDTO) {
         if (autorRepository.findByNombreAndApellido(autorDTO.getNombre(), autorDTO.getApellido()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+            throw new AutorExistenteException("El autor que intenta agregar ya existe en el sistema.");
         }
 
         AutorEntity autorEntity = modelMapper.map(autorDTO, AutorEntity.class);
         autorEntity = autorRepository.save(autorEntity);
-        AutorDTO resultado = modelMapper.map(autorEntity, AutorDTO.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
+        
+        return "Autor agregado con exito.";
     }
-    @PreAuthorize("hasAuthority('VER_AUTORES')")
+
     public Page<AutorDTO> listarAutores(int numeroPagina) {
 
         int tamañoPagina = 5;  // o el tamaño que quieras fijo
@@ -64,37 +64,80 @@ public class AutorService {
         return new PageImpl<>(listaAutorDTO, pageable, paginaAutores.getTotalElements());
     }
 
-    @PreAuthorize("hasAuthority('ELIMINAR_AUTOR')")
-    public ResponseEntity<String> borrarAutor(int id) {
-        AutorEntity autorOptional = autorRepository.findById(id).orElseThrow(() -> new AutorNoEncontrado("Autor " + id + " no existe"));
+    public String borrarAutor(int id) {
+        
+        if(autorRepository.findById(id).isEmpty()){
+            throw new AutorNoEncontrado("No existe un autor con el ID indicado en el sistema.");
+        }
 
         autorRepository.deleteById(id);
-        return ResponseEntity.ok("Autor eliminado.");
+
+        return "Autor eliminado correctamente.";
     }
-    @PreAuthorize("hasAuthority('VER_AUTORES')")
-    public ResponseEntity<List<AutorEntity>> listarPorNombre(String nombre) {
-        List<AutorEntity> autores = autorRepository.findAllByNombre(nombre);
+
+    public Page<AutorDTO>  listarPorNombre(String nombre, int numeroPagina) {
+
+        int tamañoPagina = 5;  // o el tamaño que quieras fijo
+        Pageable pageable = PageRequest.of(numeroPagina, tamañoPagina);
+
+        Page<AutorEntity> autores = autorRepository.findAllByNombre(nombre, pageable);
+
         if (autores.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            throw new AutorNoEncontrado("No hay autores en el sistema.");
         }
-        return ResponseEntity.ok(autores);
+
+        List<AutorDTO> listaAutorDTO = autores.getContent().stream()
+                                        .map(i -> modelMapper.map(i, AutorDTO.class))
+                                        .toList();
+
+        return new PageImpl<>(listaAutorDTO, pageable, autores.getTotalElements());
     }
 
-    @PreAuthorize("hasAuthority('VER_AUTORES')")
-    public List<LibroEntity>obtenerLibrosPorNombreAutor(String nombre) {
-        AutorEntity autorEntity=autorRepository.findByNombreIgnoreCase(nombre).orElseThrow(()->new AutorNoEncontrado("Autor: "+nombre+" no existe"));
-        return autorEntity.getLibros();
+    public Page<LibroDTO>obtenerLibrosPorNombreAutor(String nombre, int numeroPagina) {
+
+        if(autorRepository.findByNombreIgnoreCase(nombre).isEmpty()){
+            throw new AutorNoEncontrado("No existe un autor con ese nombre.");
+        }
+
+        AutorEntity autor = autorRepository.findByNombreIgnoreCase(nombre).get();
+
+        List<LibroEntity> listaLibros = autor.getLibros();
+
+        if(listaLibros.isEmpty()){
+            throw new NoHayLibrosException("El autor no tiene libros asignados.");
+        }
+
+        int tamañoPagina = 5;  // o el tamaño que quieras fijo
+        Pageable pageable = PageRequest.of(numeroPagina, tamañoPagina);
+
+        List<LibroDTO> listaLibroDTO = listaLibros.stream()
+        .map(i -> modelMapper.map(i, LibroDTO.class))
+        .toList();
+
+
+        int total = listaLibroDTO.size();
+        int desde = (int) pageable.getOffset();
+        int hasta = Math.min((desde + pageable.getPageSize()), total);
+
+        List<LibroDTO> subLista = listaLibroDTO.subList(desde, hasta);
+
+        return new PageImpl<>(subLista, pageable, total);
     }
 
-    @PreAuthorize("hasAuthority('MODIFICAR_AUTOR')")
-    public AutorEntity actualizarAutor(Integer id, AutorEntity nuevoAutor) {
+    public String actualizarAutor(Integer id, AutorEntity nuevoAutor) {
         AutorEntity autorExistente = autorRepository.findById(id)
                 .orElseThrow(() -> new AutorNoEncontrado("Autor con ID " + id + " no encontrado"));
+
+        if(autorRepository.findById(id).isEmpty()){
+            throw new AutorNoEncontrado("No se encontro un autor con el id ingresado.");
+        }
 
         autorExistente.setNombre(nuevoAutor.getNombre());
         autorExistente.setApellido(nuevoAutor.getApellido());
 
-        return autorRepository.save(autorExistente);
+        autorRepository.save(autorExistente);
+
+        return "Autor actualizado con exito";
     }
 
 

@@ -84,5 +84,15 @@ public class LibroEntityController {
         return new ResponseEntity<>(libroService.altaLogicaLibro(idLibro), HttpStatus.OK);
     }
 
+    @GetMapping("/buscar/nombre/{titulo}")
+    public ResponseEntity<LibroDTO> buscarPorNombre(@PathVariable String titulo) {
+        return libroService.buscarLibroPorNombre(titulo);
+    }
+
+    @GetMapping("/buscar/id/{idLibro}")
+    public ResponseEntity<LibroDTO> buscarPorId(@PathVariable int idLibro) {
+        return libroService.buscarLibroPorId(idLibro);
+    }
+
 }
 

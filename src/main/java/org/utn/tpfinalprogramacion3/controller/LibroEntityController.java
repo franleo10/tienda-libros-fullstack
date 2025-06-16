@@ -27,7 +27,7 @@ public class LibroEntityController {
 
     @PostMapping("/crear/{idAutor}/{idGenero}")
     public ResponseEntity<LibroDTO> crearLibro(@RequestBody LibroDTO libro, @PathVariable int idAutor,
-                                               @PathVariable int idGenero) {
+            @PathVariable int idGenero) {
         if (this.libroService.crearLibro(libro, idAutor, idGenero).isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -75,12 +75,12 @@ public class LibroEntityController {
     }
 
     @PutMapping("/baja/{idLibro}")
-    public ResponseEntity<String> bajaLogicaLibro(@PathVariable int idLibro){
+    public ResponseEntity<String> bajaLogicaLibro(@PathVariable int idLibro) {
         return new ResponseEntity<>(libroService.bajaLogicaLibro(idLibro), HttpStatus.OK);
     }
 
     @PutMapping("/alta/{idLibro}")
-    public ResponseEntity<String> altaLogicaLibro(@PathVariable int idLibro){
+    public ResponseEntity<String> altaLogicaLibro(@PathVariable int idLibro) {
         return new ResponseEntity<>(libroService.altaLogicaLibro(idLibro), HttpStatus.OK);
     }
 
@@ -95,4 +95,3 @@ public class LibroEntityController {
     }
 
 }
-

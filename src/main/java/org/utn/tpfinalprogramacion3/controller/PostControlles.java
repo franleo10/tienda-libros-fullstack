@@ -11,6 +11,10 @@ import com.mercadopago.client.preference.PreferenceRequest;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.preference.Preference;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +46,15 @@ public class PostControlles {
     @Autowired
     private CarritoRepository carritoRepository;
 
+    @Operation(
+            summary = "Generar preferencia de pago en Mercado Pago",
+            description = "Recibe un ID de usuario, genera una preferencia de pago en Mercado Pago en base al carrito asociado y retorna el enlace de inicio de pago (init_point).",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Enlace generado correctamente", content = @Content(schema = @Schema(implementation = String.class))),
+                    @ApiResponse(responseCode = "404", description = "Carrito no encontrado"),
+                    @ApiResponse(responseCode = "500", description = "Error interno al generar la preferencia")
+            }
+    )
     @GetMapping("/mercado")
     public String mercado(@RequestParam int idUsuario) throws MPException, MPApiException {
 

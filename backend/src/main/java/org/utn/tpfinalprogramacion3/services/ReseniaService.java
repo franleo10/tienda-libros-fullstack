@@ -1,0 +1,161 @@
+package org.utn.tpfinalprogramacion3.services;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.utn.tpfinalprogramacion3.Exceptions.*;
+import org.utn.tpfinalprogramacion3.dtos.ReseniaCreateDTO;
+import org.utn.tpfinalprogramacion3.dtos.ReseniaDTO;
+import org.utn.tpfinalprogramacion3.entities.BibliotecaEntity;
+import org.utn.tpfinalprogramacion3.entities.LibroEntity;
+import org.utn.tpfinalprogramacion3.entities.ReseniaEntity;
+import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
+import org.utn.tpfinalprogramacion3.repository.BibliotecaRepository;
+import org.utn.tpfinalprogramacion3.repository.LibroRepository;
+import org.utn.tpfinalprogramacion3.repository.ReseniaRepository;
+import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
+import org.springframework.security.core.Authentication;
+import org.utn.tpfinalprogramacion3.security.entities.CredencialEntity;
+
+
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class ReseniaService {
+    private final LibroRepository libroRepository;
+    private final ReseniaRepository reseniaRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final BibliotecaRepository bibliotecaRepository;
+    private ModelMapper modelMapper;
+
+    public ReseniaService(ReseniaRepository repository, ModelMapper modelMapper, LibroRepository libroRepository,
+            ReseniaRepository reseniaRepository, UsuarioRepository usuarioRepository,  BibliotecaRepository bibliotecaRepository) {
+        this.modelMapper = modelMapper;
+        this.libroRepository = libroRepository;
+        this.reseniaRepository = reseniaRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.bibliotecaRepository = bibliotecaRepository;
+    }
+
+    @PreAuthorize("hasAuthority('HACER_RESENIAS')")
+    public ReseniaDTO crearResenia(ReseniaCreateDTO dto, int idLibro) {
+
+        // Obtener ID del usuario logueado desde el token
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CredencialEntity credencial = (CredencialEntity) authentication.getPrincipal();
+        Long userId = credencial.getId();
+
+        // Validar existencia de biblioteca y libro
+        BibliotecaEntity biblioteca = bibliotecaRepository.findByUsuarioId(Math.toIntExact(userId))
+                .orElseThrow(() -> new BibliotecaNoEncontradaException("No existe tal usuario con ese id..."));
+
+        LibroEntity libro = libroRepository.findById(idLibro)
+                .orElseThrow(() -> new LibroInexistenteException("No existe un libro con el id " + idLibro + " asignado"));
+
+        if (!biblioteca.getLibros().contains(libro)) {
+            throw new DenegarReseña("Reseña denegada ya que no tenés el libro en la biblioteca como para realizar la reseña");
+        }
+
+        UsuarioEntity usuario = usuarioRepository.findById(Math.toIntExact(userId))
+                .orElseThrow(() -> new UsuarioInexistenteException("No existe un usuario con el id " + userId + " asignado"));
+
+        if (reseniaRepository.existsByLibroIdAndUsuarioId(libro.getIdLibro(), Math.toIntExact(userId))) {
+            throw new ReseniaExistenteException("Ya asignaste una reseña a ese libro");
+        }
+
+        // Crear y guardar la reseña
+        ReseniaEntity resenia = ReseniaEntity.builder()
+                .calificacion(dto.getCalificacion())
+                .usuario(usuario)
+                .texto(dto.getTexto())
+                .libro(libro)
+                .build();
+
+        ReseniaEntity reseniaGuardada = reseniaRepository.save(resenia);
+
+        return modelMapper.map(reseniaGuardada, ReseniaDTO.class);
+    }
+
+    @PreAuthorize("hasAuthority('VER_RESENIAS')")
+    public Page<ReseniaDTO> listarResenias(int numeroPaginacion) {
+
+        Pageable pageable = PageRequest.of(numeroPaginacion, 5);
+        Page<ReseniaEntity> paginaResenias = reseniaRepository.findAll(pageable);
+
+        if (paginaResenias.isEmpty()) {
+            throw new NoHayReseniasException("No se encontraron resenias en el sistema");
+        }
+
+        List<ReseniaDTO> listaReseniasDTO = paginaResenias.getContent().stream()
+                .map(i -> modelMapper.map(i, ReseniaDTO.class))
+                .toList();
+
+        return new PageImpl<>(listaReseniasDTO, pageable, paginaResenias.getTotalElements());
+    }
+
+    @PreAuthorize("hasAuthority('VER_RESENIAS')")
+    public Page<ReseniaDTO> listarReseniasByLibro(int idLibro, int numeroPaginacion) {
+
+        if (libroRepository.findById(idLibro).isEmpty()) {
+            throw new NoSuchElementException("El libro no existe");
+        }
+
+        Pageable pageable = PageRequest.of(numeroPaginacion, 5);
+        Page<ReseniaEntity> paginaResenias = reseniaRepository.findByLibroId(idLibro, pageable);
+
+        if (paginaResenias.isEmpty()) {
+            throw new NoHayReseniasException("El libro seleccionado no tiene resenias");
+        }
+
+        List<ReseniaDTO> listaResenias = paginaResenias.getContent().stream()
+                .map(i -> modelMapper.map(i, ReseniaDTO.class))
+                .toList();
+
+        return new PageImpl<>(listaResenias, pageable, paginaResenias.getTotalElements());
+    }
+
+    @PreAuthorize("hasAuthority('VER_RESENIAS')")
+    public Page<ReseniaDTO> listarReseniasByUsuario(int idUsuario, int numeroPaginacion) {
+
+        if (usuarioRepository.findById(idUsuario).isEmpty()) {
+            throw new NoSuchElementException("El usuario no existe");
+        }
+
+        Pageable pageable = PageRequest.of(numeroPaginacion, 5);
+        Page<ReseniaEntity> paginaResenias = reseniaRepository.findByUsuarioId(idUsuario, pageable);
+
+        if (paginaResenias.isEmpty()) {
+            throw new NoHayReseniasException("El usuario no tiene resenias realizadas");
+        }
+
+        List<ReseniaDTO> listaResenias = paginaResenias.getContent().stream()
+                .map(i -> modelMapper.map(i, ReseniaDTO.class))
+                .toList();
+
+        return new PageImpl<>(listaResenias, pageable, paginaResenias.getTotalElements());
+    }
+
+    @PreAuthorize("hasAuthority('ELIMINAR_RESENIA_PROPIA') or hasAuthority('ELIMINAR_RESENIA')")
+    public void eliminarResenia(int idResenia, int idUsuario) {
+
+        if (reseniaRepository.findById(idResenia).isEmpty()) {
+            throw new ReseniaExistenteException("La resenia no existe");
+        }
+
+        if (reseniaRepository.findByReseniaIdAndIdUsuario(idResenia, idUsuario)) {
+            throw new DenegarPermisoEliminarReseniaException("No puedes eliminar una resenia que no sea tuya");
+        }
+
+        reseniaRepository.deleteById(idResenia);
+    }
+}

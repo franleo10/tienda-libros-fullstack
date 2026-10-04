@@ -1,1 +1,27 @@
-<p>navbar works!</p>
+<nav>
+<button class="hamburguesa" (click)="alternarMenu()">☰</button>
+<div class="links" [class.abierto]="menuAbierto()">
+@if(sesionIniciada()){
+
+    <a routerLink="/libros">Libros</a>
+    <a routerLink="/autores">Autores</a>
+    <a routerLink="/carrito">Carrito</a>
+    <a routerLink="/mi-biblioteca">Biblioteca</a>
+    <a routerLink="/perfil">Perfil</a>
+    <button>Salir</button>
+
+@if(esAdmin()){
+
+    <a routerLink="/admin/libros">Admin Libros</a>
+    <a routerLink="/admin/autores/nuevo">Admin Autores</a>
+    <a routerLink="/admin/usuarios">Admin Usuarios</a>
+}
+}@else{
+
+    <a routerLink="/registro">Registrarse</a>
+    <a routerLink="/login">Iniciar Sesion</a>
+
+}
+</div>
+</nav>
+

@@ -1,1 +1,17 @@
-<p>login works!</p>
+<form [formGroup]="formulario" (ngSubmit)="alEnviar()">
+    <label for="email">Email</label>
+    <input type="email" formControlName="email" id="email">
+
+    <label for="password">Contraseña</label>
+    <input type="password" formControlName="password" id="password">
+    
+    
+    <button type="submit" [disabled]="formulario.invalid || cargando() ">@if (cargando()) { Ingresando... } @else { Ingresar }</button>
+
+
+    @if (mensajeError()) {
+     <p>{{ mensajeError() }}</p>
+    }
+
+    
+</form>

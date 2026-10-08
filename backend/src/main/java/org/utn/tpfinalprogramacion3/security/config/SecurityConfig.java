@@ -23,6 +23,10 @@ import org.utn.tpfinalprogramacion3.security.enums.Permits;
 import org.utn.tpfinalprogramacion3.security.filter.JwtAuthenticationFilter;
 import org.utn.tpfinalprogramacion3.security.filter.RestAuthenticationEntryPoint;
 import org.utn.tpfinalprogramacion3.security.repositories.RoleRepository;
+import java.util.List;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Set;
 
@@ -79,6 +83,18 @@ public class SecurityConfig {
         AccessDeniedHandlerImpl handler = new AccessDeniedHandlerImpl();
         handler.setErrorPage(null); // No redireccionar
         return handler;
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOriginPatterns(List.of("http://localhost:*"));   // 1
+        config.setAllowedMethods(List.of( "GET", "POST", "PUT", "DELETE", "OPTIONS" ));          // 2
+        config.setAllowedHeaders(List.of("*"));          // 3
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     @Bean

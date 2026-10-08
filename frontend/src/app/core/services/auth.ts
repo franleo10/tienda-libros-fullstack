@@ -16,8 +16,12 @@ export class Auth {
   private apiUrl = 'http://localhost:8080';
 
   login(email: string, password: string) {
-  return this.http.post<AuthResponse>(`${this.apiUrl}/auth`, {username: email, password}
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth`, {username: email, password}
   );
+  }
+
+  register(nombre: string, edad: number, email: string, password: string){
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, {nombre,edad,email,password});
   }
 
 }

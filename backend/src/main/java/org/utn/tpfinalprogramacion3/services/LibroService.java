@@ -243,6 +243,10 @@ public class LibroService {
 
             JsonNode primerDoc = docs.get(0);
 
+            if (primerDoc.has("cover_i")) {
+                libro.setUrlPortada("https://covers.openlibrary.org/b/id/" + primerDoc.get("cover_i").asInt() + "-M.jpg");
+            }
+
             String nombreAutorCompleto = null;
             if (primerDoc.has("author_name") && primerDoc.get("author_name").isArray() && primerDoc.get("author_name").size() > 0) {
                 nombreAutorCompleto = primerDoc.get("author_name").get(0).asText();

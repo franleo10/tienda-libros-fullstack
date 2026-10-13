@@ -19,6 +19,7 @@ public class LibroDTO {
     private String sinopsis;
     private Float precio;
     private LocalDate fecha_lanzamiento;
+    private String urlPortada;
     private List<AutorDTO> autores=new ArrayList<>();
     private List<GeneroDTO> generos=new ArrayList<>();
     private List<ReseniaDTOLibro>resenias=new ArrayList<>();

@@ -54,6 +54,8 @@ public class LibroEntity {
     private Set<GeneroEntity> generos = new HashSet<>();
     @Column(name = "url_pdf", length = 500)
     private String urlPdf;
+    @Column(name = "url_portada", length = 500)
+    private String urlPortada;
     @Column(name = "activo", nullable = false)
     private boolean activo;
 

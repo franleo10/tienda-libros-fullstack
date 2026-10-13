@@ -25,6 +25,9 @@ public class AutorEntity {
     @Column(name="apellido", nullable = false, length = 100)
     private String apellido;
 
+    @Builder.Default
+    @Column(name = "activo", nullable = false, columnDefinition = "BOOLEAN NOT NULL DEFAULT TRUE")
+    private boolean activo = true;
 
     @ManyToMany(mappedBy = "autores")
     @JsonBackReference
@@ -46,6 +49,11 @@ public class AutorEntity {
     public AutorEntity(String nombre, String apellido) {
         this.nombre = nombre;
         this.apellido = apellido;
+        this.activo = true;
+    }
+
+    @PrePersist
+    public void activarAlCrear() {
+        this.activo = true;
     }
 }
-

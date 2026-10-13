@@ -1,34 +1,109 @@
-nav{
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    padding: 1rem;
-    flex-wrap: wrap;
+nav {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  min-height: 4.25rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem clamp(1rem, 4vw, 2rem);
+  border-bottom: 1px solid rgb(255 255 255 / 12%);
+  background: var(--design-primary);
+  color: var(--design-surface);
+  font-family: var(--design-font);
+  box-shadow: 0 0.25rem 0.9rem rgb(32 49 73 / 14%);
 }
 
-.links{
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    padding: 1rem;
-    flex-wrap: wrap;
+.links {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  flex-wrap: wrap;
 }
 
-.hamburguesa{
-    display: none;
+.links a,
+.links button,
+.hamburguesa {
+  display: inline-flex;
+  min-height: 2.65rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid transparent;
+  border-radius: var(--design-radius-control);
+  background: transparent;
+  color: var(--design-surface);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 650;
+  text-decoration: none;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.links a:hover,
+.links button:hover,
+.hamburguesa:hover {
+  border-color: rgb(255 255 255 / 16%);
+  background: rgb(255 255 255 / 10%);
+}
+
+.links a:focus-visible,
+.links button:focus-visible,
+.hamburguesa:focus-visible {
+  outline: 3px solid #a9d2ff;
+  outline-offset: 3px;
+}
+
+.links button {
+  border-color: rgb(255 255 255 / 28%);
+}
+
+.hamburguesa {
+  display: none;
+  min-width: 2.8rem;
+  padding: 0.45rem;
+  border-color: rgb(255 255 255 / 20%);
+  font-size: 1.2rem;
 }
 
 @media (max-width: 768px) {
-  .hamburguesa{
-    display: block;
+  nav {
+    min-height: 3.75rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    padding-block: 0.55rem;
   }
 
-  .links{
+  .hamburguesa {
+    display: inline-flex;
+  }
+
+  .links {
     display: none;
+    flex: 0 0 100%;
+    align-items: stretch;
+    gap: 0.35rem;
+    padding: 0.45rem 0 0.3rem;
   }
 
-  .links.abierto{
+  .links.abierto {
     display: flex;
     flex-direction: column;
+  }
+
+  .links a,
+  .links button {
+    width: 100%;
+    justify-content: flex-start;
+    box-sizing: border-box;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .links *,
+  .hamburguesa {
+    transition-duration: 0.01ms !important;
   }
 }

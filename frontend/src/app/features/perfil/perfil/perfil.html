@@ -1,1 +1,25 @@
-<p>perfil works!</p>
+<main class="perfil-page">
+  <header class="encabezado">
+    <p class="eyebrow">Tu cuenta</p>
+    <h1>Mi perfil</h1>
+    <p>Consultá y administrá tus datos personales.</p>
+  </header>
+
+  @if (cargando()) {
+    <p class="estado" role="status">Cargando tu perfil...</p>
+  } @else if (mensajeError()) {
+    <p class="estado error" role="alert">{{ mensajeError() }}</p>
+  } @else if (perfil(); as usuario) {
+    <section class="datos-perfil" aria-label="Datos de tu cuenta">
+      <dl>
+        <div><dt>Nombre</dt><dd>{{ usuario.nombre }}</dd></div>
+        <div><dt>Email</dt><dd>{{ usuario.email }}</dd></div>
+        <div><dt>Edad</dt><dd>{{ usuario.edad }}</dd></div>
+      </dl>
+      <nav class="acciones" aria-label="Administrar cuenta">
+        <a routerLink="/perfil/editar">Editar datos</a>
+        <a routerLink="/perfil/cambiar-password">Cambiar contraseña</a>
+      </nav>
+    </section>
+  }
+</main>

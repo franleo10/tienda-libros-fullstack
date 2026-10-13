@@ -1,1 +1,38 @@
-<p>perfil-editar works!</p>
+<main class="formulario-page">
+  <a class="volver" routerLink="/perfil">← Volver al perfil</a>
+  <header class="encabezado">
+    <p class="eyebrow">Tu cuenta</p>
+    <h1>Editar datos</h1>
+  </header>
+
+  @if (cargandoPerfil()) {
+    <p class="estado" role="status">Cargando datos...</p>
+  } @else {
+    <form class="form-card" [formGroup]="formulario" (ngSubmit)="guardar()">
+      <label for="nombre">Nombre</label>
+      <input id="nombre" type="text" formControlName="nombre" autocomplete="name" />
+      @if (formulario.controls.nombre.touched && formulario.controls.nombre.invalid) {
+        <p class="error">Ingresá un nombre de hasta 50 caracteres.</p>
+      }
+
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" autocomplete="email" />
+      @if (formulario.controls.email.touched && formulario.controls.email.invalid) {
+        <p class="error">Ingresá un email válido.</p>
+      }
+
+      <label for="edad">Edad</label>
+      <input id="edad" type="number" formControlName="edad" min="1" />
+      @if (formulario.controls.edad.touched && formulario.controls.edad.invalid) {
+        <p class="error">La edad debe ser mayor que cero.</p>
+      }
+
+      @if (mensajeError()) {
+        <p class="error" role="alert">{{ mensajeError() }}</p>
+      }
+      <button type="submit" [disabled]="guardando()">
+        {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+    </form>
+  }
+</main>

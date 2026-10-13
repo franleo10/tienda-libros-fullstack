@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.ResponseStatusException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.utn.tpfinalprogramacion3.Exceptions.*;
@@ -26,7 +27,12 @@ public class GlobalExceptionHandler {
     // Maneja argumentos inválidos en métodos (400)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Argumentos no válidos: " + ex.getMessage());
+        String message = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getDefaultMessage())
+                .filter(error -> error != null && !error.isBlank())
+                .findFirst()
+                .orElse("Revisá los datos ingresados e intentá de nuevo.");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 
     // Maneja errores de tipo en parámetros de ruta (400)
@@ -35,10 +41,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tipo de argumento inválido: " + ex.getMessage());
     }
 
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<String> handleResponseStatusException(ResponseStatusException ex) {
+        return ResponseEntity.status(ex.getStatusCode())
+                .body(ex.getReason() == null ? "La solicitud no pudo completarse." : ex.getReason());
+    }
+
     // Maneja conflictos de integridad en la base de datos (409)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Violación de integridad de datos: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body("No se pudo completar la operación porque los datos entran en conflicto con un registro existente.");
     }
 
     // Maneja otros errores no específicos (500)

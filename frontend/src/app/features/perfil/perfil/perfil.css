@@ -1,0 +1,209 @@
+.perfil-page,
+.formulario-page {
+  box-sizing: border-box;
+  width: min(100% - 2rem, 48rem);
+  margin: clamp(1.5rem, 4vw, 3rem) auto;
+  padding: clamp(1.25rem, 4vw, 2.75rem);
+  border: 1px solid var(--design-border);
+  border-radius: var(--design-radius-card);
+  background: var(--design-page-surface);
+  color: var(--design-ink);
+  font-family: var(--design-font);
+  line-height: 1.55;
+}
+
+.encabezado {
+  margin-bottom: 1.75rem;
+}
+
+.encabezado h1 {
+  margin: 0.35rem 0 0.5rem;
+  color: var(--design-ink);
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+}
+
+.encabezado > p:last-child {
+  margin-bottom: 0;
+  color: var(--design-ink-muted);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 0.55rem;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--design-border);
+  border-radius: 999px;
+  background: var(--design-surface);
+  color: var(--design-primary);
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.datos-perfil,
+.form-card {
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--design-border);
+  border-radius: var(--design-radius-card);
+  background: var(--design-surface);
+  box-shadow: var(--design-shadow-card);
+}
+
+.datos-perfil dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 0.9rem;
+  margin: 0;
+}
+
+.datos-perfil dl > div {
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--design-border);
+  border-radius: var(--design-radius-control);
+  background: var(--design-surface-muted);
+}
+
+.datos-perfil dt {
+  color: var(--design-ink-muted);
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.datos-perfil dd {
+  margin: 0.25rem 0 0;
+  overflow-wrap: anywhere;
+  color: var(--design-ink);
+  font-weight: 700;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.4rem;
+}
+
+.acciones a,
+.form-card button {
+  display: inline-flex;
+  min-height: 2.9rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.1rem;
+  border: 1px solid var(--design-primary);
+  border-radius: var(--design-radius-control);
+  background: var(--design-primary);
+  color: var(--design-surface);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.acciones a:hover,
+.form-card button:hover:not(:disabled) {
+  border-color: var(--design-primary-hover);
+  background: var(--design-primary-hover);
+  transform: translateY(-1px);
+}
+
+.form-card {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.form-card label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--design-ink);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.form-card input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 2.9rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--design-border-strong);
+  border-radius: var(--design-radius-control);
+  background: var(--design-surface);
+  color: var(--design-ink);
+  font: inherit;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.form-card input:focus-visible {
+  border-color: var(--design-focus);
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(91 148 209 / 20%);
+}
+
+.form-card button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.volver {
+  display: inline-block;
+  margin-bottom: 1.25rem;
+  color: var(--design-primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.volver:hover {
+  color: var(--design-primary-hover);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.estado {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--design-border);
+  border-radius: var(--design-radius-control);
+  background: var(--design-surface);
+  color: var(--design-ink-muted);
+}
+
+.error,
+.estado.error {
+  color: var(--design-error);
+}
+
+.form-card .error {
+  margin: -0.5rem 0 0.25rem;
+  font-size: 0.88rem;
+}
+
+.estado.error {
+  border-color: #eac9c7;
+  background: #fff6f5;
+}
+
+.perfil-page :focus-visible,
+.formulario-page :focus-visible {
+  outline: 3px solid var(--design-focus);
+  outline-offset: 3px;
+}
+
+@media (max-width: 34rem) {
+  .acciones a {
+    flex: 1 1 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .perfil-page *,
+  .formulario-page * {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

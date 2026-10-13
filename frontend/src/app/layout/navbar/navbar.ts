@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Auth } from '../../core/services/auth';
 
 @Component({
   selector: 'app-navbar',
@@ -8,10 +9,14 @@ import { RouterLink } from '@angular/router';
   styleUrl: './navbar.css',
 })
 export class Navbar {
-
-  protected readonly sesionIniciada = signal(false);
+  private auth = inject(Auth);
+  protected readonly sesionIniciada = computed(() => this.auth.token() !== null);
   protected readonly esAdmin = signal(false);
   protected readonly menuAbierto = signal(false);
+
+  salir() {
+    this.auth.logout();
+  }
 
   alternarMenu(){
     this.menuAbierto.update(valorActual => !valorActual);

@@ -1,1 +1,95 @@
-<p>autor-detalle works!</p>
+<main class="autor-detalle-page">
+  <a class="volver" routerLink="/autores">← Volver a autores</a>
+
+  @if (cargando()) {
+    <p class="estado" role="status">Cargando autor y sus libros...</p>
+  } @else if (mensajeError()) {
+    <p class="estado error" role="alert">{{ mensajeError() }}</p>
+  } @else if (autor(); as autorActual) {
+    <header class="page-header">
+      <p class="eyebrow">Autor</p>
+      <h1>{{ autorActual.nombre }} {{ autorActual.apellido }}</h1>
+      @if (puedeEditar()) {
+        <a class="editar-autor" [routerLink]="['/autores', autorActual.idAutor, 'editar']">
+          Editar autor
+        </a>
+      }
+      @if (mensajePermisos()) {
+        <p class="estado error" role="alert">{{ mensajePermisos() }}</p>
+      }
+      <p>
+        {{ autorActual.libros.length }}
+        {{ autorActual.libros.length === 1 ? 'libro en el catálogo' : 'libros en el catálogo' }}
+      </p>
+    </header>
+
+    @if (autorActual.libros.length === 0) {
+      <p class="estado">Este autor todavía no tiene libros en el catálogo.</p>
+    } @else {
+      <section class="lista-libros" aria-label="Libros del autor">
+        @for (libro of autorActual.libros; track libro.id) {
+          <article class="libro-card">
+            <header class="libro-header">
+              <div>
+                <p class="eyebrow">Libro</p>
+                <h2>{{ libro.titulo }}</h2>
+              </div>
+              <p class="precio">{{ formatearPrecio(libro.precio) }}</p>
+            </header>
+
+            <section class="datos-libro" aria-label="Datos del libro">
+              <div>
+                <h3>Descripción</h3>
+                <p>{{ libro.sinopsis || 'No hay descripción disponible.' }}</p>
+              </div>
+              <div>
+                <h3>Géneros</h3>
+                @if (libro.generos.length > 0) {
+                  <ul class="generos">
+                    @for (genero of libro.generos; track genero.nombre) {
+                      <li>{{ genero.nombre }}</li>
+                    }
+                  </ul>
+                } @else {
+                  <p>Sin género informado.</p>
+                }
+              </div>
+              <div>
+                <h3>Fecha de lanzamiento</h3>
+                <p>{{ libro.fecha_lanzamiento | date: 'dd/MM/yyyy' }}</p>
+              </div>
+            </section>
+
+            <section class="resenias" aria-label="Reseñas y calificaciones">
+              <h3>Reseñas y calificaciones</h3>
+              @if (libro.resenias.length > 0) {
+                @if (calificacionPromedio(libro.resenias) !== null) {
+                  <p class="promedio">
+                    Calificación promedio:
+                    <strong>{{ calificacionPromedio(libro.resenias) | number: '1.1-1' }}/5</strong>
+                    ({{ libro.resenias.length }}
+                    {{ libro.resenias.length === 1 ? 'reseña' : 'reseñas' }})
+                  </p>
+                }
+                <ul class="lista-resenias">
+                  @for (resenia of libro.resenias; track resenia.id) {
+                    <li>
+                      <p class="calificacion">
+                        {{ resenia.calificacion | number: '1.0-1' }}/5
+                        <span aria-hidden="true">★</span>
+                      </p>
+                      <p>{{ resenia.texto }}</p>
+                      <p class="autor-resenia">Reseña de {{ resenia.nombreUsuario }}</p>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p>Este libro todavía no tiene reseñas.</p>
+              }
+            </section>
+          </article>
+        }
+      </section>
+    }
+  }
+</main>

@@ -3,6 +3,8 @@ package org.utn.tpfinalprogramacion3.dtos;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Builder
@@ -11,6 +13,6 @@ import lombok.*;
 public class ReseniaDTOLibro {
     private Long id;
     private String texto;
-    private int calificacion;
+    private BigDecimal calificacion;
     private String nombreUsuario;
 }

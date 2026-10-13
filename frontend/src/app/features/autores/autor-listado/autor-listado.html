@@ -1,1 +1,130 @@
-<p>autor-listado works!</p>
+<main class="autores-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Explorá nuestro catálogo</p>
+      <h1>Autores</h1>
+      <p>
+        {{ viendoInactivos()
+          ? 'Autores dados de baja. Podés reactivarlos cuando quieras.'
+          : 'Encontrá autores y descubrí cuántos libros tenemos de cada uno.' }}
+      </p>
+    </div>
+    @if (puedeEliminar()) {
+      <button type="button" class="boton-nuevo" (click)="alternarAutoresInactivos()">
+        {{ viendoInactivos() ? 'Ver autores activos' : 'Ver autores dados de baja' }}
+      </button>
+    }
+    @if (puedeAgregar()) {
+      <a class="boton-nuevo" routerLink="/autores/nuevo">Nuevo autor</a>
+    }
+  </header>
+
+  @if (mensajeResultado()) {
+    <p class="estado exito" role="status">{{ mensajeResultado() }}</p>
+  }
+  @if (mensajePermisos()) {
+    <p class="estado error" role="alert">{{ mensajePermisos() }}</p>
+  }
+  @if (mensajeErrorEliminacion()) {
+    <p class="estado error" role="alert">{{ mensajeErrorEliminacion() }}</p>
+  }
+
+  <form class="busqueda" [formGroup]="formulario" (ngSubmit)="buscar()">
+    <label for="buscar-autor">Buscar por nombre o apellido</label>
+    <div class="busqueda-controls">
+      <input
+        id="buscar-autor"
+        type="search"
+        formControlName="busqueda"
+        placeholder="Ej.: Gabriel García Márquez"
+      />
+      <button type="submit" [disabled]="cargando()">Buscar</button>
+      @if (busqueda.value) {
+        <button type="button" class="secondary" [disabled]="cargando()" (click)="limpiarBusqueda()">
+          Limpiar
+        </button>
+      }
+    </div>
+  </form>
+
+  @if (cargando()) {
+    <p class="estado" role="status">Cargando autores...</p>
+  } @else if (mensajeError()) {
+    <p class="estado error" role="alert">{{ mensajeError() }}</p>
+  } @else if (autores().length === 0) {
+    <p class="estado">No se encontraron autores.</p>
+  } @else {
+    <section class="lista-autores" aria-label="Lista de autores">
+      @for (autor of autores(); track autor.idAutor) {
+        <article class="autor-tarjeta">
+          @if (!viendoInactivos()) {
+            <a class="autor-card" [routerLink]="['/autores', autor.idAutor]">
+              <div>
+                <h2>{{ autor.nombre }} {{ autor.apellido }}</h2>
+                <p>
+                  {{ autor.cantidadLibros }}
+                  {{ autor.cantidadLibros === 1 ? 'libro' : 'libros' }}
+                </p>
+              </div>
+              <span class="ver-detalle">Ver libros →</span>
+            </a>
+          } @else {
+            <div class="autor-card">
+              <div>
+                <h2>{{ autor.nombre }} {{ autor.apellido }}</h2>
+                <p>Autor dado de baja · {{ autor.cantidadLibros }} libros asociados</p>
+              </div>
+            </div>
+          }
+          @if (!viendoInactivos() && puedeEditar()) {
+            <a class="editar-autor" [routerLink]="['/autores', autor.idAutor, 'editar']">
+              Editar autor
+            </a>
+          }
+          @if (!viendoInactivos() && puedeEliminar()) {
+            <button
+              type="button"
+              class="eliminar-autor"
+              [disabled]="autorEliminando() !== null"
+              (click)="eliminarAutor(autor)"
+            >
+              {{ autorEliminando() === autor.idAutor ? 'Procesando...' : 'Dar de baja' }}
+            </button>
+          }
+          @if (viendoInactivos() && puedeEliminar()) {
+            <button
+              type="button"
+              class="editar-autor"
+              [disabled]="autorEliminando() !== null"
+              (click)="reactivarAutor(autor)"
+            >
+              {{ autorEliminando() === autor.idAutor ? 'Procesando...' : 'Reactivar autor' }}
+            </button>
+          }
+        </article>
+      }
+    </section>
+
+    @if (totalPaginas() > 1) {
+      <nav class="paginacion" aria-label="Paginación de autores">
+        <button
+          type="button"
+          class="secondary"
+          [disabled]="paginaActual() === 0 || cargando()"
+          (click)="cambiarPagina(paginaActual() - 1)"
+        >
+          Anterior
+        </button>
+        <span>Página {{ paginaActual() + 1 }} de {{ totalPaginas() }}</span>
+        <button
+          type="button"
+          class="secondary"
+          [disabled]="paginaActual() + 1 >= totalPaginas() || cargando()"
+          (click)="cambiarPagina(paginaActual() + 1)"
+        >
+          Siguiente
+        </button>
+      </nav>
+    }
+  }
+</main>

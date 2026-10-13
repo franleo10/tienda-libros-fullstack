@@ -64,7 +64,7 @@ public class LibroService {
         try {
             LibroEntity libro = modelMapper.map(libroDTO, LibroEntity.class);
 
-            Optional<AutorEntity> autorOpt = autorRepository.findByidAutor(autor_id);
+            Optional<AutorEntity> autorOpt = autorRepository.findByIdAutorAndActivoTrue(autor_id);
             if (autorOpt.isEmpty()) {
                 return Optional.empty();
             }
@@ -192,7 +192,7 @@ public class LibroService {
         LibroEntity libro = libroRepository.findById(idLibro)
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + idLibro));
 
-        AutorEntity autor = autorRepository.findById(idAutor)
+        AutorEntity autor = autorRepository.findByIdAutorAndActivoTrue(idAutor)
                 .orElseThrow(() -> new EntityNotFoundException("Autor no encontrado con id: " + idAutor));
 
         if (!libro.getAutores().contains(autor)) {
@@ -264,7 +264,7 @@ public class LibroService {
             // Buscar o crear autor
             String finalNombre = nombre;
             String finalApellido = apellido;
-            AutorEntity autor = autorRepository.findByNombre(nombre)
+            AutorEntity autor = autorRepository.findByNombreAndActivoTrue(nombre)
                     .orElseGet(() -> autorRepository.save(new AutorEntity(finalNombre, finalApellido)));
 
             // Buscar género por ID recibido

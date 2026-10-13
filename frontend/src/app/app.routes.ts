@@ -21,6 +21,7 @@ import { Perfil } from './features/perfil/perfil/perfil';
 import { PerfilEditar } from './features/perfil/perfil-editar/perfil-editar';
 import { CambiarPassword } from './features/perfil/cambiar-password/cambiar-password';
 import { UsuarioTabla } from './features/admin-usuarios/usuario-tabla/usuario-tabla';
+import { permisoGuard } from './core/guards/permiso.guard';
 
 export const routes: Routes = [
     {path:'', redirectTo: 'login', pathMatch:'full'},
@@ -35,9 +36,29 @@ export const routes: Routes = [
     {path:'facturas', component: FacturaListado},
     {path:'facturas/:id', component: FacturaDetalle},
     {path:'autores', component: AutorListado},
+    {
+      path: 'autores/nuevo',
+      component: AutorFormulario,
+      canActivate: [permisoGuard],
+      data: { permiso: 'AGREGAR_AUTOR' },
+    },
+    {
+      path: 'autores/:id/editar',
+      component: AutorFormulario,
+      canActivate: [permisoGuard],
+      data: { permiso: 'MODIFICAR_AUTOR' },
+    },
     {path:'autores/:id', component: AutorDetalle},
-    {path:'admin/autores/nuevo', component: AutorFormulario},
-    {path:'admin/autores/:id/editar', component: AutorFormulario},
+    {
+      path: 'admin/autores/nuevo',
+      redirectTo: 'autores/nuevo',
+      pathMatch: 'full',
+    },
+    {
+      path: 'admin/autores/:id/editar',
+      redirectTo: 'autores/:id/editar',
+      pathMatch: 'full',
+    },
     {path:'carrito', component: Carrito},
     {path:'compra-confirmada', component: CompraConfirmada},
     {path:'compras', component: HistorialCompras},

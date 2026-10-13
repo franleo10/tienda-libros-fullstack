@@ -1,1 +1,68 @@
-<p>autor-formulario works!</p>
+<main class="autor-formulario-page">
+  <a class="volver" routerLink="/autores">← Volver a autores</a>
+
+  <header class="page-header">
+    <p class="eyebrow">Gestión de autores</p>
+    <h1>{{ editando() ? 'Editar autor' : 'Nuevo autor' }}</h1>
+    <p>Completá los datos del autor. Los campos marcados son obligatorios.</p>
+  </header>
+
+  @if (cargando()) {
+    <p class="estado" role="status">Cargando los datos del autor...</p>
+  }
+
+  @if (mensajeError()) {
+    <p class="estado error" role="alert">{{ mensajeError() }}</p>
+  }
+
+  <form [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+    <div class="campo">
+      <label for="nombre">Nombre <span aria-hidden="true">*</span></label>
+      <input
+        id="nombre"
+        type="text"
+        formControlName="nombre"
+        maxlength="100"
+        autocomplete="given-name"
+        [attr.aria-invalid]="formulario.controls.nombre.touched && formulario.controls.nombre.invalid"
+        [attr.aria-describedby]="formulario.controls.nombre.touched && formulario.controls.nombre.invalid ? 'nombre-error' : null"
+      />
+      @if (formulario.controls.nombre.touched && formulario.controls.nombre.invalid) {
+        <p class="error-campo" id="nombre-error">{{ mensajeCampo('nombre') }}</p>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="apellido">Apellido <span aria-hidden="true">*</span></label>
+      <input
+        id="apellido"
+        type="text"
+        formControlName="apellido"
+        maxlength="100"
+        autocomplete="family-name"
+        [attr.aria-invalid]="formulario.controls.apellido.touched && formulario.controls.apellido.invalid"
+        [attr.aria-describedby]="formulario.controls.apellido.touched && formulario.controls.apellido.invalid ? 'apellido-error' : null"
+      />
+      @if (formulario.controls.apellido.touched && formulario.controls.apellido.invalid) {
+        <p class="error-campo" id="apellido-error">{{ mensajeCampo('apellido') }}</p>
+      }
+    </div>
+
+    <div class="acciones">
+      <a class="boton boton-secundario" routerLink="/autores">Cancelar</a>
+      <button
+        class="boton boton-principal"
+        type="submit"
+        [disabled]="cargando() || guardando() || cargaFallida()"
+      >
+        @if (guardando()) {
+          Guardando...
+        } @else if (editando()) {
+          Guardar cambios
+        } @else {
+          Crear autor
+        }
+      </button>
+    </div>
+  </form>
+</main>

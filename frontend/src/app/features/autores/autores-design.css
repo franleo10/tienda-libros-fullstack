@@ -1,0 +1,123 @@
+:root {
+  --design-ink: #203149;
+  --design-ink-muted: #5b6b7e;
+  --design-primary: #263d59;
+  --design-primary-hover: #344f70;
+  --design-border: #dce4ed;
+  --design-border-strong: #bdcbd9;
+  --design-surface: #fff;
+  --design-surface-muted: #f3f6fa;
+  --design-page-surface: #f7f9fc;
+  --design-accent: #b77932;
+  --design-success: #236348;
+  --design-error: #a12622;
+  --design-focus: #5b94d1;
+  --design-radius-control: 0.6rem;
+  --design-radius-card: 0.9rem;
+  --design-shadow-card: 0 0.35rem 1.2rem rgb(32 49 73 / 7%);
+  --design-shadow-card-hover: 0 0.7rem 1.6rem rgb(32 49 73 / 12%);
+  --design-font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.autores-page,
+.autor-detalle-page,
+.autor-formulario-page {
+  --autores-ink: var(--design-ink);
+  --autores-ink-muted: var(--design-ink-muted);
+  --autores-primary: var(--design-primary);
+  --autores-primary-hover: var(--design-primary-hover);
+  --autores-border: var(--design-border);
+  --autores-border-strong: var(--design-border-strong);
+  --autores-surface: var(--design-surface);
+  --autores-surface-muted: var(--design-surface-muted);
+  --autores-page-surface: var(--design-page-surface);
+  --autores-accent: var(--design-accent);
+  --autores-success: var(--design-success);
+  --autores-error: var(--design-error);
+  --autores-focus: var(--design-focus);
+  --autores-radius-control: var(--design-radius-control);
+  --autores-radius-card: var(--design-radius-card);
+  --autores-shadow-card: var(--design-shadow-card);
+  --autores-shadow-card-hover: var(--design-shadow-card-hover);
+  --autores-font: var(--design-font);
+
+  box-sizing: border-box;
+  color: var(--autores-ink);
+  font-family: var(--autores-font);
+  line-height: 1.55;
+}
+
+.autores-page :focus-visible,
+.autor-detalle-page :focus-visible,
+.autor-formulario-page :focus-visible {
+  outline: 3px solid var(--autores-focus);
+  outline-offset: 3px;
+}
+
+.autor-tarjeta {
+  overflow: hidden;
+  border: 1px solid var(--autores-border);
+  border-radius: var(--autores-radius-card);
+  background: var(--autores-surface);
+  box-shadow: var(--autores-shadow-card);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.autor-tarjeta:hover,
+.autor-tarjeta:focus-within {
+  border-color: var(--autores-focus);
+  box-shadow: var(--autores-shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.autores-page .boton-nuevo,
+.autores-page .editar-autor,
+.autor-detalle-page .editar-autor {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 2.7rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--autores-primary);
+  border-radius: var(--autores-radius-control);
+  background: var(--autores-primary);
+  color: var(--autores-surface);
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 140ms ease, border-color 140ms ease;
+}
+
+.autores-page .boton-nuevo:hover,
+.autores-page .editar-autor:hover,
+.autor-detalle-page .editar-autor:hover {
+  border-color: var(--autores-primary-hover);
+  background: var(--autores-primary-hover);
+}
+
+.autores-page .editar-autor {
+  min-height: 2.4rem;
+  margin: 0 1.3rem 1rem;
+  padding: 0.45rem 0.8rem;
+  background: var(--autores-surface);
+  color: var(--autores-primary);
+}
+
+.autores-page .editar-autor:hover {
+  color: var(--autores-surface);
+}
+
+.autores-page .estado.exito {
+  border-color: #c6e5d1;
+  background: #f1fbf4;
+  color: #23633b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .autores-page *,
+  .autor-detalle-page *,
+  .autor-formulario-page * {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

@@ -8,7 +8,7 @@
     <a routerLink="/carrito">Carrito</a>
     <a routerLink="/mi-biblioteca">Biblioteca</a>
     <a routerLink="/perfil">Perfil</a>
-    <button>Salir</button>
+    <button (click)="salir()">Salir</button>
 
 @if(esAdmin()){
 
@@ -24,4 +24,3 @@
 }
 </div>
 </nav>
-

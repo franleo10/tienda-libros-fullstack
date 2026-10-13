@@ -11,7 +11,7 @@ import { Libro, LibroDato } from '../../../core/services/libro';
 export class LibroListado implements OnInit{
   
   ngOnInit(){
-    this.libroService.obtenerLibros(1).subscribe({
+    this.libroService.obtenerLibros(0).subscribe({
       next: (pagina) => {this.libros.set(pagina.content); this.cargando.set(false)},
       error: (error) => {this.cargando.set(false); console.log('Error al traer libros', error)},
     });

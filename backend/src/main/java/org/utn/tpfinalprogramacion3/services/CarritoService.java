@@ -122,7 +122,7 @@ public class CarritoService {
                 .orElseThrow(() -> new LibroInexistenteException("Libro no encontrado: " + idLibro));
 
         if (carrito.getLibros().contains(libro)) {
-            throw new RuntimeException("El libro ya está en el carrito");
+            throw new IllegalArgumentException("El libro ya está en el carrito");
         }
 
         carrito.getLibros().add(libro);
@@ -152,7 +152,7 @@ public class CarritoService {
                 .anyMatch(l -> l.getIdLibro() == idLibro);
 
         if (yaEnCarrito) {
-            throw new RuntimeException("El libro ya está en el carrito");
+            throw new IllegalArgumentException("El libro ya está en el carrito");
         }
 
         // Agregar el libro

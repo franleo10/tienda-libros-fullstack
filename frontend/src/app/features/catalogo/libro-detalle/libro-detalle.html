@@ -1,32 +1,30 @@
 @if (libro(); as l) {
-<h1>{{ l.titulo }}</h1>
+<div class="detalle">
 
-@if (l.urlPortada) {
-<img [src]="l.urlPortada" [alt]="l.titulo" class="portada">
-} @else {
-<div class="portada">{{ l.titulo[0] }}</div>
+  @if (l.urlPortada) {
+  <img [src]="l.urlPortada" [alt]="l.titulo" class="portada">
+  } @else {
+  <div class="portada">{{ l.titulo[0] }}</div>
+  }
+
+  <div class="datos">
+    <h1>{{ l.titulo }}</h1>
+    <p class="autor">{{ l.autores[0]?.nombre }} {{ l.autores[0]?.apellido }}</p>
+    <p class="genero">{{ l.generos[0]?.nombre }}</p>
+    <p class="sinopsis">{{ l.sinopsis }}</p>
+    <p class="precio">$ {{ l.precio }}</p>
+
+    <button (click)="agregarAlCarrito()">Agregar al carrito</button>
+    @if (mensajeCarrito()) {
+      <p class="mensaje">{{ mensajeCarrito() }}</p>
+    }
+  </div>
+
+</div>
 }
 
-<p>
-    Autor: {{l.autores[0]?.nombre}}{{ l.autores[0]?.apellido}} 
-
-</p>
-<p>
-    Género: {{l.generos[0]?.nombre}}
-</p>
-<p>
-    Sinopsis: {{l.sinopsis}}
-</p>
-
-<p>
-    Precio: $ {{l.precio}}
-</p>
-
-<button (click)="agregarAlCarrito()">Agregar al carrito</button>
-@if (mensajeCarrito()) {
-  <p> {{ mensajeCarrito() }} </p>
-}
-}
+@if (cargando()) { <p>Cargando...</p> }
+@if (mensajeError()) { <p class="mensaje-error">{{ mensajeError() }}</p> }
 
 @if (cargando()) { <p>Cargando...</p> }
 @if (mensajeError()) { <p>{{ mensajeError() }}</p> }

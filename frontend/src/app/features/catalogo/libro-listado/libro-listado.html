@@ -9,7 +9,8 @@
 } @else {
   <div class="portada">{{ libro.titulo[0] }}</div>
 }
-    <h2>{{libro.titulo}}</h2>
+    <a [routerLink]="['/libros', libro.id]">
+    <h2>{{libro.titulo}}</h2></a>
     <p>{{libro.autores[0]?.nombre }}
     {{libro.autores[0]?.apellido}} </p>
    <p> {{libro.precio}}</p>

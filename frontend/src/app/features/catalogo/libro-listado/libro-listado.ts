@@ -1,9 +1,11 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { Libro, LibroDato } from '../../../core/services/libro';
+import { Libro } from '../../../services/libro';
+import { LibroDato } from '../../../models/libro';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-libro-listado',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './libro-listado.html',
   styleUrl: './libro-listado.css',
 })

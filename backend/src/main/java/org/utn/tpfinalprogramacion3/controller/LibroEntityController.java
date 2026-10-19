@@ -103,6 +103,13 @@ public class LibroEntityController {
         return new ResponseEntity<>(libroService.altaLogicaLibro(idLibro), HttpStatus.OK);
     }
 
+    @Operation(summary = "Modificar un libro", description = "Actualiza el título, la sinopsis, el precio y la fecha de lanzamiento de un libro.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = LibroDTO.class)))
+    @PutMapping("/modificar/{idLibro}")
+    public ResponseEntity<LibroDTO> modificarLibro(@PathVariable int idLibro, @RequestBody LibroDTO libroDTO) {
+        return new ResponseEntity<>(libroService.modificarLibro(idLibro, libroDTO), HttpStatus.OK);
+    }
+
     @Operation(summary = "Buscar libro por nombre", description = "Busca un libro por su título.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = LibroDTO.class)))
     @GetMapping("/buscar/nombre/{titulo}")

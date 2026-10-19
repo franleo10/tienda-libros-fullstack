@@ -19,4 +19,8 @@ export class Libro {
     return this.http.get<LibroDato>(`${this.apiUrl}/libro/buscar/id/${id}`);
   }
 
+  darDeBaja(id: number){
+    return this.http.put(`${this.apiUrl}/libro/baja/${id}`,null, {responseType: 'text'});
+  }
+
 }

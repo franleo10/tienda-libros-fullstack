@@ -1,0 +1,38 @@
+table {
+  width: 100%;
+  max-width: 900px;
+  margin: 2rem auto;
+  border-collapse: collapse;
+  font-family: var(--design-font);
+  color: var(--design-ink);
+  background: var(--design-surface);
+}
+
+th, td {
+  padding: 0.7rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid var(--design-border);
+}
+
+th {
+  background: var(--design-surface-muted);
+  font-size: 0.85rem;
+}
+
+tbody tr:hover {
+  background: var(--design-page-surface);
+}
+
+a {
+  margin-right: 0.5rem;
+  color: var(--design-primary);
+}
+
+button {
+  padding: 0.3rem 0.8rem;
+  background: var(--design-error);
+  color: #fff;
+  border: 0;
+  border-radius: var(--design-radius-control);
+  cursor: pointer;
+}

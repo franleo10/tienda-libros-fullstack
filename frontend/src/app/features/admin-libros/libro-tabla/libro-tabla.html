@@ -1,1 +1,16 @@
-<p>libro-tabla works!</p>
+@if (cargando()) { <p>Cargando...</p> }
+@if (mensajeError()) { <p>{{ mensajeError() }}</p> }
+<table>
+  <thead>
+    <tr>
+      <th>ID</th> <th>Título</th> <th>Autor</th> <th>Precio</th> <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (libro of libros(); track libro.id) {
+      <tr>
+        <td>{{ libro.id }}</td> <td> {{libro.titulo}} </td><td>{{libro.autores[0]?.nombre}} {{libro.autores[0]?.apellido}}</td><td>{{libro.precio}}</td><td><a [routerLink]="['/libros' , libro.id]">Ver </a><a [routerLink]="['/admin/libros', libro.id, 'editar']"> Editar</a> <button (click)="eliminar(libro)">Eliminar</button> </td>
+      </tr>
+    }
+  </tbody>
+</table>

@@ -8,7 +8,15 @@ export interface LibroDato {
   titulo: string;
   sinopsis: string;
   precio: number;
+  fecha_lanzamiento: string;
   autores: AutorDato[];
   urlPortada?: string | null;
   generos: { nombre: string }[];
+}
+
+export interface LibroGuardado {
+  titulo: string;
+  sinopsis: string;
+  precio: number;
+  fecha_lanzamiento: string;
 }

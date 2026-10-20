@@ -168,6 +168,32 @@ public class LibroService {
         return "Libro dado de alta correctamente";
     }
 
+    @PreAuthorize("hasAuthority('MODIFICAR_LIBRO')")
+    @Transactional
+    public LibroDTO modificarLibro(int idLibro, LibroDTO libroDTO) {
+        LibroEntity libro = libroRepository.findById(idLibro)
+                .orElseThrow(() -> new LibroInexistenteException("El libro indicado no existe."));
+
+        if (libroDTO.getTitulo() == null || libroDTO.getTitulo().isBlank()) {
+            throw new IllegalArgumentException("El titulo del libro es obligatorio");
+        }
+        if (libroDTO.getSinopsis() == null || libroDTO.getSinopsis().isBlank()) {
+            throw new IllegalArgumentException("La sinopsis del libro es obligatoria");
+        }
+        if (libroDTO.getPrecio() == null || libroDTO.getPrecio() < 0) {
+            throw new IllegalArgumentException("El precio del libro no puede ser negativo");
+        }
+
+        libro.setTitulo(libroDTO.getTitulo());
+        libro.setSinopsis(libroDTO.getSinopsis());
+        libro.setPrecio(libroDTO.getPrecio());
+        if (libroDTO.getFecha_lanzamiento() != null) {
+            libro.setFecha_lanzamiento(libroDTO.getFecha_lanzamiento());
+        }
+
+        return modelMapper.map(libroRepository.save(libro), LibroDTO.class);
+    }
+
     @PreAuthorize("hasAuthority('AGREGAR_GENEROS')")
     public String agregarGeneroALibro(int idLibro, int idGenero) {
         LibroEntity libro = libroRepository.findById(idLibro)

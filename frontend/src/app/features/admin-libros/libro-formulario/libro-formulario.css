@@ -1,0 +1,65 @@
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 520px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: var(--design-surface);
+  border: 1px solid var(--design-border);
+  border-radius: var(--design-radius-card);
+  box-shadow: var(--design-shadow-card);
+  font-family: var(--design-font);
+  color: var(--design-ink);
+}
+
+h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+input, textarea, select {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--design-border-strong);
+  border-radius: var(--design-radius-control);
+  font: inherit;
+}
+
+textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid var(--design-focus);
+  outline-offset: 1px;
+}
+
+button {
+  align-self: flex-start;
+  padding: 0.65rem 1.4rem;
+  background: var(--design-primary);
+  color: #fff;
+  border: 0;
+  border-radius: var(--design-radius-control);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--design-primary-hover);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+p {
+  margin: 0;
+}

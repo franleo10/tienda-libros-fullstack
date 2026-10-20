@@ -1,1 +1,36 @@
-<p>libro-formulario works!</p>
+<form [formGroup]="formulario" (ngSubmit)="guardar()">
+    <h1>@if (idLibro()) { Editar libro } @else { Nuevo libro }</h1>
+
+    <label for="titulo">Titulo</label>
+    <input type="text" id="titulo" formControlName="titulo">
+    <label for="sinopsis">Sinopsis</label>
+    <textarea name="sinopsis" id="sinopsis" formControlName="sinopsis"></textarea>
+    <label for="precio">Precio</label>
+    <input type="number" id="precio" formControlName="precio">
+    <label for="fecha_lanzamiento">Fecha de Lanzamiento</label>
+    <input type="date" id="fecha_lanzamiento" formControlName="fecha_lanzamiento">
+    @if (!idLibro()) {
+    <label for="idAutor">Autor</label>
+    <select formControlName="idAutor" id="idAutor">
+        <option [ngValue]="null">Elegí un autor</option>
+        @for (autor of autores(); track autor.idAutor) {
+        <option [ngValue]="autor.idAutor">{{ autor.nombre }} {{ autor.apellido }}</option>
+        }
+    </select>
+    <label for="idGenero">Genero</label>
+    <select formControlName="idGenero" id="idGenero">
+        <option [ngValue]="null">Elegí un genero</option>
+        @for (genero of generos(); track genero.idGenero) {
+        <option [ngValue]="genero.idGenero">{{ genero.nombre }}</option>
+        }
+    </select>
+    } @else {
+    @if (libroActual(); as l) {
+    <p>Autor/es: @for (a of l.autores; track $index) { {{ a.nombre }} {{ a.apellido }}{{ $last ? '' : ', ' }} }</p>
+    <p>Género/s: @for (g of l.generos; track $index) { {{ g.nombre }}{{ $last ? '' : ', ' }} }</p>
+    }
+    }
+
+    <button type="submit" [disabled]="formulario.invalid">Guardar</button>
+    @if (mensajeError()) { <p>{{ mensajeError() }}</p> }
+</form>

@@ -1,0 +1,28 @@
+.estrellas {
+  display: inline-flex;
+  gap: 0.15rem;
+}
+
+button {
+  padding: 0;
+  background: none;
+  border: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--design-accent);
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+button:not(:disabled):hover {
+  transform: scale(1.15);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--design-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

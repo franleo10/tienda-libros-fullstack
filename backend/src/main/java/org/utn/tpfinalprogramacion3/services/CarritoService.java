@@ -215,9 +215,11 @@ public class CarritoService {
             List<LibroCarritoDTO> librosDTO = carritoOpt.getLibros().stream()
                     .map(libro -> {
                         LibroCarritoDTO dto = new LibroCarritoDTO();
+                        dto.setIdLibro(libro.getIdLibro());
                         dto.setTitulo(libro.getTitulo());
                         dto.setPrecio(libro.getPrecio());
                         dto.setFechaLanzamiento(libro.getFecha_lanzamiento());
+                        dto.setUrlPortada(libro.getUrlPortada());
                         return dto;
                     })
                     .toList();
@@ -262,9 +264,11 @@ public class CarritoService {
         List<LibroCarritoDTO> librosDTO = carrito.getLibros().stream()
                 .map(libro -> {
                     LibroCarritoDTO dto = new LibroCarritoDTO();
+                    dto.setIdLibro(libro.getIdLibro());
                     dto.setTitulo(libro.getTitulo());
                     dto.setPrecio(libro.getPrecio());
                     dto.setFechaLanzamiento(libro.getFecha_lanzamiento());
+                    dto.setUrlPortada(libro.getUrlPortada());
                     return dto;
                 })
                 .toList();

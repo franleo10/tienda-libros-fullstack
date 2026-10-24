@@ -1,1 +1,38 @@
-<p>mi-biblioteca works!</p>
+<main class="biblioteca-page">
+  <h1>Mi biblioteca</h1>
+
+  @if (cargando()) {
+    <p class="estado" role="status">Cargando tu biblioteca...</p>
+  } @else if (mensajeError()) {
+    <p class="estado error" role="alert">{{ mensajeError() }}</p>
+  } @else if (libros().length === 0) {
+    <section class="vacio">
+      <p>Todavía no compraste ningún libro.</p>
+      <a class="boton-secundario" routerLink="/libros">Explorar libros</a>
+    </section>
+  } @else {
+    <p class="cantidad">
+      {{ libros().length }} {{ libros().length === 1 ? 'libro adquirido' : 'libros adquiridos' }}
+    </p>
+    <ul class="grilla">
+      @for (libro of libros(); track libro.idLibro) {
+        <li>
+          <a class="tarjeta" [routerLink]="['/libros', libro.idLibro]">
+            @if (libro.urlPortada) {
+              <img [src]="libro.urlPortada" [alt]="libro.titulo" class="portada" />
+            } @else {
+              <div class="portada" aria-hidden="true">{{ libro.titulo[0] }}</div>
+            }
+            <h2>{{ libro.titulo }}</h2>
+            @if (libro.autores.length > 0) {
+              <p class="autor">{{ nombreAutores(libro) }}</p>
+            }
+            @if (libro.esFavorito) {
+              <span class="favorito">★ Favorito</span>
+            }
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</main>

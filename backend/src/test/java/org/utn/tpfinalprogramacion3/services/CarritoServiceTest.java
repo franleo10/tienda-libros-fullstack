@@ -7,20 +7,28 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.utn.tpfinalprogramacion3.dtos.CarritoDTO2;
 import org.utn.tpfinalprogramacion3.dtos.LibroCarritoDTO;
+import org.utn.tpfinalprogramacion3.entities.BibliotecaEntity;
 import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
 import org.utn.tpfinalprogramacion3.entities.LibroEntity;
 import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
+import org.utn.tpfinalprogramacion3.repository.BibliotecaRepository;
 import org.utn.tpfinalprogramacion3.repository.CarritoRepository;
 import org.utn.tpfinalprogramacion3.repository.LibroRepository;
 import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
 import org.utn.tpfinalprogramacion3.security.entities.CredencialEntity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class CarritoServiceTest {
@@ -37,14 +45,10 @@ class CarritoServiceTest {
                 carritos,
                 mock(LibroRepository.class),
                 mock(UsuarioRepository.class),
-                new ModelMapper()
+                new ModelMapper(),
+                mock(BibliotecaRepository.class)
         );
-
-        CredencialEntity credencial = new CredencialEntity();
-        credencial.setId(7L);
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(credencial, null, List.of())
-        );
+        iniciarSesion(7L);
 
         UsuarioEntity usuario = new UsuarioEntity();
         usuario.setId(7);
@@ -71,6 +75,41 @@ class CarritoServiceTest {
         assertEquals("Rayuela", rayuela.getTitulo());
         assertEquals("https://covers.openlibrary.org/b/id/1-M.jpg", rayuela.getUrlPortada());
         assertEquals(15, dto.getLibros().get(1).getIdLibro());
+    }
+
+    @Test
+    void noSePuedeAgregarAlCarritoUnLibroQueYaEstaEnLaBiblioteca() {
+        CarritoRepository carritos = mock(CarritoRepository.class);
+        LibroRepository libros = mock(LibroRepository.class);
+        BibliotecaRepository bibliotecas = mock(BibliotecaRepository.class);
+        CarritoService service = new CarritoService(
+                carritos, libros, mock(UsuarioRepository.class), new ModelMapper(), bibliotecas
+        );
+        iniciarSesion(7L);
+
+        LibroEntity rayuela = libro(12, "Rayuela", 12500F, null);
+        CarritoEntity carrito = new CarritoEntity();
+        carrito.setLibros(new ArrayList<>());
+        BibliotecaEntity biblioteca = new BibliotecaEntity();
+        biblioteca.setLibros(new HashSet<>(Set.of(rayuela)));
+
+        when(carritos.findByUsuarioId(7)).thenReturn(Optional.of(carrito));
+        when(libros.findById(12)).thenReturn(Optional.of(rayuela));
+        when(bibliotecas.findByUsuarioId(7)).thenReturn(Optional.of(biblioteca));
+
+        IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
+                () -> service.agregarLibroAMiCarrito(12));
+
+        assertEquals("Ya tenés este libro en tu biblioteca", error.getMessage());
+        verify(carritos, never()).save(any());
+    }
+
+    private void iniciarSesion(long idCredencial) {
+        CredencialEntity credencial = new CredencialEntity();
+        credencial.setId(idCredencial);
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(credencial, null, List.of())
+        );
     }
 
     private LibroEntity libro(int id, String titulo, float precio, String urlPortada) {

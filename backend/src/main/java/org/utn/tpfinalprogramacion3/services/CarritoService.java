@@ -15,6 +15,7 @@ import org.utn.tpfinalprogramacion3.dtos.*;
 import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
 import org.utn.tpfinalprogramacion3.entities.LibroEntity;
 import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
+import org.utn.tpfinalprogramacion3.repository.BibliotecaRepository;
 import org.utn.tpfinalprogramacion3.repository.CarritoRepository;
 import org.utn.tpfinalprogramacion3.repository.LibroRepository;
 import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
@@ -33,13 +34,15 @@ public class CarritoService {
     private final LibroRepository libroRepository;
     private final UsuarioRepository usuarioRepository;
     private final ModelMapper modelMapper;
+    private final BibliotecaRepository bibliotecaRepository;
 
     @Autowired
-    public CarritoService(CarritoRepository carritoRepository, LibroRepository libroRepository, UsuarioRepository usuarioRepository, UsuarioService usuarioService, ModelMapper modelMapper) {
+    public CarritoService(CarritoRepository carritoRepository, LibroRepository libroRepository, UsuarioRepository usuarioRepository, UsuarioService usuarioService, ModelMapper modelMapper, BibliotecaRepository bibliotecaRepository) {
         this.carritoRepository = carritoRepository;
         this.libroRepository = libroRepository;
         this.usuarioRepository = usuarioRepository;
         this.modelMapper = modelMapper;
+        this.bibliotecaRepository = bibliotecaRepository;
     }
     @PreAuthorize("hasAuthority('VER_CARRITO')")
     public Optional<CarritoDTO> createCarrito(CarritoDTO carritoDTO, Integer idUsuario) {
@@ -153,6 +156,16 @@ public class CarritoService {
 
         if (yaEnCarrito) {
             throw new IllegalArgumentException("El libro ya está en el carrito");
+        }
+
+        // Validar que el usuario no haya comprado ya el libro
+        boolean yaComprado = bibliotecaRepository.findByUsuarioId(Math.toIntExact(userId))
+                .map(biblioteca -> biblioteca.getLibros() != null && biblioteca.getLibros().stream()
+                        .anyMatch(l -> l.getIdLibro() == idLibro))
+                .orElse(false);
+
+        if (yaComprado) {
+            throw new IllegalArgumentException("Ya tenés este libro en tu biblioteca");
         }
 
         // Agregar el libro

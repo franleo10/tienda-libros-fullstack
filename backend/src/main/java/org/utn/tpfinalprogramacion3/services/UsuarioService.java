@@ -9,11 +9,17 @@ import org.springframework.data.domain.Pageable;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import org.utn.tpfinalprogramacion3.Exceptions.NoHayUsuariosException;
 import org.utn.tpfinalprogramacion3.Exceptions.UsuarioActualmenteDadoDeAltaException;
 import org.utn.tpfinalprogramacion3.Exceptions.UsuarioActualmenteDadoDeBajaException;
 import org.utn.tpfinalprogramacion3.Exceptions.UsuarioInexistenteException;
+import org.utn.tpfinalprogramacion3.dtos.UsuarioAdminDTO;
 import org.utn.tpfinalprogramacion3.dtos.UsuarioCreateDTO;
 import org.utn.tpfinalprogramacion3.entities.BibliotecaEntity;
 import org.utn.tpfinalprogramacion3.entities.CarritoEntity;
@@ -37,6 +43,7 @@ public class UsuarioService {
         this.modelMapper = modelMapper;
     }
 
+    @PreAuthorize("hasAuthority('ELIMINAR_USUARIOS')")
     @Transactional
     public UsuarioCreateDTO createUsuario(UsuarioCreateDTO dto) {
         try {
@@ -65,6 +72,7 @@ public class UsuarioService {
         }
     }
 
+    @PreAuthorize("hasAuthority('ELIMINAR_USUARIOS')")
     public Page<UsuarioCreateDTO> findAll(int numeroPaginacion) {
 
         Pageable pageable = PageRequest.of(numeroPaginacion, 5);
@@ -82,6 +90,7 @@ public class UsuarioService {
         return new PageImpl<>(listaUsuariosDTO, pageable, paginaUsusarios.getTotalElements());
     }
 
+    @PreAuthorize("hasAuthority('ELIMINAR_USUARIOS')")
     public Page<UsuarioCreateDTO> findAllInactivos(int numeroPaginacion) {
 
         Pageable pageable = PageRequest.of(numeroPaginacion, 5);
@@ -99,6 +108,7 @@ public class UsuarioService {
         return new PageImpl<>(listaUsuariosDTO, pageable, paginaUsusarios.getTotalElements());
     }
 
+    @PreAuthorize("hasAuthority('ELIMINAR_USUARIOS')")
     public UsuarioCreateDTO findByNombre(String nombre) {
 
         UsuarioEntity usuarioBuscado = repository.findByNombre(nombre)
@@ -110,6 +120,7 @@ public class UsuarioService {
         return usuarioDTO;
     }
 
+    @PreAuthorize("hasAuthority('ELIMINAR_USUARIOS')")
     public String delete(int id) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("El usuario no existe");
@@ -119,6 +130,7 @@ public class UsuarioService {
         return "Usuario eliminado con exito";
     }
 
+    @PreAuthorize("hasAuthority('ELIMINAR_USUARIOS')")
     public String verificar_nombre(String nombre) {
         if (repository.existsByNombre(nombre)) {
             return "El usuario existe";
@@ -127,10 +139,15 @@ public class UsuarioService {
         }
     }
 
+    @PreAuthorize("hasAuthority('ELIMINAR_USUARIOS')")
     public String bajaUsuario(int idusuario) {
 
         if (!repository.existsById(idusuario)) {
             throw new UsuarioInexistenteException("No hay un usuario con el id indicado en el sistema");
+        }
+
+        if (idusuario == idUsuarioActual()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "No podés darte de baja a vos mismo.");
         }
 
         UsuarioEntity usuarioBuscado = repository.findById(idusuario).get();
@@ -146,6 +163,7 @@ public class UsuarioService {
         return "Usuario dado de baja existosamente";
     }
 
+    @PreAuthorize("hasAuthority('ELIMINAR_USUARIOS')")
     public String altaUsuario(int idusuario) {
 
         if (!repository.existsById(idusuario)) {
@@ -163,5 +181,45 @@ public class UsuarioService {
         repository.save(usuarioBuscado);
 
         return "Usuario dado de alta existosamente";
+    }
+
+    // Tabla del panel de admin: búsqueda por nombre o email, filtro por rol y por estado.
+    // A diferencia de findAll, filtra en la base para que la paginación sea correcta.
+    @PreAuthorize("hasAuthority('ELIMINAR_USUARIOS')")
+    public Page<UsuarioAdminDTO> listarParaAdmin(int numeroPagina, String busqueda, Rol rol, Boolean activo) {
+        String texto = (busqueda == null || busqueda.isBlank()) ? null : busqueda.trim();
+        Boolean esAdmin = rol == null ? null : rol == Rol.ADMINISTRADOR;
+
+        return repository.buscarParaAdmin(texto, activo, esAdmin, PageRequest.of(numeroPagina, 10))
+                .map(this::toAdminDTO);
+    }
+
+    private UsuarioAdminDTO toAdminDTO(UsuarioEntity usuario) {
+        return new UsuarioAdminDTO(
+                usuario.getId(),
+                usuario.getNombre(),
+                usuario.getEmail(),
+                rolDe(usuario),
+                usuario.isActivo());
+    }
+
+    // Si tiene el rol de administrador se muestra ese, si no el de usuario
+    private Rol rolDe(UsuarioEntity usuario) {
+        CredencialEntity credencial = usuario.getCredencialEntity();
+        if (credencial == null || credencial.getRoles() == null) {
+            return null;
+        }
+        boolean esAdmin = credencial.getRoles().stream()
+                .anyMatch(r -> r.getRole() == Rol.ADMINISTRADOR);
+        return esAdmin ? Rol.ADMINISTRADOR : Rol.USUARIO;
+    }
+
+    private int idUsuarioActual() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof CredencialEntity credencial)
+                || credencial.getUsuario() == null) {
+            return -1;
+        }
+        return credencial.getUsuario().getId();
     }
 }

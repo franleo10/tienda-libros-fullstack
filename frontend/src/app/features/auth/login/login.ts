@@ -25,7 +25,11 @@ export class Login {
     this.mensajeError.set('');
     this.auth.login(this.formulario.value.email!, this.formulario.value.password!).subscribe({
     next: (respuesta) => {this.cargando.set(false)},
-    error: (error) => { console.log('Login falló', error); this.cargando.set(false); this.mensajeError.set('No se pudo iniciar sesión. Revisá tu email y contraseña.')},
+    error: (error) => { console.log('Login falló', error); this.cargando.set(false); this.mensajeError.set(
+      // 403 = cuenta dada de baja por un administrador; el backend manda el motivo como texto
+      error.status === 403 && typeof error.error === 'string'
+        ? error.error
+        : 'No se pudo iniciar sesión. Revisá tu email y contraseña.')},
     });
   }
 

@@ -82,7 +82,12 @@ export const routes: Routes = [
   { path: 'perfil', component: Perfil },
   { path: 'perfil/editar', component: PerfilEditar },
   { path: 'perfil/cambiar-password', component: CambiarPassword },
-  { path: 'admin/usuarios', component: UsuarioTabla },
+  {
+    path: 'admin/usuarios',
+    component: UsuarioTabla,
+    canActivate: [permisoGuard],
+    data: { permiso: 'ELIMINAR_USUARIOS' },
+  },
   { path: '**', component: NotFound }
 
 ];

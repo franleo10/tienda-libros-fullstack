@@ -2,6 +2,7 @@ package org.utn.tpfinalprogramacion3.config;
 
 import org.apache.catalina.connector.Response;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -179,6 +180,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AutorExistenteException.class)
     public ResponseEntity<String> manejarAutorExistenteException(AutorExistenteException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    // Maneja el login de un usuario dado de baja. (403)
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<String> manejarCuentaDeshabilitada(DisabledException ex) {
+        return new ResponseEntity<>("Tu cuenta fue suspendida. Contactá a un administrador.", HttpStatus.FORBIDDEN);
     }
 
     // Maneja el caso en el que se quiera confirmar una compra cuyo pago no fue aprobado. (409)

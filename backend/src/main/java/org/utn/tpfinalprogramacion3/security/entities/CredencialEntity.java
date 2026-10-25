@@ -78,7 +78,8 @@ public class CredencialEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        // Un usuario dado de baja (baneado) no puede loguearse y sus tokens dejan de ser válidos
+        return usuario == null || usuario.isActivo();
     }
 
     @Override

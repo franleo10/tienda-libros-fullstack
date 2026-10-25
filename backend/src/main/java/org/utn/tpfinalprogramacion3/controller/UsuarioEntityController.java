@@ -14,7 +14,9 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.utn.tpfinalprogramacion3.dtos.UsuarioAdminDTO;
 import org.utn.tpfinalprogramacion3.dtos.UsuarioCreateDTO;
+import org.utn.tpfinalprogramacion3.enums.Rol;
 import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
 import org.utn.tpfinalprogramacion3.services.UsuarioService;
 
@@ -69,6 +71,23 @@ public class UsuarioEntityController {
     }
 
     @Operation(
+            summary = "Listar usuarios para el panel de administración",
+            description = "Devuelve una página de 10 usuarios con id, nombre, email, rol y estado. "
+                    + "Permite buscar por nombre o email y filtrar por rol y por estado (activo/inactivo).",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente"),
+                    @ApiResponse(responseCode = "403", description = "El usuario no tiene permiso para ver usuarios")
+            }
+    )
+    @GetMapping("/admin/listar/{numeroPagina}")
+    public ResponseEntity<Page<UsuarioAdminDTO>> listarUsuariosAdmin(@PathVariable int numeroPagina,
+                                                                     @RequestParam(required = false) String busqueda,
+                                                                     @RequestParam(required = false) Rol rol,
+                                                                     @RequestParam(required = false) Boolean activo) {
+        return ResponseEntity.ok(usuarioService.listarParaAdmin(numeroPagina, busqueda, rol, activo));
+    }
+
+    @Operation(
             summary = "Buscar usuario por nombre",
             description = "Busca y devuelve un usuario que coincida con el nombre proporcionado.",
             responses = {
@@ -98,13 +117,14 @@ public class UsuarioEntityController {
             summary = "Dar de baja a un usuario",
             description = "Cambia el estado del usuario a inactivo (baja lógica).",
             responses = {
-                    @ApiResponse(responseCode = "204", description = "Usuario dado de baja"),
-                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+                    @ApiResponse(responseCode = "200", description = "Usuario dado de baja"),
+                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+                    @ApiResponse(responseCode = "409", description = "El usuario ya estaba dado de baja o es el propio administrador")
             }
     )
     @PutMapping("/baja/{id}")
     public ResponseEntity<String> darDeBajaUsuario(@PathVariable int id) {
-        return new ResponseEntity<>(usuarioService.bajaUsuario(id), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(usuarioService.bajaUsuario(id), HttpStatus.OK);
     }
 
     @Operation(

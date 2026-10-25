@@ -1,1 +1,136 @@
-<p>usuario-tabla works!</p>
+<main class="usuarios-page">
+  <header class="page-header">
+    <p class="eyebrow">Administración</p>
+    <h1>Usuarios</h1>
+    <p>Buscá usuarios, filtralos por rol o estado y baneá a quien no deba usar la tienda.</p>
+  </header>
+
+  @if (mensajeResultado()) {
+    <p class="estado exito" role="status">{{ mensajeResultado() }}</p>
+  }
+  @if (mensajeAccionError()) {
+    <p class="estado error" role="alert">{{ mensajeAccionError() }}</p>
+  }
+
+  <form class="filtros" [formGroup]="filtros" (ngSubmit)="buscar()">
+    <div class="campo campo-busqueda">
+      <label for="buscar-usuario">Buscar por nombre o email</label>
+      <input
+        id="buscar-usuario"
+        type="search"
+        formControlName="busqueda"
+        placeholder="Ej.: ana@mail.com"
+      />
+    </div>
+    <div class="campo">
+      <label for="filtro-rol">Rol</label>
+      <select id="filtro-rol" formControlName="rol" (change)="buscar()">
+        <option value="">Todos</option>
+        <option value="ADMINISTRADOR">Administrador</option>
+        <option value="USUARIO">Usuario</option>
+      </select>
+    </div>
+    <div class="campo">
+      <label for="filtro-estado">Estado</label>
+      <select id="filtro-estado" formControlName="activo" (change)="buscar()">
+        <option value="">Todos</option>
+        <option value="true">Activos</option>
+        <option value="false">Baneados</option>
+      </select>
+    </div>
+    <div class="acciones-filtros">
+      <button type="submit" [disabled]="cargando()">Buscar</button>
+      @if (hayFiltros()) {
+        <button type="button" class="secondary" [disabled]="cargando()" (click)="limpiarFiltros()">
+          Limpiar
+        </button>
+      }
+    </div>
+  </form>
+
+  @if (cargando() && usuarios().length === 0) {
+    <p class="estado" role="status">Cargando usuarios...</p>
+  } @else if (mensajeError()) {
+    <p class="estado error" role="alert">{{ mensajeError() }}</p>
+  } @else if (usuarios().length === 0) {
+    <p class="estado">No se encontraron usuarios con esos filtros.</p>
+  } @else {
+    <p class="resumen">
+      {{ totalUsuarios() }} {{ totalUsuarios() === 1 ? 'usuario' : 'usuarios' }}
+    </p>
+    <div class="tabla-contenedor">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Email</th>
+            <th scope="col">Rol</th>
+            <th scope="col">Estado</th>
+            <th scope="col"><span class="visualmente-oculto">Acciones</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (usuario of usuarios(); track usuario.id) {
+            <tr [class.inactivo]="!usuario.activo">
+              <td class="nombre">{{ usuario.nombre }}</td>
+              <td class="email">{{ usuario.email }}</td>
+              <td>
+                <span class="etiqueta" [class.admin]="usuario.rol === 'ADMINISTRADOR'">
+                  {{ usuario.rol === 'ADMINISTRADOR' ? 'Administrador' : 'Usuario' }}
+                </span>
+              </td>
+              <td>
+                <span class="etiqueta" [class.activo]="usuario.activo" [class.baneado]="!usuario.activo">
+                  {{ usuario.activo ? 'Activo' : 'Baneado' }}
+                </span>
+              </td>
+              <td class="acciones">
+                @if (usuario.activo) {
+                  <button
+                    type="button"
+                    class="banear"
+                    [disabled]="usuarioProcesando() !== null"
+                    (click)="banear(usuario)"
+                  >
+                    {{ usuarioProcesando() === usuario.id ? 'Procesando...' : 'Banear' }}
+                  </button>
+                } @else {
+                  <button
+                    type="button"
+                    class="reactivar"
+                    [disabled]="usuarioProcesando() !== null"
+                    (click)="reactivar(usuario)"
+                  >
+                    {{ usuarioProcesando() === usuario.id ? 'Procesando...' : 'Reactivar' }}
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (totalPaginas() > 1) {
+      <nav class="paginacion" aria-label="Paginación de usuarios">
+        <button
+          type="button"
+          class="secondary"
+          [disabled]="paginaActual() === 0 || cargando()"
+          (click)="cambiarPagina(paginaActual() - 1)"
+        >
+          Anterior
+        </button>
+        <span>Página {{ paginaActual() + 1 }} de {{ totalPaginas() }}</span>
+        <button
+          type="button"
+          class="secondary"
+          [disabled]="paginaActual() + 1 >= totalPaginas() || cargando()"
+          (click)="cambiarPagina(paginaActual() + 1)"
+        >
+          Siguiente
+        </button>
+      </nav>
+    }
+  }
+</main>

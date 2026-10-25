@@ -1,1 +1,65 @@
-<p>historial-compras works!</p>
+<main class="compras-page">
+  <header class="page-header">
+    <h1>Mis compras</h1>
+    <p>Todas tus compras, de la más reciente a la más antigua.</p>
+  </header>
+
+  @if (cargando()) {
+    <p class="estado" role="status">Cargando tus compras...</p>
+  } @else if (mensajeError()) {
+    <p class="estado error" role="alert">{{ mensajeError() }}</p>
+  } @else if (compras().length === 0) {
+    <section class="vacio">
+      <h2>Todavía no hiciste ninguna compra</h2>
+      <p>Cuando compres un libro lo vas a ver acá, junto con su factura.</p>
+      <a class="boton-principal" routerLink="/libros">Explorar libros</a>
+    </section>
+  } @else {
+    <ul class="lista-compras">
+      @for (compra of compras(); track compra.idFactura) {
+        <li>
+          <a class="compra" [routerLink]="['/compras', compra.idFactura]">
+            <div class="compra-info">
+              <p class="fecha">
+                <time [attr.datetime]="compra.fechaCompra">
+                  {{ compra.fechaCompra | date: 'dd/MM/yyyy HH:mm' }}
+                </time>
+              </p>
+              <p class="libros">{{ resumirLibros(compra.titulosLibrosComprados) }}</p>
+              <p class="meta">
+                Compra N.º {{ compra.idFactura }} ·
+                {{ compra.titulosLibrosComprados.length }}
+                {{ compra.titulosLibrosComprados.length === 1 ? 'libro' : 'libros' }}
+              </p>
+            </div>
+            <div class="compra-total">
+              <span class="etiqueta-estado">Aprobada</span>
+              <strong>{{ formatearPrecio(compra.monto) }}</strong>
+              <span class="ver-detalle">Ver detalle →</span>
+            </div>
+          </a>
+        </li>
+      }
+    </ul>
+
+    @if (totalPaginas() > 1) {
+      <nav class="paginacion" aria-label="Paginación de compras">
+        <button
+          type="button"
+          [disabled]="paginaActual() === 0"
+          (click)="cambiarPagina(paginaActual() - 1)"
+        >
+          Anterior
+        </button>
+        <span>Página {{ paginaActual() + 1 }} de {{ totalPaginas() }}</span>
+        <button
+          type="button"
+          [disabled]="paginaActual() + 1 >= totalPaginas()"
+          (click)="cambiarPagina(paginaActual() + 1)"
+        >
+          Siguiente
+        </button>
+      </nav>
+    }
+  }
+</main>

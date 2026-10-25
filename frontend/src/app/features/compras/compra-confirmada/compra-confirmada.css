@@ -114,6 +114,13 @@
   background: var(--design-primary-hover);
 }
 
+.enlace-factura {
+  display: block;
+  margin-top: 0.9rem;
+  color: var(--design-primary);
+  font-weight: 700;
+}
+
 .boton-principal:focus-visible {
   outline: 3px solid var(--design-focus);
   outline-offset: 3px;

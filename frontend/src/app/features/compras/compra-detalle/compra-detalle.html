@@ -1,1 +1,55 @@
-<p>compra-detalle works!</p>
+<main class="detalle-page">
+  <a class="volver" routerLink="/compras">← Mis compras</a>
+
+  @if (cargando()) {
+    <p class="estado" role="status">Cargando la compra...</p>
+  } @else if (mensajeError()) {
+    <p class="estado error" role="alert">{{ mensajeError() }}</p>
+  } @else if (compra(); as c) {
+    <article class="factura">
+      <header class="factura-header">
+        <div>
+          <p class="tienda">Tienda de Libros</p>
+          <h1>Factura N.º {{ c.idFactura }}</h1>
+        </div>
+        <span class="etiqueta-estado">Aprobada</span>
+      </header>
+
+      <dl class="datos">
+        <div>
+          <dt>Fecha</dt>
+          <dd>{{ c.fechaCompra | date: 'dd/MM/yyyy HH:mm' }}</dd>
+        </div>
+        <div>
+          <dt>Medio de pago</dt>
+          <dd>{{ nombreMetodoPago(c.metodoPago) }}</dd>
+        </div>
+        @if (c.idPago) {
+          <div>
+            <dt>Operación MercadoPago</dt>
+            <dd>{{ c.idPago }}</dd>
+          </div>
+        }
+      </dl>
+
+      <h2>Libros comprados</h2>
+      <ul class="items">
+        @for (titulo of c.titulosLibrosComprados; track $index) {
+          <li>{{ titulo }}</li>
+        }
+      </ul>
+
+      <p class="total">
+        <span>Total pagado</span>
+        <strong>{{ formatearPrecio(c.monto) }}</strong>
+      </p>
+
+      <div class="acciones">
+        <button type="button" class="boton-principal" (click)="imprimirFactura()">
+          Descargar factura
+        </button>
+        <a class="boton-secundario" routerLink="/mi-biblioteca">Ir a mi biblioteca</a>
+      </div>
+    </article>
+  }
+</main>

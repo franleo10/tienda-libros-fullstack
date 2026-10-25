@@ -2,19 +2,10 @@ import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { FacturaDato } from '../../../models/factura';
+import { FacturaDato, nombreMetodoPago } from '../../../models/factura';
 import { Pago } from '../../../services/pago';
 
 type Estado = 'confirmando' | 'confirmada' | 'pendiente' | 'sin-pago' | 'error';
-
-const METODOS_DE_PAGO: Record<string, string> = {
-  credit_card: 'Tarjeta de crédito',
-  debit_card: 'Tarjeta de débito',
-  prepaid_card: 'Tarjeta prepaga',
-  account_money: 'Dinero en cuenta de MercadoPago',
-  ticket: 'Pago en efectivo',
-  bank_transfer: 'Transferencia bancaria',
-};
 
 @Component({
   selector: 'app-compra-confirmada',
@@ -76,7 +67,5 @@ export class CompraConfirmada implements OnInit {
     return this.formateadorPrecio.format(precio);
   }
 
-  protected nombreMetodoPago(metodo: string) {
-    return METODOS_DE_PAGO[metodo] ?? metodo;
-  }
+  protected readonly nombreMetodoPago = nombreMetodoPago;
 }

@@ -2,7 +2,6 @@ package org.utn.tpfinalprogramacion3.services;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -10,6 +9,7 @@ import org.utn.tpfinalprogramacion3.Exceptions.BibliotecaNoEncontradaException;
 import org.utn.tpfinalprogramacion3.Exceptions.LibroInexistenteException;
 import org.utn.tpfinalprogramacion3.Exceptions.UsuarioInexistenteException;
 import org.utn.tpfinalprogramacion3.dtos.AgregarLibroDTO;
+import org.utn.tpfinalprogramacion3.dtos.AutorDTO;
 import org.utn.tpfinalprogramacion3.dtos.BibliotecaDTO;
 import org.utn.tpfinalprogramacion3.dtos.LibroBibliotecaDTO;
 import org.utn.tpfinalprogramacion3.dtos.LibroDTO;
@@ -32,8 +32,6 @@ public class BibliotecaService {
     private final BibliotecaRepository bibliotecaRepository;
     private final UsuarioRepository usuarioRepository;
     private final LibroRepository libroRepository;
-    @Autowired
-    private OpenLibraryService openLibraryService;
 
     public void agregarLibro(AgregarLibroDTO dto) {
         UsuarioEntity usuario = usuarioRepository.findById(dto.getIdUsuario())
@@ -157,15 +155,26 @@ public class BibliotecaService {
 
     private LibroBibliotecaDTO toLibroDTO(BibliotecaEntity biblioteca,LibroEntity entity) {
 
-        String urlPdf = openLibraryService.obtenerUrlLibroPorTitulo(entity.getTitulo()).block();
+        // urlPdf se guarda en el libro al comprarlo (CompraService), no hace falta consultar OpenLibrary acá
+        boolean esFavorito = biblioteca.getLibrosFavoritos() != null
+                && biblioteca.getLibrosFavoritos().contains(entity);
 
-        boolean esFavorito = biblioteca.getLibrosFavoritos().contains(entity);
+        List<AutorDTO> autores = entity.getAutores().stream()
+                .map(autor -> {
+                    AutorDTO autorDTO = new AutorDTO();
+                    autorDTO.setNombre(autor.getNombre());
+                    autorDTO.setApellido(autor.getApellido());
+                    return autorDTO;
+                })
+                .toList();
 
         return LibroBibliotecaDTO.builder()
                 .idLibro(entity.getIdLibro())
                 .titulo(entity.getTitulo())
                 .precio(entity.getPrecio())
-                .urlPdf(urlPdf)
+                .urlPdf(entity.getUrlPdf())
+                .urlPortada(entity.getUrlPortada())
+                .autores(autores)
                 .esFavorito(esFavorito)
                 .build();
     }

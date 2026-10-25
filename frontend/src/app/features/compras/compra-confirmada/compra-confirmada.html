@@ -1,1 +1,66 @@
-<p>compra-confirmada works!</p>
+<main class="confirmacion-page">
+  @switch (estado()) {
+    @case ('confirmando') {
+      <p class="estado" role="status">Confirmando tu compra...</p>
+    }
+
+    @case ('confirmada') {
+      @if (factura(); as f) {
+        <section class="tarjeta exito">
+          <p class="icono" aria-hidden="true">✓</p>
+          <h1>¡Gracias por tu compra!</h1>
+          <p class="subtitulo">Tus libros ya están disponibles en tu biblioteca.</p>
+
+          <dl class="datos">
+            <div>
+              <dt>Factura</dt>
+              <dd>N.º {{ f.idFactura }}</dd>
+            </div>
+            <div>
+              <dt>Fecha</dt>
+              <dd>{{ f.fechaCompra | date: 'dd/MM/yyyy HH:mm' }}</dd>
+            </div>
+            <div>
+              <dt>Medio de pago</dt>
+              <dd>{{ nombreMetodoPago(f.metodoPago) }}</dd>
+            </div>
+          </dl>
+
+          <h2>Resumen del pedido</h2>
+          <ul class="libros">
+            @for (titulo of f.titulosLibrosComprados; track titulo) {
+              <li>{{ titulo }}</li>
+            }
+          </ul>
+          <p class="total">Total pagado: <strong>{{ formatearPrecio(f.monto) }}</strong></p>
+
+          <a class="boton-principal" routerLink="/mi-biblioteca">Ir a mi biblioteca</a>
+        </section>
+      }
+    }
+
+    @case ('pendiente') {
+      <section class="tarjeta aviso">
+        <h1>Tu compra no se completó</h1>
+        <p role="alert">{{ mensaje() }}</p>
+        <a class="boton-principal" routerLink="/carrito">Volver al carrito</a>
+      </section>
+    }
+
+    @case ('sin-pago') {
+      <section class="tarjeta aviso">
+        <h1>No encontramos un pago</h1>
+        <p>No recibimos los datos de ningún pago. Si no llegaste a pagar, tus libros siguen en el carrito.</p>
+        <a class="boton-principal" routerLink="/carrito">Ir al carrito</a>
+      </section>
+    }
+
+    @case ('error') {
+      <section class="tarjeta aviso">
+        <h1>No pudimos confirmar tu compra</h1>
+        <p role="alert">{{ mensaje() }}</p>
+        <a class="boton-principal" routerLink="/mi-biblioteca">Ir a mi biblioteca</a>
+      </section>
+    }
+  }
+</main>

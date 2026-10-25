@@ -1,1 +1,49 @@
-<p>carrito works!</p>
+<main class="carrito-page">
+  <h1>Mi carrito</h1>
+
+  @if (cargando()) {
+    <p class="estado" role="status">Cargando carrito...</p>
+  } @else if (mensajeError()) {
+    <p class="estado error" role="alert">{{ mensajeError() }}</p>
+  } @else if (libros().length === 0) {
+    <section class="vacio">
+      <p>Tu carrito está vacío.</p>
+      <a class="boton-secundario" routerLink="/libros">Ver libros</a>
+    </section>
+  } @else {
+    @if (mensajeErrorQuitar()) {
+      <p class="estado error" role="alert">{{ mensajeErrorQuitar() }}</p>
+    }
+
+    <ul class="items">
+      @for (libro of libros(); track libro.idLibro) {
+        <li class="item">
+          @if (libro.urlPortada) {
+            <img [src]="libro.urlPortada" [alt]="libro.titulo" class="portada" />
+          } @else {
+            <div class="portada" aria-hidden="true">{{ libro.titulo[0] }}</div>
+          }
+          <a class="titulo" [routerLink]="['/libros', libro.idLibro]">{{ libro.titulo }}</a>
+          <span class="precio">{{ formatearPrecio(libro.precio) }}</span>
+          <button
+            type="button"
+            class="quitar"
+            [disabled]="libroQuitando() !== null"
+            [attr.aria-label]="'Quitar ' + libro.titulo + ' del carrito'"
+            (click)="quitar(libro)"
+          >
+            {{ libroQuitando() === libro.idLibro ? 'Quitando...' : 'Quitar' }}
+          </button>
+        </li>
+      }
+    </ul>
+
+    <section class="resumen">
+      <p class="total">
+        Total ({{ libros().length }} {{ libros().length === 1 ? 'libro' : 'libros' }}):
+        <strong>{{ formatearPrecio(total()) }}</strong>
+      </p>
+      <a class="boton-pagar" routerLink="/checkout">Ir a pagar</a>
+    </section>
+  }
+</main>

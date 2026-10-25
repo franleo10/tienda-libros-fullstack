@@ -38,8 +38,8 @@ public class FacturaService {
     private final CarritoRepository carritoRepository;
     private final ModelMapper modelMapper;
 
-    public void generarFactura(Double monto, String externalReference, String metodoPago, Integer idUsuario,
-            List<String> titulosLibros) {
+    public FacturaEntity generarFactura(Double monto, String externalReference, String metodoPago, Integer idUsuario,
+            List<String> titulosLibros, Long idPago) {
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + idUsuario));
 
@@ -47,18 +47,19 @@ public class FacturaService {
         List<String> titulosUnicos = titulosLibros.stream()
                 .distinct()
                 .toList();
-        String librosStr = String.join(", ", titulosLibros);
+        String librosStr = String.join(", ", titulosUnicos);
 
         FacturaEntity factura = FacturaEntity.builder()
                 .monto(monto)
                 .fechaCompra(LocalDateTime.now())
                 .metodoPago(metodoPago)
                 .externalReference(externalReference)
+                .idPago(idPago)
                 .usuario(usuario)
                 .librosComprados(librosStr)
                 .build();
 
-        facturaRepository.save(factura);
+        return facturaRepository.save(factura);
     }
 
     @PreAuthorize("hasAuthority('VER_SU_FACTURA')")

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @Data
 @Builder
@@ -17,6 +19,8 @@ public class LibroBibliotecaDTO {
         private String titulo;
         private Float precio;
         private String urlPdf;
+        private String urlPortada;
+        private List<AutorDTO> autores;
         private boolean esFavorito;
 
 

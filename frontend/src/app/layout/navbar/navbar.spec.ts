@@ -40,27 +40,55 @@ describe('Navbar', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('muestra Admin Usuarios a quien puede administrar usuarios', () => {
+  const botonAdmin = (): HTMLButtonElement | null =>
+    fixture.nativeElement.querySelector('button.admin-toggle');
+
+  it('agrupa las opciones de admin en un desplegable', () => {
     crear('token-admin');
     httpTesting.expectOne('http://localhost:8080/me/permisos').flush(['ELIMINAR_USUARIOS']);
     fixture.detectChanges();
 
+    expect(botonAdmin()).not.toBeNull();
+    expect(linkUsuarios()).toBeNull();
+
+    botonAdmin()!.click();
+    fixture.detectChanges();
+
+    expect(botonAdmin()!.getAttribute('aria-expanded')).toBe('true');
     expect(linkUsuarios()).not.toBeNull();
     expect(fixture.nativeElement.querySelector('a[href="/admin/libros"]')).toBeNull();
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    fixture.detectChanges();
+
+    expect(linkUsuarios()).toBeNull();
   });
 
-  it('oculta Admin Usuarios a un usuario común', () => {
+  it('cierra el desplegable al hacer clic afuera', () => {
+    crear('token-admin');
+    httpTesting.expectOne('http://localhost:8080/me/permisos').flush(['ELIMINAR_USUARIOS']);
+    fixture.detectChanges();
+
+    botonAdmin()!.click();
+    fixture.detectChanges();
+    document.body.click();
+    fixture.detectChanges();
+
+    expect(linkUsuarios()).toBeNull();
+  });
+
+  it('no muestra el desplegable Admin a un usuario común', () => {
     crear('token-usuario');
     httpTesting.expectOne('http://localhost:8080/me/permisos').flush(['VER_LIBROS', 'VER_CARRITO']);
     fixture.detectChanges();
 
-    expect(linkUsuarios()).toBeNull();
+    expect(botonAdmin()).toBeNull();
   });
 
   it('no consulta permisos ni muestra links de admin sin sesión', () => {
     crear(null);
 
     httpTesting.expectNone('http://localhost:8080/me/permisos');
-    expect(linkUsuarios()).toBeNull();
+    expect(botonAdmin()).toBeNull();
   });
 });

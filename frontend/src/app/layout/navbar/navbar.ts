@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { catchError, of, switchMap } from 'rxjs';
@@ -14,6 +14,7 @@ import { Permisos } from '../../core/services/permisos';
 export class Navbar {
   private auth = inject(Auth);
   private permisosService = inject(Permisos);
+  private elemento = inject<ElementRef<HTMLElement>>(ElementRef);
   protected readonly sesionIniciada = computed(() => this.auth.token() !== null);
   protected readonly menuAbierto = signal(false);
 
@@ -33,12 +34,41 @@ export class Navbar {
   protected readonly puedeAdministrarUsuarios = computed(() =>
     this.permisos().includes('ELIMINAR_USUARIOS')
   );
+  // El desplegable Admin aparece si el usuario tiene al menos una de las opciones
+  protected readonly esAdmin = computed(
+    () =>
+      this.puedeAdministrarLibros() || this.puedeAgregarAutores() || this.puedeAdministrarUsuarios()
+  );
+  protected readonly adminAbierto = signal(false);
 
   salir() {
+    this.cerrarMenus();
     this.auth.logout();
   }
 
   alternarMenu(){
     this.menuAbierto.update(valorActual => !valorActual);
+  }
+
+  alternarAdmin() {
+    this.adminAbierto.update((abierto) => !abierto);
+  }
+
+  cerrarMenus() {
+    this.adminAbierto.set(false);
+    this.menuAbierto.set(false);
+  }
+
+  // Cierra el desplegable al hacer clic fuera de él o al apretar Escape
+  @HostListener('document:click', ['$event'])
+  alHacerClicAfuera(evento: MouseEvent) {
+    if (!this.elemento.nativeElement.querySelector('.admin')?.contains(evento.target as Node)) {
+      this.adminAbierto.set(false);
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  alApretarEscape() {
+    this.adminAbierto.set(false);
   }
 }

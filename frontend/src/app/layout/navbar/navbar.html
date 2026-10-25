@@ -9,17 +9,35 @@
     <a routerLink="/mi-biblioteca">Biblioteca</a>
     <a routerLink="/perfil">Perfil</a>
 
-@if(puedeAdministrarLibros()){
-    <a routerLink="/admin/libros">Admin Libros</a>
-}
-@if(puedeAgregarAutores()){
-    <a routerLink="/admin/autores/nuevo">Admin Autores</a>
-}
-@if(puedeAdministrarUsuarios()){
-    <a routerLink="/admin/usuarios">Admin Usuarios</a>
+@if(esAdmin()){
+    <div class="admin">
+      <button
+        type="button"
+        class="admin-toggle"
+        aria-haspopup="true"
+        aria-controls="menu-admin"
+        [attr.aria-expanded]="adminAbierto()"
+        (click)="alternarAdmin()"
+      >
+        Admin <span class="flecha" aria-hidden="true">▾</span>
+      </button>
+      @if(adminAbierto()){
+        <div class="admin-menu" id="menu-admin" (click)="cerrarMenus()">
+          @if(puedeAdministrarLibros()){
+            <a routerLink="/admin/libros">Libros</a>
+          }
+          @if(puedeAgregarAutores()){
+            <a routerLink="/admin/autores/nuevo">Nuevo autor</a>
+          }
+          @if(puedeAdministrarUsuarios()){
+            <a routerLink="/admin/usuarios">Usuarios</a>
+          }
+        </div>
+      }
+    </div>
 }
 
-    <button (click)="salir()">Salir</button>
+    <button class="salir" (click)="salir()">Salir</button>
 }@else{
 
     <a routerLink="/registro">Registrarse</a>

@@ -17,6 +17,8 @@ public class FacturaResponseDTO {
     private LocalDateTime fechaCompra;
     private String metodoPago;
     private String externalReference;
+    // Número de operación de MercadoPago
+    private Long idPago;
 
     private Integer idUsuario;
 

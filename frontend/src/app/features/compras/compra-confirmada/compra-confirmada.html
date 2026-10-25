@@ -35,6 +35,7 @@
           <p class="total">Total pagado: <strong>{{ formatearPrecio(f.monto) }}</strong></p>
 
           <a class="boton-principal" routerLink="/mi-biblioteca">Ir a mi biblioteca</a>
+          <a class="enlace-factura" [routerLink]="['/compras', f.idFactura]">Ver la factura</a>
         </section>
       }
     }

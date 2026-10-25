@@ -8,14 +8,18 @@
     <a routerLink="/carrito">Carrito</a>
     <a routerLink="/mi-biblioteca">Biblioteca</a>
     <a routerLink="/perfil">Perfil</a>
-    <button (click)="salir()">Salir</button>
 
-@if(esAdmin()){
-
+@if(puedeAdministrarLibros()){
     <a routerLink="/admin/libros">Admin Libros</a>
+}
+@if(puedeAgregarAutores()){
     <a routerLink="/admin/autores/nuevo">Admin Autores</a>
+}
+@if(puedeAdministrarUsuarios()){
     <a routerLink="/admin/usuarios">Admin Usuarios</a>
 }
+
+    <button (click)="salir()">Salir</button>
 }@else{
 
     <a routerLink="/registro">Registrarse</a>

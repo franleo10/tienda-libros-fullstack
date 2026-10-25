@@ -4,6 +4,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,8 +41,8 @@ public class FacturaService {
     private final CarritoRepository carritoRepository;
     private final ModelMapper modelMapper;
 
-    public void generarFactura(Double monto, String externalReference, String metodoPago, Integer idUsuario,
-            List<String> titulosLibros) {
+    public FacturaEntity generarFactura(Double monto, String externalReference, String metodoPago, Integer idUsuario,
+            List<String> titulosLibros, Long idPago) {
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + idUsuario));
 
@@ -47,39 +50,45 @@ public class FacturaService {
         List<String> titulosUnicos = titulosLibros.stream()
                 .distinct()
                 .toList();
-        String librosStr = String.join(", ", titulosLibros);
+        String librosStr = String.join(", ", titulosUnicos);
 
         FacturaEntity factura = FacturaEntity.builder()
                 .monto(monto)
                 .fechaCompra(LocalDateTime.now())
                 .metodoPago(metodoPago)
                 .externalReference(externalReference)
+                .idPago(idPago)
                 .usuario(usuario)
                 .librosComprados(librosStr)
                 .build();
 
-        facturaRepository.save(factura);
+        return facturaRepository.save(factura);
     }
 
+    // Historial de compras del usuario logueado, de la más reciente a la más antigua.
+    // Si no compró nada devuelve una página vacía (la pantalla muestra "todavía no compraste").
     @PreAuthorize("hasAuthority('VER_SU_FACTURA')")
     public Page<FacturaResponseDTO> obtenerFacturasPorUsuario(int numeroPaginacion) {
+        Pageable pageable = PageRequest.of(numeroPaginacion, 10,
+                Sort.by(Sort.Direction.DESC, "fechaCompra").and(Sort.by(Sort.Direction.DESC, "idFactura")));
 
-        // Obtener ID del usuario logueado desde el token
+        return facturaRepository.findByUsuarioId(idUsuarioActual(), pageable)
+                .map(this::mapFacturaToDTO);
+    }
+
+    // Detalle de una compra. Si la factura es de otro usuario responde lo mismo que si no existiera.
+    @PreAuthorize("hasAuthority('VER_SU_FACTURA')")
+    public FacturaResponseDTO obtenerFacturaPropia(int idFactura) {
+        return facturaRepository.findById(idFactura)
+                .filter(factura -> factura.getUsuario().getId() == idUsuarioActual())
+                .map(this::mapFacturaToDTO)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No encontramos esa compra."));
+    }
+
+    private int idUsuarioActual() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CredencialEntity credencial = (CredencialEntity) authentication.getPrincipal();
-        Long userId = credencial.getId();
-
-        Pageable pageable = PageRequest.of(numeroPaginacion, 5);
-        Page<FacturaEntity> paginaFacturas = facturaRepository.findByUsuarioId(Math.toIntExact(userId), pageable);
-
-        if (paginaFacturas.isEmpty()) {
-            throw new NoHayFacturasException("El usuario no tiene facturas.");
-        }
-
-        List<FacturaResponseDTO> listaFacturasDTO = paginaFacturas.getContent().stream()
-                .map(this::mapFacturaToDTO)
-                .toList();
-        return new PageImpl<>(listaFacturasDTO, pageable, paginaFacturas.getTotalElements());
+        return credencial.getUsuario().getId();
     }
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
@@ -127,6 +136,7 @@ public class FacturaService {
                 .fechaCompra(factura.getFechaCompra())
                 .metodoPago(factura.getMetodoPago())
                 .externalReference(factura.getExternalReference())
+                .idPago(factura.getIdPago())
                 .idUsuario(idUsuario)
                 .titulosLibrosComprados(titulosLibrosComprados)
                 .build();

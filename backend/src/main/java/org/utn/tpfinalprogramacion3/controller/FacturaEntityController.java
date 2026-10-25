@@ -36,6 +36,14 @@ public class FacturaEntityController {
         return ResponseEntity.ok(facturaService.obtenerFacturasPorUsuario(numeroPaginacion));
     }
 
+    @Operation(summary = "Detalle de una compra del usuario", description = "Devuelve la factura indicada si pertenece al usuario autenticado; si no existe o es de otro usuario responde 404.")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FacturaResponseDTO.class)))
+    @ApiResponse(responseCode = "404", description = "La compra no existe o no pertenece al usuario")
+    @GetMapping("/{idFactura}")
+    public ResponseEntity<FacturaResponseDTO> obtenerFacturaPropia(@PathVariable int idFactura) {
+        return ResponseEntity.ok(facturaService.obtenerFacturaPropia(idFactura));
+    }
+
     @Operation(summary = "Obtener facturas paginadas por usuario (Admin)", description = "Obtiene una página de facturas asociadas a un usuario específico, indicado por su ID, para uso administrativo.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Page.class)))
     @GetMapping("/usuario/{idUsuario}/pag/{numeroPaginacion}")

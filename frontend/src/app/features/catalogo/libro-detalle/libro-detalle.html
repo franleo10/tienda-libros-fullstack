@@ -14,9 +14,13 @@
     <p class="sinopsis">{{ l.sinopsis }}</p>
     <p class="precio">$ {{ l.precio }}</p>
 
-    <button (click)="agregarAlCarrito()">Agregar al carrito</button>
-    @if (mensajeCarrito()) {
-      <p class="mensaje">{{ mensajeCarrito() }}</p>
+    @if (yaComprado()) {
+      <p class="ya-comprado">Ya tenés este libro. <a routerLink="/mi-biblioteca">Ver en mi biblioteca</a></p>
+    } @else {
+      <button (click)="agregarAlCarrito()">Agregar al carrito</button>
+      @if (mensajeCarrito()) {
+        <p class="mensaje">{{ mensajeCarrito() }}</p>
+      }
     }
   </div>
 
@@ -25,6 +29,3 @@
 
 @if (cargando()) { <p>Cargando...</p> }
 @if (mensajeError()) { <p class="mensaje-error">{{ mensajeError() }}</p> }
-
-@if (cargando()) { <p>Cargando...</p> }
-@if (mensajeError()) { <p>{{ mensajeError() }}</p> }

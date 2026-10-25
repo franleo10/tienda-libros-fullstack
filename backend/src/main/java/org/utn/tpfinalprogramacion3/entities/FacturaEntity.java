@@ -31,6 +31,10 @@ public class FacturaEntity {
     @Column(name = "external_reference", nullable = false, length = 100)
     private String externalReference;
 
+    // Id del pago en MercadoPago: evita facturar dos veces el mismo pago (webhook + confirmación)
+    @Column(name = "id_pago", unique = true)
+    private Long idPago;
+
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
     private UsuarioEntity usuario;

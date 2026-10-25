@@ -79,6 +79,22 @@ button:hover {
   color: var(--design-success);
 }
 
+.ya-comprado {
+  display: inline-block;
+  margin: 0;
+  padding: 0.7rem 1rem;
+  border: 1px solid #c6e5d1;
+  border-radius: var(--design-radius-control);
+  background: #f1fbf4;
+  color: var(--design-success);
+  font-weight: 600;
+}
+
+.ya-comprado a {
+  margin-left: 0.25rem;
+  color: var(--design-primary);
+}
+
 .mensaje-error {
   max-width: 900px;
   margin: 2rem auto;

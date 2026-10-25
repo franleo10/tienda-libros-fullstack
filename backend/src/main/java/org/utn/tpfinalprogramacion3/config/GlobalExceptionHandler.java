@@ -188,6 +188,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>("Tu cuenta fue suspendida. Contactá a un administrador.", HttpStatus.FORBIDDEN);
     }
 
+    // Maneja el caso en el que se quiera confirmar una compra cuyo pago no fue aprobado. (409)
+    @ExceptionHandler(PagoNoAprobadoException.class)
+    public ResponseEntity<String> manejarPagoNoAprobado(PagoNoAprobadoException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<?> handleAuthorizationDenied(AuthorizationDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)

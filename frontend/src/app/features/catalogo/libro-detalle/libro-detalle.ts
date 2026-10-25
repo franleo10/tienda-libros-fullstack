@@ -3,10 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { Libro } from '../../../services/libro';
 import { LibroDato } from '../../../models/libro';
 import { Carrito } from '../../../services/carrito';
+import { Biblioteca } from '../../../services/biblioteca';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-libro-detalle',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './libro-detalle.html',
   styleUrl: './libro-detalle.css',
 })
@@ -15,13 +17,23 @@ export class LibroDetalle implements OnInit {
   private route = inject(ActivatedRoute);
   private carritoService = inject(Carrito);
   private readonly libroService = inject(Libro);
+  private readonly bibliotecaService = inject(Biblioteca);
   protected readonly libro = signal<LibroDato | null>(null);
+  protected readonly yaComprado = signal(false);
   protected readonly cargando = signal(true);
   protected readonly mensajeError = signal('');
   protected readonly mensajeCarrito = signal('');
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+
+    // Si el libro ya está en la biblioteca del usuario, no se ofrece agregarlo al carrito.
+    // Si falla la consulta se muestra el botón igual: el backend rechaza agregar un libro ya comprado.
+    this.bibliotecaService.obtenerMiBiblioteca().subscribe({
+      next: (biblioteca) => this.yaComprado.set(biblioteca.libros.some((l) => l.idLibro === id)),
+      error: () => this.yaComprado.set(false),
+    });
+
     this.libroService.obtenerLibro(id).subscribe({
       next: (libro) => {
         this.libro.set(libro);

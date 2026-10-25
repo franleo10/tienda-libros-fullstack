@@ -11,8 +11,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LibroCarritoDTO {
+    private int idLibro;
     private String titulo;
     private double precio;
     private LocalDate fechaLanzamiento;
+    private String urlPortada;
 
 }

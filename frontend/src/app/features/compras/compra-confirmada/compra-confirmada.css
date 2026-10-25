@@ -1,0 +1,138 @@
+.confirmacion-page {
+  max-width: 640px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: var(--design-font);
+  color: var(--design-ink);
+}
+
+.estado {
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--design-border);
+  border-radius: var(--design-radius-control);
+  background: var(--design-surface-muted);
+}
+
+.tarjeta {
+  padding: 2rem;
+  background: var(--design-surface);
+  border: 1px solid var(--design-border);
+  border-radius: var(--design-radius-card);
+  box-shadow: var(--design-shadow-card);
+  text-align: center;
+}
+
+.tarjeta h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.7rem;
+}
+
+.icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0 0 1rem;
+  border-radius: 50%;
+  background: #e6f4ec;
+  color: var(--design-success);
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.subtitulo {
+  margin: 0 0 1.5rem;
+  color: var(--design-ink-muted);
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 0 0 1.5rem;
+  padding: 1rem;
+  border-radius: var(--design-radius-control);
+  background: var(--design-surface-muted);
+}
+
+.datos dt {
+  font-size: 0.8rem;
+  color: var(--design-ink-muted);
+}
+
+.datos dd {
+  margin: 0.2rem 0 0;
+  font-weight: 600;
+}
+
+.tarjeta h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  text-align: left;
+}
+
+.libros {
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.libros li {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--design-border);
+}
+
+.total {
+  margin: 0 0 1.5rem;
+  text-align: right;
+  font-size: 1.1rem;
+}
+
+.total strong {
+  font-size: 1.35rem;
+  color: var(--design-accent);
+}
+
+.aviso p {
+  margin: 0 0 1.5rem;
+  color: var(--design-ink-muted);
+}
+
+.boton-principal {
+  display: inline-block;
+  padding: 0.7rem 1.4rem;
+  background: var(--design-primary);
+  color: #fff;
+  border-radius: var(--design-radius-control);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.boton-principal:hover {
+  background: var(--design-primary-hover);
+}
+
+.enlace-factura {
+  display: block;
+  margin-top: 0.9rem;
+  color: var(--design-primary);
+  font-weight: 700;
+}
+
+.boton-principal:focus-visible {
+  outline: 3px solid var(--design-focus);
+  outline-offset: 3px;
+}
+
+@media (max-width: 500px) {
+  .tarjeta {
+    padding: 1.25rem;
+  }
+
+  .datos {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+}

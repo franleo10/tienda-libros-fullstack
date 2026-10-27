@@ -36,3 +36,18 @@ button {
   border-radius: var(--design-radius-control);
   cursor: pointer;
 }
+
+.tabla-scroll {
+  max-width: 900px;
+  margin: 2rem auto;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+  font-family: var(--design-font);
+  color: var(--design-ink);
+  background: var(--design-surface);
+}

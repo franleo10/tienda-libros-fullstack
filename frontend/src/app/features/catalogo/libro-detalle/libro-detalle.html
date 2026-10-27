@@ -15,12 +15,17 @@
     <p class="precio">$ {{ l.precio }}</p>
 
     @if (yaComprado()) {
-      <p class="ya-comprado">Ya tenés este libro. <a routerLink="/mi-biblioteca">Ver en mi biblioteca</a></p>
+    <p class="ya-comprado">Ya tenés este libro. <a routerLink="/mi-biblioteca">Ver en mi biblioteca</a></p>
+    @if (reseniaEnviada()) {
+    <p class="mensaje">¡Gracias por tu reseña!</p>
     } @else {
-      <button (click)="agregarAlCarrito()">Agregar al carrito</button>
-      @if (mensajeCarrito()) {
-        <p class="mensaje">{{ mensajeCarrito() }}</p>
-      }
+    <app-resenia-formulario [idLibro]="l.id" (creada)="reseniaEnviada.set(true)" />
+    }
+    } @else {
+    <button (click)="agregarAlCarrito()">Agregar al carrito</button>
+    @if (mensajeCarrito()) {
+    <p class="mensaje">{{ mensajeCarrito() }}</p>
+    }
     }
   </div>
 

@@ -1,0 +1,11 @@
+<form [formGroup]="formulario" (ngSubmit)="enviar()">
+    <span>Tu puntuación</span>
+    <app-estrellas [valor]="formulario.controls.calificacion.value ?? 0" [editable]="true"
+        (puntuacionElegida)="formulario.controls.calificacion.setValue($event)" />
+    <label for="texto">Comentarios</label>
+    <textarea formControlName="texto" id="texto" maxlength="1000"></textarea>
+    <button type="submit" [disabled]="formulario.invalid || enviando()"> @if(enviando()){Enviando...}@else{ Enviar Reseña} </button>
+    @if(mensajeError()){
+    <p> {{mensajeError()}}</p>
+    }
+</form>

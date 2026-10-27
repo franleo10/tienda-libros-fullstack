@@ -5,10 +5,11 @@ import { LibroDato } from '../../../models/libro';
 import { Carrito } from '../../../services/carrito';
 import { Biblioteca } from '../../../services/biblioteca';
 import { RouterLink } from '@angular/router';
+import { ReseniaFormulario } from '../../resenias/resenia-formulario/resenia-formulario';
 
 @Component({
   selector: 'app-libro-detalle',
-  imports: [RouterLink],
+  imports: [RouterLink, ReseniaFormulario],
   templateUrl: './libro-detalle.html',
   styleUrl: './libro-detalle.css',
 })
@@ -23,6 +24,7 @@ export class LibroDetalle implements OnInit {
   protected readonly cargando = signal(true);
   protected readonly mensajeError = signal('');
   protected readonly mensajeCarrito = signal('');
+  protected readonly reseniaEnviada = signal(false);
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));

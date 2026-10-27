@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Auth } from '../../../core/services/auth';
+import { Router } from '@angular/router';
 
 function passwordsCoinciden(control: AbstractControl): ValidationErrors | null {
 
@@ -25,6 +26,7 @@ export class Register {
   private auth = inject(Auth);
   protected readonly cargando = signal(false);
   protected readonly mensajeError = signal('');
+  protected router = inject(Router);
 
   formulario = this.fb.group({
     nombre: ['', [Validators.required, Validators.maxLength(50)]],
@@ -38,7 +40,7 @@ export class Register {
     this.cargando.set(true);
     this.mensajeError.set('');
     this.auth.register(this.formulario.value.nombre!, this.formulario.value.edad!, this.formulario.value.email!, this.formulario.value.password!).subscribe({
-      next: (respuesta) => { this.cargando.set(false) },
+      next: (respuesta) => { this.cargando.set(false); this.router.navigateByUrl('/libros'); },
       error: (error) => { this.cargando.set(false); if (error.status === 409) { this.mensajeError.set(error.error) } else { this.mensajeError.set('No se pudo registrar. Intentá de nuevo.') } },
     });
 

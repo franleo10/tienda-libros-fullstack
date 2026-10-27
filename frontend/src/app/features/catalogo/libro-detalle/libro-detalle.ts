@@ -6,10 +6,11 @@ import { Carrito } from '../../../services/carrito';
 import { Biblioteca } from '../../../services/biblioteca';
 import { RouterLink } from '@angular/router';
 import { ReseniaFormulario } from '../../resenias/resenia-formulario/resenia-formulario';
+import { ReseniaListado } from '../../resenias/resenia-listado/resenia-listado';
 
 @Component({
   selector: 'app-libro-detalle',
-  imports: [RouterLink, ReseniaFormulario],
+  imports: [RouterLink, ReseniaFormulario, ReseniaListado],
   templateUrl: './libro-detalle.html',
   styleUrl: './libro-detalle.css',
 })

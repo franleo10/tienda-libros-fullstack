@@ -16,6 +16,16 @@
       </header>
 
       <dl class="datos">
+        @if (comprador(); as u) {
+          <div>
+            <dt>Comprador</dt>
+            <dd>{{ u.nombre }}</dd>
+          </div>
+          <div>
+            <dt>Email</dt>
+            <dd>{{ u.email }}</dd>
+          </div>
+        }
         <div>
           <dt>Fecha</dt>
           <dd>{{ c.fechaCompra | date: 'dd/MM/yyyy HH:mm' }}</dd>

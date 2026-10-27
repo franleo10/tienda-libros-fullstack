@@ -4,6 +4,8 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FacturaDato, nombreMetodoPago } from '../../../models/factura';
 import { Factura as FacturaService } from '../../../services/factura';
+import { PerfilService } from '../../../services/perfil';
+import { PerfilUsuario } from '../../../models/perfil';
 
 @Component({
   selector: 'app-compra-detalle',
@@ -23,6 +25,8 @@ export class CompraDetalle implements OnInit {
     style: 'currency',
     currency: 'ARS',
   });
+  private readonly perfilService = inject(PerfilService);
+  protected readonly comprador = signal<PerfilUsuario | null>(null);
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -47,6 +51,10 @@ export class CompraDetalle implements OnInit {
               : 'No pudimos cargar la compra. Intentá de nuevo.'
         );
       },
+    });
+
+    this.perfilService.obtenerPerfil().subscribe({
+      next: (perfil) => this.comprador.set(perfil),
     });
   }
 

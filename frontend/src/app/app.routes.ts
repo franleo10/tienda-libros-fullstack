@@ -7,8 +7,6 @@ import { LibroListado } from './features/catalogo/libro-listado/libro-listado';
 import { LibroTabla } from './features/admin-libros/libro-tabla/libro-tabla';
 import { LibroFormulario } from './features/admin-libros/libro-formulario/libro-formulario';
 import { Checkout } from './features/checkout/checkout/checkout';
-import { FacturaListado } from './features/facturas/factura-listado/factura-listado';
-import { FacturaDetalle } from './features/facturas/factura-detalle/factura-detalle';
 import { AutorListado } from './features/autores/autor-listado/autor-listado';
 import { AutorDetalle } from './features/autores/autor-detalle/autor-detalle';
 import { AutorFormulario } from './features/autores/autor-formulario/autor-formulario';
@@ -42,8 +40,6 @@ export const routes: Routes = [
     data: { permiso: 'MODIFICAR_LIBRO' },
   },
   { path: 'checkout', component: Checkout },
-  { path: 'facturas', component: FacturaListado },
-  { path: 'facturas/:id', component: FacturaDetalle },
   { path: 'autores', component: AutorListado },
   {
     path: 'autores/nuevo',

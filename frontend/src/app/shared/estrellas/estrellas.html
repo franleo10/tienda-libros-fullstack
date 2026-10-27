@@ -1,0 +1,8 @@
+<div class="estrellas" >
+    
+  @for (n of estrellas; track n) {
+    <button type="button" (click)="elegir(n)" [disabled]="!editable()" [attr.aria-label]="'Puntuar con ' + n + ' estrellas'">
+      {{ n <= valor() ? '★' : '☆' }}
+    </button>
+  }
+</div>

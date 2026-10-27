@@ -1,0 +1,56 @@
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  background: var(--design-surface-muted);
+  border: 1px solid var(--design-border);
+  border-radius: var(--design-radius-card);
+  font-family: var(--design-font);
+  color: var(--design-ink);
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+textarea {
+  min-height: 90px;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--design-border-strong);
+  border-radius: var(--design-radius-control);
+  font: inherit;
+  resize: vertical;
+}
+
+textarea:focus {
+  outline: 2px solid var(--design-focus);
+  outline-offset: 1px;
+}
+
+button[type='submit'] {
+  align-self: flex-start;
+  padding: 0.6rem 1.3rem;
+  background: var(--design-primary);
+  color: #fff;
+  border: 0;
+  border-radius: var(--design-radius-control);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button[type='submit']:hover:not(:disabled) {
+  background: var(--design-primary-hover);
+}
+
+button[type='submit']:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+p {
+  margin: 0;
+  color: var(--design-error);
+}

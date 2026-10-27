@@ -12,4 +12,10 @@ export class Pago {
   confirmar(idPago: string) {
     return this.http.post<FacturaDato>(`${this.apiUrl}/${idPago}/confirmar`, null);
   }
+
+  obtenerLinkDePago(idUsuario: number) {
+  return this.http.get(`http://localhost:8080/api/mercado?idUsuario=${idUsuario}`, {
+    responseType: 'text',
+  });
+}
 }

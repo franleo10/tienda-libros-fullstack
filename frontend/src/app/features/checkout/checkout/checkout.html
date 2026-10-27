@@ -1,1 +1,42 @@
-<p>checkout works!</p>
+<main class="checkout">
+    <h1>Finalizar compra</h1>
+
+    @if (cargando()) {
+    <p>Cargando...</p>
+    } @else if (mensajeError() && !perfil()) {
+    <p class="error">{{ mensajeError() }}</p>
+    } @else if (libros().length === 0) {
+    <p>Tu carrito está vacío.</p>
+    <a routerLink="/libros">Ver libros</a>
+    } @else {
+    <section class="seccion">
+        <h2>Datos del comprador</h2>
+        <p><strong>Nombre:</strong> {{ perfil()?.nombre }}</p>
+        <p><strong>Email:</strong> {{ perfil()?.email }}</p>
+    </section>
+
+    <section class="seccion">
+        <h2>Resumen del pedido</h2>
+        <ul>
+            @for (libro of libros(); track libro.idLibro) {
+            <li>
+                {{ libro.titulo }}
+                <span>{{ libro.precio | currency: 'ARS' }}</span>
+            </li>
+            }
+        </ul>
+        <p>Total: <strong>{{ total() | currency: 'ARS' }}</strong></p>
+    </section>
+
+    <section class="seccion">
+        <h2>Método de pago</h2>
+        <p>MercadoPago</p>
+        <button type="button" class="boton-pagar" (click)="pagar()" [disabled]="pagando()">
+            {{ pagando() ? 'Redirigiendo...' : 'Pagar con MercadoPago' }}
+        </button>
+        @if (mensajeError()) {
+        <p class="error">{{ mensajeError() }}</p>
+        }
+    </section>
+    }
+</main>

@@ -1,0 +1,54 @@
+.listado {
+  margin-top: 2rem;
+  font-family: var(--design-font);
+  color: var(--design-ink);
+}
+
+.resenia {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1rem;
+  margin-bottom: 0.8rem;
+  background: var(--design-surface);
+  border: 1px solid var(--design-border);
+  border-radius: var(--design-radius-card);
+  box-shadow: var(--design-shadow-card);
+}
+
+.autor {
+  font-weight: 600;
+}
+
+.fecha {
+  color: var(--design-ink-muted);
+}
+
+.resenia p {
+  margin: 0;
+}
+
+.error {
+  color: var(--design-error);
+}
+
+.paginacion {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.paginacion button {
+  padding: 0.5rem 1rem;
+  background: var(--design-primary);
+  color: #fff;
+  border: 0;
+  border-radius: var(--design-radius-control);
+  cursor: pointer;
+}
+
+.paginacion button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

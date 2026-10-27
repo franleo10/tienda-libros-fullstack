@@ -1,0 +1,26 @@
+<section class="listado">
+    <h3>Reseñas</h3>
+    @if (cargando()) {
+    <p>Cargando reseñas...</p>
+    } @else if (mensajeError()) {
+    <p class="error">{{ mensajeError() }}</p>
+    } @else if (resenias().length === 0) {
+    <p>Todavía no hay reseñas para este libro.</p>
+    } @else {
+    @for (r of resenias(); track $index) {
+    <article class="resenia">
+        <app-estrellas [valor]="r.calificacion" />
+        <strong class="autor">{{ r.usuario.nombre }}</strong>
+        <small class="fecha">{{ r.fecha | date: 'dd/MM/yyyy' }}</small>
+        <p>{{ r.texto }}</p>
+    </article>
+    }
+    @if (totalPaginas() > 1) {
+    <div class="paginacion">
+        <button (click)="anterior()" [disabled]="pagina() === 0">Anterior</button>
+        <span>Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
+        <button (click)="siguiente()" [disabled]="pagina() + 1 >= totalPaginas()">Siguiente</button>
+    </div>
+    }
+    }
+</section>

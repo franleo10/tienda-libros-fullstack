@@ -1,19 +1,19 @@
-@if(cargando()){
-    <p>Cargando...</p>
+@if (cargando()) {
+  <p class="estado">Cargando...</p>
 }
 <div class="grilla">
-@for (libro of libros(); track libro.id) {
-  <article>
-    @if (libro.urlPortada) {
-  <img [src]="libro.urlPortada" [alt]="libro.titulo" class="portada">
-} @else {
-  <div class="portada">{{ libro.titulo[0] }}</div>
-}
-    <a [routerLink]="['/libros', libro.id]">
-    <h2>{{libro.titulo}}</h2></a>
-    <p>{{libro.autores[0]?.nombre }}
-    {{libro.autores[0]?.apellido}} </p>
-   <p> {{libro.precio}}</p>
-  </article>
-}
+  @for (libro of libros(); track libro.id) {
+    <article class="tarjeta">
+      @if (libro.urlPortada) {
+        <img [src]="libro.urlPortada" [alt]="libro.titulo" class="portada">
+      } @else {
+        <div class="portada">{{ libro.titulo[0] }}</div>
+      }
+      <a class="titulo" [routerLink]="['/libros', libro.id]">
+        <h2>{{ libro.titulo }}</h2>
+      </a>
+      <p class="autor">{{ libro.autores[0]?.nombre }} {{ libro.autores[0]?.apellido }}</p>
+      <p class="precio">$ {{ libro.precio }}</p>
+    </article>
+  }
 </div>

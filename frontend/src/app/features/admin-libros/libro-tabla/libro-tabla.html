@@ -1,6 +1,7 @@
 @if (cargando()) { <p>Cargando...</p> }
 @if (mensajeError()) { <p>{{ mensajeError() }}</p> }
-<table>
+<div class="tabla-scroll">
+<table> 
   <thead>
     <tr>
       <th>ID</th> <th>Título</th> <th>Autor</th> <th>Precio</th> <th>Acciones</th>
@@ -14,3 +15,4 @@
     }
   </tbody>
 </table>
+</div>

@@ -1,6 +1,6 @@
 import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { catchError, of, switchMap } from 'rxjs';
 import { Auth } from '../../core/services/auth';
 import { Permisos } from '../../core/services/permisos';
@@ -14,8 +14,10 @@ import { Permisos } from '../../core/services/permisos';
 export class Navbar {
   private auth = inject(Auth);
   private permisosService = inject(Permisos);
+  private router = inject(Router);
   private elemento = inject<ElementRef<HTMLElement>>(ElementRef);
-  protected readonly sesionIniciada = computed(() => this.auth.token() !== null);
+  protected readonly sesionIniciada = this.auth.sesionIniciada;
+  protected readonly usuario = this.auth.usuario;
   protected readonly menuAbierto = signal(false);
 
   // Se recargan cada vez que cambia el token (login, logout, cambio de email en el perfil)
@@ -44,6 +46,7 @@ export class Navbar {
   salir() {
     this.cerrarMenus();
     this.auth.logout();
+    void this.router.navigateByUrl('/login');
   }
 
   alternarMenu(){

@@ -6,7 +6,10 @@
   gap: 1.25rem;
 }
 
+/* position: relative hace que el texto oculto "Acciones" (position: absolute) quede dentro del scroll
+   y no ensanche la página en el celular */
 .tabla-scroll {
+  position: relative;
   overflow-x: auto;
   border: 1px solid var(--design-border);
   border-radius: var(--design-radius-card);
@@ -96,12 +99,13 @@ app-portada {
   text-decoration: none;
 }
 
-.acciones a:hover {
+.acciones a:hover,
+.acciones button:hover {
   border-color: var(--design-border-strong);
   color: var(--design-primary);
 }
 
-.acciones button:hover {
+.acciones .eliminar:hover {
   border-color: rgb(242 149 138 / 40%);
   color: var(--design-error);
 }

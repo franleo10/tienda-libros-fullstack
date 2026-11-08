@@ -96,38 +96,26 @@ public class LibroService {
         int tamañoPagina = 5;  // o el tamaño que quieras fijo
         Pageable pageable = PageRequest.of(numeroPagina, tamañoPagina);
 
-        Page<LibroEntity> paginaLibros = libroRepository.findAll(pageable);
+        Page<LibroEntity> paginaLibros = libroRepository.findAllByActivoTrue(pageable);
 
         if (paginaLibros.isEmpty()) {
             throw new RuntimeException("No hay libros disponibles."); // O la excepción que quieras
         }
 
-        List<LibroDTO> listaLibrosDTO = paginaLibros.getContent().stream()
-                .filter(i -> i.isActivo() == true)
-                .map(libro -> modelMapper.map(libro, LibroDTO.class))
-                .toList();
-
-        
-
-        return new PageImpl<>(listaLibrosDTO, pageable, paginaLibros.getTotalElements());
+        return paginaLibros.map(libro -> modelMapper.map(libro, LibroDTO.class));
     }
 
     public Page<LibroDTO> getAllLibrosInactivos(int numeroPagina) {
         int tamañoPagina = 5;  // o el tamaño que quieras fijo
         Pageable pageable = PageRequest.of(numeroPagina, tamañoPagina);
 
-        Page<LibroEntity> paginaLibros = libroRepository.findAll(pageable);
+        Page<LibroEntity> paginaLibros = libroRepository.findAllByActivoFalse(pageable);
 
         if (paginaLibros.isEmpty()) {
             throw new RuntimeException("No hay libros disponibles."); // O la excepción que quieras
         }
 
-        List<LibroDTO> listaLibrosDTO = paginaLibros.getContent().stream()
-                .filter(i -> i.isActivo() == false)
-                .map(libro -> modelMapper.map(libro, LibroDTO.class))
-                .toList();
-
-        return new PageImpl<>(listaLibrosDTO, pageable, paginaLibros.getTotalElements());
+        return paginaLibros.map(libro -> modelMapper.map(libro, LibroDTO.class));
     }
 
     @PreAuthorize("hasAuthority('ELIMINAR_LIBRO')")

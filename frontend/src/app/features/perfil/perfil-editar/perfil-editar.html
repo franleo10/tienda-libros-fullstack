@@ -17,8 +17,8 @@
 
       <label for="email">Email</label>
       <input id="email" type="email" formControlName="email" autocomplete="email" />
-      @if (formulario.controls.email.touched && formulario.controls.email.invalid) {
-        <p class="error">Ingresá un email válido.</p>
+      @if (mensajeErrorEmail(formulario.controls.email); as error) {
+        <p class="error">{{ error }}</p>
       }
 
       <label for="edad">Edad</label>

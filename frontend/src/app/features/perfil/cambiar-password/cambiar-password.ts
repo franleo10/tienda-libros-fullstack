@@ -1,15 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../../core/services/auth';
 import { PerfilService } from '../../../services/perfil';
-
-function passwordsCoinciden(control: AbstractControl): ValidationErrors | null {
-  return control.get('passwordNueva')?.value === control.get('confirmarPassword')?.value
-    ? null
-    : { noCoinciden: true };
-}
+import { camposCoinciden, mensajeErrorPassword, reglasPasswordNueva } from '../../../shared/validadores';
 
 @Component({
   selector: 'app-cambiar-password',
@@ -29,11 +24,13 @@ export class CambiarPassword {
   protected readonly formulario = this.fb.nonNullable.group(
     {
       passwordActual: ['', Validators.required],
-      passwordNueva: ['', [Validators.required, Validators.minLength(6)]],
+      passwordNueva: ['', reglasPasswordNueva],
       confirmarPassword: ['', Validators.required],
     },
-    { validators: passwordsCoinciden }
+    { validators: camposCoinciden('passwordNueva', 'confirmarPassword') }
   );
+
+  protected readonly mensajeErrorPassword = mensajeErrorPassword;
 
   protected guardar() {
     if (this.formulario.invalid || this.guardando()) {

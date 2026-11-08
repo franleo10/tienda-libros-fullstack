@@ -1,19 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Auth } from '../../../core/services/auth';
 import { Router } from '@angular/router';
-
-function passwordsCoinciden(control: AbstractControl): ValidationErrors | null {
-
-  if (control.get('password')?.value === control.get('confirmarPassword')?.value) {
-    return null;
-  } else {
-    return { noCoinciden: true }
-  }
-
-}
-
-
+import {
+  camposCoinciden,
+  mensajeErrorEmail,
+  mensajeErrorPassword,
+  reglasEmail,
+  reglasPasswordNueva,
+} from '../../../shared/validadores';
 
 @Component({
   selector: 'app-register',
@@ -31,17 +26,20 @@ export class Register {
   formulario = this.fb.group({
     nombre: ['', [Validators.required, Validators.maxLength(50)]],
     edad: [null as number | null, [Validators.required, Validators.min(1)]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    email: ['', reglasEmail],
+    password: ['', reglasPasswordNueva],
     confirmarPassword: ['', Validators.required]
-  }, { validators: passwordsCoinciden });
+  }, { validators: camposCoinciden('password', 'confirmarPassword') });
+
+  protected readonly mensajeErrorEmail = mensajeErrorEmail;
+  protected readonly mensajeErrorPassword = mensajeErrorPassword;
 
   protected alEnviar() {
     this.cargando.set(true);
     this.mensajeError.set('');
     this.auth.register(this.formulario.value.nombre!, this.formulario.value.edad!, this.formulario.value.email!, this.formulario.value.password!).subscribe({
       next: (respuesta) => { this.cargando.set(false); this.router.navigateByUrl('/libros'); },
-      error: (error) => { this.cargando.set(false); if (error.status === 409) { this.mensajeError.set(error.error) } else { this.mensajeError.set('No se pudo registrar. Intentá de nuevo.') } },
+      error: (error) => { this.cargando.set(false); if ((error.status === 409 || error.status === 400) && typeof error.error === 'string') { this.mensajeError.set(error.error) } else { this.mensajeError.set('No se pudo registrar. Intentá de nuevo.') } },
     });
 
 

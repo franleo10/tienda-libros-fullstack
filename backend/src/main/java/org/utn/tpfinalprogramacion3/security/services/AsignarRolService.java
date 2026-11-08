@@ -3,6 +3,7 @@ package org.utn.tpfinalprogramacion3.security.services;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.utn.tpfinalprogramacion3.enums.Rol;
 import org.utn.tpfinalprogramacion3.security.repositories.CredentialsRepository;
@@ -19,6 +20,8 @@ public class AsignarRolService {
     private final CredentialsRepository credencialRepository;
     private final RoleRepository roleRepository;
 
+    // Antes cualquier usuario logueado podía hacerse administrador con este endpoint
+    @PreAuthorize("hasAuthority('ELIMINAR_USUARIOS')")
     public String asignarRol(String email, Rol rol) {
         CredencialEntity credencial = (CredencialEntity) credencialRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Credencial no encontrada"));

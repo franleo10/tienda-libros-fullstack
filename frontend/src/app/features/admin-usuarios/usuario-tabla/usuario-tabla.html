@@ -75,9 +75,27 @@
               <td class="nombre">{{ usuario.nombre }}</td>
               <td class="email">{{ usuario.email }}</td>
               <td>
-                <span class="etiqueta" [class.admin]="usuario.rol === 'ADMINISTRADOR'">
-                  {{ usuario.rol === 'ADMINISTRADOR' ? 'Administrador' : 'Usuario' }}
-                </span>
+                @if (usuario.rol && !esUsuarioActual(usuario)) {
+                  <select
+                    class="selector-rol"
+                    [class.admin]="usuario.rol === 'ADMINISTRADOR'"
+                    [value]="usuario.rol"
+                    [disabled]="usuarioProcesando() !== null"
+                    [attr.aria-label]="'Rol de ' + usuario.nombre"
+                    (change)="elegirRol(usuario, $event)"
+                  >
+                    <option value="ADMINISTRADOR">{{ nombreRol.ADMINISTRADOR }}</option>
+                    <option value="USUARIO">{{ nombreRol.USUARIO }}</option>
+                  </select>
+                } @else {
+                  <span
+                    class="etiqueta"
+                    [class.admin]="usuario.rol === 'ADMINISTRADOR'"
+                    [attr.title]="esUsuarioActual(usuario) ? 'No podés cambiar tu propio rol' : null"
+                  >
+                    {{ usuario.rol === 'ADMINISTRADOR' ? 'Administrador' : 'Usuario' }}
+                  </span>
+                }
               </td>
               <td>
                 <span class="etiqueta" [class.activo]="usuario.activo" [class.baneado]="!usuario.activo">
@@ -85,7 +103,9 @@
                 </span>
               </td>
               <td class="acciones">
-                @if (usuario.activo) {
+                @if (esUsuarioActual(usuario)) {
+                  <span class="vos">Vos</span>
+                } @else if (usuario.activo) {
                   <button
                     type="button"
                     class="banear"
@@ -133,4 +153,15 @@
       </nav>
     }
   }
+
+  <app-confirmacion
+    [abierto]="accionPendiente() !== null"
+    [titulo]="tituloConfirmacion()"
+    [mensaje]="mensajeConfirmacion()"
+    [textoConfirmar]="textoConfirmar()"
+    [peligro]="accionPendiente()?.tipo === 'banear'"
+    [procesando]="usuarioProcesando() !== null"
+    (confirmar)="confirmarAccion()"
+    (cancelar)="cancelarAccion()"
+  />
 </main>

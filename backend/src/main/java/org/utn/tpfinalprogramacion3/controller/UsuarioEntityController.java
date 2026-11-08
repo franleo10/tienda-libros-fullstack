@@ -141,6 +141,20 @@ public class UsuarioEntityController {
     }
 
     @Operation(
+            summary = "Cambiar el rol de un usuario",
+            description = "Hace administrador a un usuario o le quita ese rol. Un administrador no puede cambiar su propio rol.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Rol actualizado"),
+                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+                    @ApiResponse(responseCode = "409", description = "El usuario ya tenía ese rol o es el propio administrador")
+            }
+    )
+    @PutMapping("/rol/{id}")
+    public ResponseEntity<String> cambiarRol(@PathVariable int id, @RequestParam Rol rol) {
+        return ResponseEntity.ok(usuarioService.cambiarRol(id, rol));
+    }
+
+    @Operation(
             summary = "Verificar disponibilidad de nombre de usuario",
             description = "Verifica si ya existe un usuario registrado con el nombre indicado.",
             responses = {

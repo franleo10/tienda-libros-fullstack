@@ -60,6 +60,17 @@ nav {
   border-color: rgb(255 255 255 / 28%);
 }
 
+.usuario {
+  max-width: 16rem;
+  overflow: hidden;
+  padding: 0 0.35rem 0 0.75rem;
+  border-left: 1px solid rgb(255 255 255 / 28%);
+  font-size: 0.88rem;
+  opacity: 0.85;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .admin {
   position: relative;
 }
@@ -142,6 +153,13 @@ nav {
   .links.abierto {
     display: flex;
     flex-direction: column;
+  }
+
+  .usuario {
+    max-width: none;
+    padding: 0.55rem 0.85rem;
+    border-left: 0;
+    border-top: 1px solid rgb(255 255 255 / 20%);
   }
 
   .links a,

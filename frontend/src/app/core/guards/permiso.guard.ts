@@ -11,7 +11,7 @@ export const permisoGuard: CanActivateFn = (route, state) => {
   const permisos = inject(Permisos);
   const permiso = route.data['permiso'];
 
-  if (!auth.token()) {
+  if (!auth.sesionVigente()) {
     return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
   }
 

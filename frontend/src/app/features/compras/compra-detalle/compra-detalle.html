@@ -1,10 +1,10 @@
-<main class="detalle-page">
+<main class="pagina pagina-angosta detalle-page">
   <a class="volver" routerLink="/compras">← Mis compras</a>
 
   @if (cargando()) {
-    <p class="estado" role="status">Cargando la compra...</p>
+    <p class="alerta" role="status">Cargando la compra...</p>
   } @else if (mensajeError()) {
-    <p class="estado error" role="alert">{{ mensajeError() }}</p>
+    <p class="alerta error" role="alert">{{ mensajeError() }}</p>
   } @else if (compra(); as c) {
     <article class="factura">
       <header class="factura-header">
@@ -12,7 +12,7 @@
           <p class="tienda">Tienda de Libros</p>
           <h1>Factura N.º {{ c.idFactura }}</h1>
         </div>
-        <span class="etiqueta-estado">Aprobada</span>
+        <span class="etiqueta exito">Aprobada</span>
       </header>
 
       <dl class="datos">

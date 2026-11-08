@@ -1,42 +1,22 @@
-.detalle-page {
-  max-width: 680px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  font-family: var(--design-font);
-  color: var(--design-ink);
-}
-
 .volver {
   display: inline-block;
-  margin-bottom: 1rem;
-  color: var(--design-primary);
-  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--design-ink-muted);
+  font-size: 0.9rem;
   text-decoration: none;
 }
 
 .volver:hover {
-  text-decoration: underline;
+  color: var(--design-primary);
 }
 
-.estado {
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--design-border);
-  border-radius: var(--design-radius-control);
-  background: var(--design-surface-muted);
-}
-
-.estado.error {
-  border-color: #eac9c7;
-  background: #fff6f5;
-  color: var(--design-error);
-}
-
+/* La factura se ve como un papel: borde fino y un filete dorado arriba */
 .factura {
-  padding: clamp(1.25rem, 4vw, 2rem);
+  padding: clamp(1.5rem, 5vw, 2.75rem);
   border: 1px solid var(--design-border);
-  border-radius: var(--design-radius-card);
+  border-top: 3px solid var(--design-primary);
+  border-radius: 4px;
   background: var(--design-surface);
-  box-shadow: var(--design-shadow-card);
 }
 
 .factura-header {
@@ -44,59 +24,46 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 2rem;
 }
 
 .tienda {
   margin: 0;
-  color: var(--design-ink-muted);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  color: var(--design-ink);
+  font: italic 400 1.15rem var(--design-font-titulos);
 }
 
 .factura-header h1 {
-  margin: 0.2rem 0 0;
-  font-size: clamp(1.4rem, 4vw, 1.8rem);
-  letter-spacing: -0.02em;
-}
-
-.etiqueta-estado {
-  padding: 0.15rem 0.7rem;
-  border: 1px solid #c6e5d1;
-  border-radius: 999px;
-  background: #f1fbf4;
-  color: var(--design-success);
-  font-size: 0.8rem;
-  font-weight: 700;
-  white-space: nowrap;
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.9rem, 5vw, 2.6rem);
 }
 
 .datos {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-  gap: 1rem;
-  margin: 0 0 1.5rem;
-  padding: 1rem;
-  border-radius: var(--design-radius-control);
-  background: var(--design-surface-muted);
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1.25rem;
+  margin: 0 0 2rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--design-border);
+  border-bottom: 1px solid var(--design-border);
 }
 
 .datos dt {
   color: var(--design-ink-muted);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .datos dd {
-  margin: 0.2rem 0 0;
-  font-weight: 600;
+  margin: 0.25rem 0 0;
   overflow-wrap: anywhere;
+  font-weight: 600;
 }
 
 .factura h2 {
   margin: 0 0 0.5rem;
-  font-size: 1.05rem;
+  font-size: 1.35rem;
 }
 
 .items {
@@ -106,20 +73,22 @@
 }
 
 .items li {
-  padding: 0.65rem 0;
-  border-bottom: 1px solid var(--design-border);
+  padding: 0.8rem 0;
+  border-bottom: 1px dashed var(--design-border-strong);
+  font: 400 1.1rem var(--design-font-titulos);
 }
 
 .total {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin: 1rem 0 1.5rem;
-  font-size: 1.05rem;
+  margin: 1.5rem 0 2rem;
+  color: var(--design-ink-muted);
 }
 
 .total strong {
-  font-size: 1.35rem;
+  color: var(--design-primary);
+  font: 500 2.2rem/1 var(--design-font-titulos);
 }
 
 .acciones {
@@ -128,57 +97,40 @@
   gap: 0.75rem;
 }
 
-.boton-principal,
-.boton-secundario {
-  padding: 0.65rem 1.2rem;
-  border-radius: var(--design-radius-control);
-  cursor: pointer;
-  font: inherit;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.boton-principal {
-  border: 1px solid var(--design-primary);
-  background: var(--design-primary);
-  color: var(--design-surface);
-}
-
-.boton-principal:hover {
-  background: var(--design-primary-hover);
-}
-
-.boton-secundario {
-  border: 1px solid var(--design-border-strong);
-  background: var(--design-surface);
-  color: var(--design-primary);
-}
-
-.boton-secundario:hover {
-  border-color: var(--design-primary);
-}
-
 @media (max-width: 34rem) {
   .acciones > * {
     flex: 1 1 100%;
-    text-align: center;
   }
 }
 
-/* Al imprimir (o guardar como PDF) solo sale la factura */
+/* Al imprimir (o guardar como PDF) solo sale la factura, en negro sobre blanco */
 @media print {
   .volver,
   .acciones {
     display: none;
   }
 
-  .detalle-page {
-    margin: 0;
+  .pagina {
     max-width: none;
+    padding: 0;
   }
 
   .factura {
+    padding: 0;
     border: 0;
-    box-shadow: none;
+    background: #fff;
+    color: #000;
+  }
+
+  .tienda,
+  .datos dt,
+  .total,
+  .total strong {
+    color: #000;
+  }
+
+  .datos,
+  .items li {
+    border-color: #999;
   }
 }

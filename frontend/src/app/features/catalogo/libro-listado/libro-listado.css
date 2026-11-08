@@ -73,85 +73,20 @@ h1 em {
   grid-row: span 2;
 }
 
-/* ---------- Portada ---------- */
-.portada {
-  position: relative;
-  display: flex;
-  aspect-ratio: 2 / 3;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow: hidden;
-  padding: 1.5rem 1.3rem;
-  border-radius: 3px;
-  box-shadow: 0 20px 40px -20px rgb(0 0 0 / 80%);
+/* ---------- Portada (componente app-portada) ---------- */
+app-portada {
   transition: transform 300ms ease;
 }
 
-/* Marco dorado de las tapas generadas */
-.portada::after {
-  content: '';
-  position: absolute;
-  inset: 0.55rem;
-  border: 1px solid rgb(226 182 91 / 45%);
-  pointer-events: none;
-}
-
-.libro:hover .portada,
-.libro:focus-visible .portada {
+.libro:hover app-portada,
+.libro:focus-visible app-portada {
   transform: translateY(-5px);
 }
 
-.tapa-titulo {
-  margin: 0;
-  overflow-wrap: break-word;
-  color: #f6ecd9;
-  font: 400 1.3rem/1.05 var(--design-font-titulos);
-}
-
-.tapa-autor {
-  color: var(--design-primary);
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-/* Un color de tapa distinto para cada libro, en ciclo */
-.libro:nth-child(5n + 1) .portada { background: #33241a; }
-.libro:nth-child(5n + 2) .portada { background: #1d2b36; }
-.libro:nth-child(5n + 3) .portada { background: #3a1d24; }
-.libro:nth-child(5n + 4) .portada { background: #22301f; }
-.libro:nth-child(5n + 5) .portada { background: #2c2440; }
-
-/* Portada real (OpenLibrary): llena la tapa sin deformarse y sin el marco interior */
-.libro .portada.con-imagen {
-  padding: 0;
-  background: var(--design-surface);
-  outline: 1px solid rgb(226 182 91 / 30%);
-  outline-offset: 4px;
-}
-
-.portada.con-imagen::after {
-  display: none;
-}
-
-.portada.con-imagen img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.destacado .portada {
-  padding: 2.2rem 2rem;
-}
-
-.destacado .portada::after {
-  inset: 0.9rem;
-}
-
-.destacado .tapa-titulo {
-  font-size: 2.6rem;
+.destacado app-portada {
+  --portada-titulo: 2.6rem;
+  --portada-relleno: 2.2rem 2rem;
+  --portada-marco: 0.9rem;
 }
 
 /* ---------- Datos ---------- */
@@ -241,12 +176,10 @@ h2 {
     grid-row: auto;
   }
 
-  .destacado .portada {
+  /* Una tapa real en un recuadro apaisado se vería recortada: se muestra entera */
+  .destacado app-portada {
     aspect-ratio: 4 / 3;
-  }
-
-  .destacado .portada.con-imagen img {
-    object-fit: contain;
+    --portada-ajuste: contain;
   }
 }
 
@@ -258,26 +191,12 @@ h2 {
     gap: 1.75rem 1rem;
   }
 
-  /* El destacado ocupa el ancho con una tapa apaisada, para no llenar toda la pantalla */
-  .libro.destacado {
-    grid-row: auto;
+  app-portada {
+    --portada-titulo: 1.1rem;
   }
 
-  .destacado .portada {
-    aspect-ratio: 4 / 3;
-    padding: 1.6rem 1.4rem;
-  }
-
-  .destacado .tapa-titulo {
-    font-size: 1.9rem;
-  }
-
-  /* Una tapa real en un recuadro apaisado se vería recortada: se muestra entera */
-  .destacado .portada.con-imagen img {
-    object-fit: contain;
-  }
-
-  .tapa-titulo {
-    font-size: 1.1rem;
+  .destacado app-portada {
+    --portada-titulo: 1.9rem;
+    --portada-relleno: 1.6rem 1.4rem;
   }
 }

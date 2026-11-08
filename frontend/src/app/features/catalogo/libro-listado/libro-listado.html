@@ -26,17 +26,11 @@
           [class.destacado]="primero && paginaActual() === 0"
           [routerLink]="['/libros', libro.id]"
         >
-          @if (libro.urlPortada) {
-            <div class="portada con-imagen">
-              <img [src]="libro.urlPortada" [alt]="'Portada de ' + libro.titulo" loading="lazy" />
-            </div>
-          } @else {
-            <!-- Sin portada: se arma una tapa con el título y el autor -->
-            <div class="portada" aria-hidden="true">
-              <p class="tapa-titulo">{{ libro.titulo }}</p>
-              <span class="tapa-autor">{{ nombreAutor(libro) }}</span>
-            </div>
-          }
+          <app-portada
+            [titulo]="libro.titulo"
+            [autor]="nombreAutor(libro)"
+            [urlPortada]="libro.urlPortada"
+          />
           <div class="info">
             @if (libro.generos.length) {
               <span class="genero">{{ libro.generos[0].nombre }}</span>

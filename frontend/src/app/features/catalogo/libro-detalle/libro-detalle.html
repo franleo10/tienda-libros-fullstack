@@ -1,37 +1,54 @@
 @if (libro(); as l) {
-<div class="detalle">
+<main class="detalle-page">
+  <a class="volver" routerLink="/libros">← Catálogo</a>
 
-  @if (l.urlPortada) {
-  <img [src]="l.urlPortada" [alt]="l.titulo" class="portada">
-  } @else {
-  <div class="portada">{{ l.titulo[0] }}</div>
-  }
+  <div class="detalle">
+    <app-portada class="portada" [titulo]="l.titulo" [autor]="nombreAutor(l)" [urlPortada]="l.urlPortada" />
 
-  <div class="datos">
-    <h1>{{ l.titulo }}</h1>
-    <p class="autor">{{ l.autores[0]?.nombre }} {{ l.autores[0]?.apellido }}</p>
-    <p class="genero">{{ l.generos[0]?.nombre }}</p>
-    <p class="sinopsis">{{ l.sinopsis }}</p>
-    <p class="precio">$ {{ l.precio }}</p>
-    
-    @if (yaComprado()) {
-    <p class="ya-comprado">Ya tenés este libro. <a routerLink="/mi-biblioteca">Ver en mi biblioteca</a></p>
-    @if (reseniaEnviada()) {
-    <p class="mensaje">¡Gracias por tu reseña!</p>
-    } @else {
-    <app-resenia-formulario [idLibro]="l.id" (creada)="reseniaEnviada.set(true); listado.cargar(0)" />
-    }
-    } @else {
-    <button (click)="agregarAlCarrito()">Agregar al carrito</button>
-    @if (mensajeCarrito()) {
-    <p class="mensaje">{{ mensajeCarrito() }}</p>
-    }
-    }
-    <app-resenia-listado #listado [idLibro]="l.id" />
+    <div class="datos">
+      <p class="eyebrow">
+        @for (genero of l.generos; track genero.nombre; let ultimo = $last) {
+          {{ genero.nombre }}@if (!ultimo) {&nbsp;·&nbsp;}
+        }
+        @if (anio(l)) {
+          <span class="anio">&nbsp;· {{ anio(l) }}</span>
+        }
+      </p>
+      <h1>{{ l.titulo }}</h1>
+      <p class="autor">de <strong>{{ nombreAutor(l) }}</strong></p>
+
+      <p class="sinopsis">{{ l.sinopsis }}</p>
+
+      <div class="compra">
+        <p class="precio">{{ formatearPrecio(l.precio) }}</p>
+        @if (yaComprado()) {
+          <p class="ya-comprado">Ya tenés este libro. <a routerLink="/mi-biblioteca">Ver en mi biblioteca</a></p>
+        } @else {
+          <button type="button" class="agregar" (click)="agregarAlCarrito()">Agregar al carrito</button>
+        }
+      </div>
+      @if (mensajeCarrito()) {
+        <p class="mensaje" role="status">
+          {{ mensajeCarrito() }}
+          <a routerLink="/carrito">Ver carrito →</a>
+        </p>
+      }
+      <p class="aclaracion">Libro digital: lo comprás una vez y queda para siempre en tu biblioteca.</p>
+    </div>
   </div>
 
-</div>
+  <section class="opiniones">
+    @if (yaComprado()) {
+      @if (reseniaEnviada()) {
+        <p class="mensaje">¡Gracias por tu reseña!</p>
+      } @else {
+        <app-resenia-formulario [idLibro]="l.id" (creada)="reseniaEnviada.set(true); listado.cargar(0)" />
+      }
+    }
+    <app-resenia-listado #listado [idLibro]="l.id" />
+  </section>
+</main>
 }
 
-@if (cargando()) { <p>Cargando...</p> }
-@if (mensajeError()) { <p class="mensaje-error">{{ mensajeError() }}</p> }
+@if (cargando()) { <p class="estado" role="status">Cargando libro...</p> }
+@if (mensajeError()) { <p class="estado error" role="alert">{{ mensajeError() }}</p> }

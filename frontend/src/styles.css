@@ -61,7 +61,8 @@ app-root {
   flex-direction: column;
 }
 
-app-root > :not(app-navbar):not(app-footer) {
+/* La página que muestra el router ocupa el espacio libre (el router-outlet queda vacío y no cuenta) */
+app-root > :not(app-navbar):not(app-footer):not(router-outlet) {
   flex: 1;
 }
 
@@ -126,6 +127,145 @@ label {
   color: var(--design-ink-muted);
   font-size: 0.9rem;
   font-weight: 500;
+}
+
+/* ---------- Clases comunes para las páginas ---------- */
+
+/* Contenedor centrado de cada página */
+.pagina {
+  width: 100%;
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 0;
+}
+
+.pagina-angosta {
+  max-width: 46rem;
+}
+
+.pagina-cabecera {
+  margin-bottom: 2.5rem;
+}
+
+.pagina-cabecera h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  line-height: 1.05;
+}
+
+.pagina-cabecera p:not(.eyebrow) {
+  margin: 0.75rem 0 0;
+  color: var(--design-ink-muted);
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  color: var(--design-primary);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.boton-principal,
+.boton-secundario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 2.75rem;
+  padding: 0.65rem 1.4rem;
+  border: 1px solid var(--design-primary);
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.boton-principal {
+  background: var(--design-primary);
+  color: var(--design-on-primary);
+}
+
+.boton-principal:hover {
+  border-color: var(--design-primary-hover);
+  background: var(--design-primary-hover);
+}
+
+.boton-secundario {
+  border-color: var(--design-border-strong);
+  background: transparent;
+  color: var(--design-ink);
+}
+
+.boton-secundario:hover {
+  border-color: var(--design-primary);
+  color: var(--design-primary);
+}
+
+.boton-principal:disabled,
+.boton-secundario:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* Mensajes de estado, error o éxito */
+.alerta {
+  margin: 0 0 1.5rem;
+  padding: 0.85rem 1.1rem;
+  border: 1px solid var(--design-border);
+  border-radius: var(--design-radius-control);
+  background: var(--design-surface);
+  color: var(--design-ink-muted);
+}
+
+.alerta.error {
+  border-color: rgb(242 149 138 / 30%);
+  background: var(--design-error-surface);
+  color: var(--design-error);
+}
+
+.alerta.exito {
+  border-color: rgb(143 209 166 / 30%);
+  background: var(--design-success-surface);
+  color: var(--design-success);
+}
+
+/* Bloque para listas vacías: "tu carrito está vacío", etc. */
+.vacio {
+  padding: 3.5rem 1.5rem;
+  border: 1px dashed var(--design-border-strong);
+  border-radius: var(--design-radius-card);
+  text-align: center;
+}
+
+.vacio p {
+  margin: 0 0 1.25rem;
+  color: var(--design-ink-muted);
+  font: italic 400 1.35rem var(--design-font-titulos);
+}
+
+/* Etiqueta redondeada: "Aprobada", "Favorito", etc. */
+.etiqueta {
+  display: inline-block;
+  padding: 0.15rem 0.65rem;
+  border: 1px solid var(--design-border-strong);
+  border-radius: 999px;
+  color: var(--design-ink-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.etiqueta.exito {
+  border-color: rgb(143 209 166 / 35%);
+  background: var(--design-success-surface);
+  color: var(--design-success);
+}
+
+.etiqueta.dorada {
+  border-color: rgb(226 182 91 / 40%);
+  color: var(--design-primary);
 }
 
 /* Al imprimir (por ejemplo, una factura) no se muestran el navbar ni el footer y se usa papel blanco */

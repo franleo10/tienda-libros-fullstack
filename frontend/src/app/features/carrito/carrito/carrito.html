@@ -1,10 +1,13 @@
-<main class="carrito-page">
-  <h1>Mi carrito</h1>
+<main class="pagina pagina-angosta">
+  <header class="pagina-cabecera">
+    <p class="eyebrow">Tu compra</p>
+    <h1>Mi carrito</h1>
+  </header>
 
   @if (cargando()) {
-    <p class="estado" role="status">Cargando carrito...</p>
+    <p class="alerta" role="status">Cargando carrito...</p>
   } @else if (mensajeError()) {
-    <p class="estado error" role="alert">{{ mensajeError() }}</p>
+    <p class="alerta error" role="alert">{{ mensajeError() }}</p>
   } @else if (libros().length === 0) {
     <section class="vacio">
       <p>Tu carrito está vacío.</p>
@@ -12,17 +15,13 @@
     </section>
   } @else {
     @if (mensajeErrorQuitar()) {
-      <p class="estado error" role="alert">{{ mensajeErrorQuitar() }}</p>
+      <p class="alerta error" role="alert">{{ mensajeErrorQuitar() }}</p>
     }
 
     <ul class="items">
       @for (libro of libros(); track libro.idLibro) {
         <li class="item">
-          @if (libro.urlPortada) {
-            <img [src]="libro.urlPortada" [alt]="libro.titulo" class="portada" />
-          } @else {
-            <div class="portada" aria-hidden="true">{{ libro.titulo[0] }}</div>
-          }
+          <app-portada class="portada" [titulo]="libro.titulo" [urlPortada]="libro.urlPortada" [chica]="true" />
           <a class="titulo" [routerLink]="['/libros', libro.idLibro]">{{ libro.titulo }}</a>
           <span class="precio">{{ formatearPrecio(libro.precio) }}</span>
           <button
@@ -40,10 +39,10 @@
 
     <section class="resumen">
       <p class="total">
-        Total ({{ libros().length }} {{ libros().length === 1 ? 'libro' : 'libros' }}):
+        <span>Total ({{ libros().length }} {{ libros().length === 1 ? 'libro' : 'libros' }})</span>
         <strong>{{ formatearPrecio(total()) }}</strong>
       </p>
-      <a class="boton-pagar" routerLink="/checkout">Ir a pagar</a>
+      <a class="boton-principal boton-pagar" routerLink="/checkout">Ir a pagar →</a>
     </section>
   }
 </main>

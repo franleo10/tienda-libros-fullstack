@@ -6,11 +6,10 @@ import { PerfilUsuario } from '../../../models/perfil';
 import { LibroEnCarrito } from '../../../models/carrito';
 import { forkJoin } from 'rxjs';
 import { RouterLink } from '@angular/router';
-import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-checkout',
-  imports: [RouterLink, CurrencyPipe],
+  imports: [RouterLink],
   templateUrl: './checkout.html',
   styleUrl: './checkout.css',
 })
@@ -27,6 +26,15 @@ export class Checkout implements OnInit {
 
   protected readonly total = computed(() =>
     this.libros().reduce((suma, libro) => suma + libro.precio, 0));
+
+  private readonly formatoPrecio = new Intl.NumberFormat('es-AR', {
+    style: 'currency',
+    currency: 'ARS',
+  });
+
+  protected formatearPrecio(precio: number) {
+    return this.formatoPrecio.format(precio);
+  }
 
   ngOnInit(): void {
     forkJoin({

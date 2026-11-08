@@ -7,10 +7,11 @@ import { Biblioteca } from '../../../services/biblioteca';
 import { RouterLink } from '@angular/router';
 import { ReseniaFormulario } from '../../resenias/resenia-formulario/resenia-formulario';
 import { ReseniaListado } from '../../resenias/resenia-listado/resenia-listado';
+import { Portada } from '../../../shared/portada/portada';
 
 @Component({
   selector: 'app-libro-detalle',
-  imports: [RouterLink, ReseniaFormulario, ReseniaListado],
+  imports: [RouterLink, ReseniaFormulario, ReseniaListado, Portada],
   templateUrl: './libro-detalle.html',
   styleUrl: './libro-detalle.css',
 })
@@ -52,6 +53,24 @@ export class LibroDetalle implements OnInit {
         }
       },
     });
+  }
+
+  private readonly formatoPrecio = new Intl.NumberFormat('es-AR', {
+    style: 'currency',
+    currency: 'ARS',
+  });
+
+  protected formatearPrecio(precio: number) {
+    return this.formatoPrecio.format(precio);
+  }
+
+  protected nombreAutor(libro: LibroDato) {
+    return libro.autores.map((autor) => `${autor.nombre} ${autor.apellido}`).join(', ') || 'Autor desconocido';
+  }
+
+  // fecha_lanzamiento viene como "1944-01-01"
+  protected anio(libro: LibroDato) {
+    return libro.fecha_lanzamiento?.slice(0, 4) ?? '';
   }
 
   agregarAlCarrito() {

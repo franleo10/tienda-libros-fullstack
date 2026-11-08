@@ -3,10 +3,11 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LibroEnCarrito } from '../../../models/carrito';
 import { Carrito as CarritoService } from '../../../services/carrito';
+import { Portada } from '../../../shared/portada/portada';
 
 @Component({
   selector: 'app-carrito',
-  imports: [RouterLink],
+  imports: [RouterLink, Portada],
   templateUrl: './carrito.html',
   styleUrl: './carrito.css',
 })

@@ -1,13 +1,13 @@
 import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { catchError, of, switchMap } from 'rxjs';
 import { Auth } from '../../core/services/auth';
 import { Permisos } from '../../core/services/permisos';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })

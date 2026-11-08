@@ -1,52 +1,65 @@
 <nav>
-<button class="hamburguesa" (click)="alternarMenu()">☰</button>
-<div class="links" [class.abierto]="menuAbierto()">
-@if(sesionIniciada()){
+  <a class="marca" routerLink="/libros" (click)="cerrarMenus()">Tienda<b>Libros</b></a>
 
-    <a routerLink="/libros">Libros</a>
-    <a routerLink="/autores">Autores</a>
-    <a routerLink="/carrito">Carrito</a>
-    <a routerLink="/mi-biblioteca">Biblioteca</a>
-    <a routerLink="/compras">Mis compras</a>
-    <a routerLink="/perfil">Perfil</a>
+  <button
+    type="button"
+    class="hamburguesa"
+    aria-label="Abrir menú"
+    [attr.aria-expanded]="menuAbierto()"
+    (click)="alternarMenu()"
+  >
+    ☰
+  </button>
 
-@if(esAdmin()){
-    <div class="admin">
-      <button
-        type="button"
-        class="admin-toggle"
-        aria-haspopup="true"
-        aria-controls="menu-admin"
-        [attr.aria-expanded]="adminAbierto()"
-        (click)="alternarAdmin()"
-      >
-        Admin <span class="flecha" aria-hidden="true">▾</span>
-      </button>
-      @if(adminAbierto()){
-        <div class="admin-menu" id="menu-admin" (click)="cerrarMenus()">
-          @if(puedeAdministrarLibros()){
-            <a routerLink="/admin/libros">Libros</a>
-          }
-          @if(puedeAgregarAutores()){
-            <a routerLink="/admin/autores/nuevo">Nuevo autor</a>
-          }
-          @if(puedeAdministrarUsuarios()){
-            <a routerLink="/admin/usuarios">Usuarios</a>
+  <div class="links" [class.abierto]="menuAbierto()">
+    @if (sesionIniciada()) {
+      <a routerLink="/libros" routerLinkActive="activo" (click)="cerrarMenus()">Libros</a>
+      <a routerLink="/autores" routerLinkActive="activo" (click)="cerrarMenus()">Autores</a>
+      <a routerLink="/mi-biblioteca" routerLinkActive="activo" (click)="cerrarMenus()">Biblioteca</a>
+      <a routerLink="/compras" routerLinkActive="activo" (click)="cerrarMenus()">Mis compras</a>
+      <a routerLink="/carrito" routerLinkActive="activo" (click)="cerrarMenus()">Carrito</a>
+
+      @if (esAdmin()) {
+        <div class="admin">
+          <button
+            type="button"
+            class="admin-toggle"
+            aria-haspopup="true"
+            aria-controls="menu-admin"
+            [attr.aria-expanded]="adminAbierto()"
+            (click)="alternarAdmin()"
+          >
+            Admin <span class="flecha" aria-hidden="true">▾</span>
+          </button>
+          @if (adminAbierto()) {
+            <div class="admin-menu" id="menu-admin" (click)="cerrarMenus()">
+              @if (puedeAdministrarLibros()) {
+                <a routerLink="/admin/libros">Libros</a>
+              }
+              @if (puedeAgregarAutores()) {
+                <a routerLink="/admin/autores/nuevo">Nuevo autor</a>
+              }
+              @if (puedeAdministrarUsuarios()) {
+                <a routerLink="/admin/usuarios">Usuarios</a>
+              }
+            </div>
           }
         </div>
       }
-    </div>
-}
 
-    @if(usuario()){
-      <span class="usuario">Hola, {{ usuario() }}</span>
+      <div class="cuenta">
+        <a routerLink="/perfil" routerLinkActive="activo" (click)="cerrarMenus()">
+          @if (usuario()) {
+            <span class="usuario">{{ usuario() }}</span>
+          } @else {
+            Perfil
+          }
+        </a>
+        <button type="button" class="salir" (click)="salir()">Salir</button>
+      </div>
+    } @else {
+      <a routerLink="/login" routerLinkActive="activo" (click)="cerrarMenus()">Iniciar sesión</a>
+      <a class="registrarse" routerLink="/registro" (click)="cerrarMenus()">Crear cuenta</a>
     }
-    <button class="salir" (click)="salir()">Salir</button>
-}@else{
-
-    <a routerLink="/registro">Registrarse</a>
-    <a routerLink="/login">Iniciar Sesion</a>
-
-}
-</div>
+  </div>
 </nav>

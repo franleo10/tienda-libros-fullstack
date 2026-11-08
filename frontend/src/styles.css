@@ -1,10 +1,152 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos globales: paleta, tipografía y estilos base de toda la app */
 @import './app/features/autores/autores-design.css';
 
-/* Al imprimir (por ejemplo, una factura) no se muestran el navbar ni el footer */
+/* Paleta "Noche": fondo oscuro cálido, texto crema y acento dorado.
+   Los componentes usan estas variables; cambiando acá cambia toda la app. */
+:root {
+  color-scheme: dark;
+
+  --design-page-surface: #13110e;
+  --design-surface: #1c1915;
+  --design-surface-muted: #24201b;
+  --design-ink: #eee6d8;
+  --design-ink-muted: #a39a8c;
+  --design-border: #2e2a24;
+  --design-border-strong: #453f36;
+  --design-primary: #e2b65b;
+  --design-primary-hover: #ecc77a;
+  --design-on-primary: #1a1408;
+  --design-accent: #e2b65b;
+  --design-success: #8fd1a6;
+  --design-success-surface: #17261d;
+  --design-error: #f2958a;
+  --design-error-surface: #2b1715;
+  --design-focus: #e2b65b;
+
+  --design-radius-control: 0.5rem;
+  --design-radius-card: 0.6rem;
+  --design-shadow-card: 0 1rem 2rem -1.25rem rgb(0 0 0 / 70%);
+  --design-shadow-card-hover: 0 1.4rem 2.6rem -1.25rem rgb(0 0 0 / 85%);
+
+  --design-font: Manrope, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --design-font-titulos: Newsreader, Georgia, 'Times New Roman', serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--design-page-surface);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--design-page-surface);
+  color: var(--design-ink);
+  font-family: var(--design-font);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* El footer queda abajo aunque la página tenga poco contenido */
+app-root {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+app-root > :not(app-navbar):not(app-footer) {
+  flex: 1;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--design-font-titulos);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+a {
+  color: var(--design-primary);
+}
+
+img {
+  max-width: 100%;
+}
+
+::selection {
+  background: rgb(226 182 91 / 35%);
+  color: var(--design-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--design-focus);
+  outline-offset: 3px;
+}
+
+/* Valores por defecto de los formularios; cada componente puede pisarlos */
+input,
+select,
+textarea {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--design-border-strong);
+  border-radius: var(--design-radius-control);
+  background: var(--design-surface);
+  color: var(--design-ink);
+  font: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--design-ink-muted);
+  opacity: 0.8;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  border-color: var(--design-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(226 182 91 / 20%);
+}
+
+button {
+  font: inherit;
+}
+
+label {
+  color: var(--design-ink-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Al imprimir (por ejemplo, una factura) no se muestran el navbar ni el footer y se usa papel blanco */
 @media print {
   app-navbar,
   app-footer {
     display: none;
+  }
+
+  html,
+  body {
+    background: #fff;
+    color: #000;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
 }

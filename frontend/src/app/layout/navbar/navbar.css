@@ -1,16 +1,34 @@
-nav {
-  position: relative;
+/* La barra ocupa todo el ancho y queda fija arriba; el contenido va centrado */
+:host {
+  position: sticky;
+  top: 0;
   z-index: 10;
+  display: block;
+  border-bottom: 1px solid var(--design-border);
+  background: rgb(19 17 14 / 92%);
+  backdrop-filter: blur(8px);
+}
+
+nav {
   display: flex;
-  min-height: 4.25rem;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem clamp(1rem, 4vw, 2rem);
-  border-bottom: 1px solid rgb(255 255 255 / 12%);
-  background: var(--design-primary);
-  color: var(--design-surface);
-  font-family: var(--design-font);
-  box-shadow: 0 0.25rem 0.9rem rgb(32 49 73 / 14%);
+  gap: 1.5rem;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 1.1rem 1.25rem;
+}
+
+.marca {
+  flex-shrink: 0;
+  color: var(--design-ink);
+  font: italic 400 1.6rem/1 var(--design-font-titulos);
+  text-decoration: none;
+}
+
+.marca b {
+  color: var(--design-primary);
+  font-style: normal;
+  font-weight: 500;
 }
 
 .links {
@@ -18,57 +36,34 @@ nav {
   flex: 1;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.4rem;
-  flex-wrap: wrap;
+  gap: 0.25rem;
 }
 
 .links a,
 .links button,
 .hamburguesa {
   display: inline-flex;
-  min-height: 2.65rem;
   align-items: center;
-  justify-content: center;
-  padding: 0.55rem 0.85rem;
+  min-height: 2.4rem;
+  padding: 0.45rem 0.75rem;
   border: 1px solid transparent;
-  border-radius: var(--design-radius-control);
+  border-radius: 999px;
   background: transparent;
-  color: var(--design-surface);
+  color: var(--design-ink-muted);
   cursor: pointer;
-  font: inherit;
-  font-size: 0.92rem;
-  font-weight: 650;
+  font-size: 0.9rem;
+  font-weight: 500;
   text-decoration: none;
-  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+  transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease;
 }
 
 .links a:hover,
-.links button:hover,
-.hamburguesa:hover {
-  border-color: rgb(255 255 255 / 16%);
-  background: rgb(255 255 255 / 10%);
+.links button:hover {
+  color: var(--design-ink);
 }
 
-.links a:focus-visible,
-.links button:focus-visible,
-.hamburguesa:focus-visible {
-  outline: 3px solid #a9d2ff;
-  outline-offset: 3px;
-}
-
-.links .salir {
-  border-color: rgb(255 255 255 / 28%);
-}
-
-.usuario {
-  max-width: 16rem;
-  overflow: hidden;
-  padding: 0 0.35rem 0 0.75rem;
-  border-left: 1px solid rgb(255 255 255 / 28%);
-  font-size: 0.88rem;
-  opacity: 0.85;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.links a.activo {
+  color: var(--design-primary);
 }
 
 .admin {
@@ -80,12 +75,12 @@ nav {
 }
 
 .admin-toggle[aria-expanded='true'] {
-  border-color: rgb(255 255 255 / 16%);
-  background: rgb(255 255 255 / 10%);
+  color: var(--design-ink);
+  background: var(--design-surface);
 }
 
 .flecha {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   transition: transform 140ms ease;
 }
 
@@ -95,7 +90,7 @@ nav {
 
 .admin-menu {
   position: absolute;
-  top: calc(100% + 0.4rem);
+  top: calc(100% + 0.5rem);
   right: 0;
   display: flex;
   min-width: 12rem;
@@ -108,34 +103,68 @@ nav {
 }
 
 .links .admin-menu a {
-  justify-content: flex-start;
+  border-radius: var(--design-radius-control);
   color: var(--design-ink);
 }
 
 .links .admin-menu a:hover {
-  border-color: transparent;
   background: var(--design-surface-muted);
+  color: var(--design-primary);
 }
 
-.links .admin-menu a:focus-visible {
-  outline-color: var(--design-focus);
-  outline-offset: -2px;
+.cuenta {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 0.75rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid var(--design-border);
+}
+
+.usuario {
+  display: inline-block;
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.links .salir {
+  border-color: var(--design-border-strong);
+  color: var(--design-ink);
+}
+
+.links .salir:hover {
+  border-color: var(--design-primary);
+  color: var(--design-primary);
+}
+
+.links .registrarse {
+  margin-left: 0.25rem;
+  border-color: var(--design-primary);
+  background: var(--design-primary);
+  color: var(--design-on-primary);
+  font-weight: 700;
+}
+
+.links .registrarse:hover {
+  background: var(--design-primary-hover);
+  color: var(--design-on-primary);
 }
 
 .hamburguesa {
   display: none;
-  min-width: 2.8rem;
-  padding: 0.45rem;
-  border-color: rgb(255 255 255 / 20%);
-  font-size: 1.2rem;
+  margin-left: auto;
+  border-color: var(--design-border-strong);
+  border-radius: var(--design-radius-control);
+  color: var(--design-ink);
+  font-size: 1.15rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   nav {
-    min-height: 3.75rem;
     flex-wrap: wrap;
-    justify-content: flex-end;
-    padding-block: 0.55rem;
+    gap: 0.75rem;
   }
 
   .hamburguesa {
@@ -145,55 +174,52 @@ nav {
   .links {
     display: none;
     flex: 0 0 100%;
+    flex-direction: column;
     align-items: stretch;
-    gap: 0.35rem;
-    padding: 0.45rem 0 0.3rem;
+    gap: 0.15rem;
+    padding: 0.5rem 0 0.25rem;
   }
 
   .links.abierto {
     display: flex;
-    flex-direction: column;
-  }
-
-  .usuario {
-    max-width: none;
-    padding: 0.55rem 0.85rem;
-    border-left: 0;
-    border-top: 1px solid rgb(255 255 255 / 20%);
   }
 
   .links a,
   .links button {
     width: 100%;
     justify-content: flex-start;
-    box-sizing: border-box;
+    border-radius: var(--design-radius-control);
   }
 
-  /* Dentro del menú hamburguesa las opciones de admin se despliegan en el lugar, con sangría */
+  .links a:hover,
+  .links button:hover {
+    background: var(--design-surface);
+  }
+
+  /* En el menú del celular las opciones de admin se despliegan en el lugar, con sangría */
   .admin-menu {
     position: static;
     min-width: 0;
-    margin-top: 0.35rem;
-    padding: 0 0 0 1rem;
+    margin: 0.25rem 0 0 1rem;
+    padding: 0 0 0 0.5rem;
     border: 0;
-    border-left: 2px solid rgb(255 255 255 / 20%);
+    border-left: 1px solid var(--design-border-strong);
     border-radius: 0;
     background: transparent;
     box-shadow: none;
   }
 
-  .links .admin-menu a {
-    color: var(--design-surface);
+  .cuenta {
+    flex-direction: column;
+    align-items: stretch;
+    margin: 0.5rem 0 0;
+    padding: 0.5rem 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--design-border);
   }
 
-  .links .admin-menu a:hover {
-    background: rgb(255 255 255 / 10%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .links *,
-  .hamburguesa {
-    transition-duration: 0.01ms !important;
+  .links .registrarse {
+    margin: 0.25rem 0 0;
+    justify-content: center;
   }
 }

@@ -1,14 +1,15 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AutorResumen } from '../../../models/autor';
 import { Autor } from '../../../services/autor';
 import { Permisos } from '../../../core/services/permisos';
+import { Confirmacion } from '../../../shared/confirmacion/confirmacion';
 
 @Component({
   selector: 'app-autor-listado',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Confirmacion],
   templateUrl: './autor-listado.html',
   styleUrl: './autor-listado.css',
 })
@@ -30,6 +31,18 @@ export class AutorListado implements OnInit {
   protected readonly puedeEliminar = signal(false);
   protected readonly viendoInactivos = signal(false);
   protected readonly autorEliminando = signal<number | null>(null);
+  // Autor sobre el que se abrió el modal de confirmación (null = modal cerrado)
+  protected readonly autorAConfirmar = signal<AutorResumen | null>(null);
+  protected readonly mensajeConfirmacion = computed(() => {
+    const autor = this.autorAConfirmar();
+    if (!autor) {
+      return '';
+    }
+    const nombreCompleto = `${autor.nombre} ${autor.apellido}`;
+    return this.viendoInactivos()
+      ? `¿Querés volver a activar a ${nombreCompleto}? Va a aparecer de nuevo en el catálogo.`
+      : `${nombreCompleto} dejará de aparecer en el catálogo, pero se conservarán sus datos y sus libros.`;
+  });
   protected readonly busqueda = new FormControl('', { nonNullable: true });
   protected readonly formulario = new FormGroup({ busqueda: this.busqueda });
 
@@ -74,16 +87,28 @@ export class AutorListado implements OnInit {
     this.cargarAutores(0);
   }
 
-  protected eliminarAutor(autor: AutorResumen) {
-    const nombreCompleto = `${autor.nombre} ${autor.apellido}`;
-    if (
-      !window.confirm(
-        `¿Dar de baja a ${nombreCompleto}? Dejará de aparecer en el catálogo, pero se conservarán sus datos y sus libros.`
-      )
-    ) {
+  protected pedirConfirmacion(autor: AutorResumen) {
+    this.autorAConfirmar.set(autor);
+  }
+
+  protected cancelarConfirmacion() {
+    this.autorAConfirmar.set(null);
+  }
+
+  protected confirmarAccion() {
+    const autor = this.autorAConfirmar();
+    if (!autor) {
       return;
     }
+    if (this.viendoInactivos()) {
+      this.reactivarAutor(autor);
+    } else {
+      this.eliminarAutor(autor);
+    }
+  }
 
+  private eliminarAutor(autor: AutorResumen) {
+    const nombreCompleto = `${autor.nombre} ${autor.apellido}`;
     this.autorEliminando.set(autor.idAutor);
     this.mensajeErrorEliminacion.set('');
     this.mensajeResultado.set('');
@@ -91,11 +116,13 @@ export class AutorListado implements OnInit {
     this.autorService.darDeBaja(autor.idAutor).subscribe({
       next: () => {
         this.autorEliminando.set(null);
+        this.autorAConfirmar.set(null);
         this.mensajeResultado.set(`El autor ${nombreCompleto} se dio de baja correctamente.`);
         this.cargarAutores(this.paginaActual(), true);
       },
       error: (error: HttpErrorResponse) => {
         this.autorEliminando.set(null);
+        this.autorAConfirmar.set(null);
         this.mensajeErrorEliminacion.set(
           error.status === 401
             ? 'Iniciá sesión nuevamente para eliminar autores.'
@@ -107,12 +134,8 @@ export class AutorListado implements OnInit {
     });
   }
 
-  protected reactivarAutor(autor: AutorResumen) {
+  private reactivarAutor(autor: AutorResumen) {
     const nombreCompleto = `${autor.nombre} ${autor.apellido}`;
-    if (!window.confirm(`¿Querés volver a activar a ${nombreCompleto}?`)) {
-      return;
-    }
-
     this.autorEliminando.set(autor.idAutor);
     this.mensajeErrorEliminacion.set('');
     this.mensajeResultado.set('');
@@ -120,11 +143,13 @@ export class AutorListado implements OnInit {
     this.autorService.darDeAlta(autor.idAutor).subscribe({
       next: () => {
         this.autorEliminando.set(null);
+        this.autorAConfirmar.set(null);
         this.mensajeResultado.set(`El autor ${nombreCompleto} volvió a estar activo.`);
         this.cargarAutores(this.paginaActual(), true);
       },
       error: (error: HttpErrorResponse) => {
         this.autorEliminando.set(null);
+        this.autorAConfirmar.set(null);
         this.mensajeErrorEliminacion.set(
           error.status === 401
             ? 'Iniciá sesión nuevamente para reactivar autores.'

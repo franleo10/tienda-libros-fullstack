@@ -1,0 +1,20 @@
+<dialog #dialogo class="confirmacion" aria-labelledby="confirmacion-titulo" (cancel)="alApretarEscape($event)">
+  <h2 id="confirmacion-titulo">{{ titulo() }}</h2>
+  @if (mensaje()) {
+    <p>{{ mensaje() }}</p>
+  }
+  <div class="acciones">
+    <button type="button" class="cancelar" [disabled]="procesando()" (click)="cancelar.emit()">
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="confirmar"
+      [class.peligro]="peligro()"
+      [disabled]="procesando()"
+      (click)="confirmar.emit()"
+    >
+      {{ procesando() ? 'Procesando...' : textoConfirmar() }}
+    </button>
+  </div>
+</dialog>

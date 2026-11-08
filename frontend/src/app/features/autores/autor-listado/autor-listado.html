@@ -86,7 +86,7 @@
               type="button"
               class="eliminar-autor"
               [disabled]="autorEliminando() !== null"
-              (click)="eliminarAutor(autor)"
+              (click)="pedirConfirmacion(autor)"
             >
               {{ autorEliminando() === autor.idAutor ? 'Procesando...' : 'Dar de baja' }}
             </button>
@@ -96,7 +96,7 @@
               type="button"
               class="editar-autor"
               [disabled]="autorEliminando() !== null"
-              (click)="reactivarAutor(autor)"
+              (click)="pedirConfirmacion(autor)"
             >
               {{ autorEliminando() === autor.idAutor ? 'Procesando...' : 'Reactivar autor' }}
             </button>
@@ -127,4 +127,15 @@
       </nav>
     }
   }
+
+  <app-confirmacion
+    [abierto]="autorAConfirmar() !== null"
+    [titulo]="viendoInactivos() ? '¿Reactivar autor?' : '¿Dar de baja al autor?'"
+    [mensaje]="mensajeConfirmacion()"
+    [textoConfirmar]="viendoInactivos() ? 'Reactivar' : 'Dar de baja'"
+    [peligro]="!viendoInactivos()"
+    [procesando]="autorEliminando() !== null"
+    (confirmar)="confirmarAccion()"
+    (cancelar)="cancelarConfirmacion()"
+  />
 </main>

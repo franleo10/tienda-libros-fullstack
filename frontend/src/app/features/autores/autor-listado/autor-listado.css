@@ -1,10 +1,7 @@
 .autores-page {
-  width: min(100% - 2rem, 74rem);
-  margin: clamp(1.5rem, 4vw, 3rem) auto;
-  padding: clamp(1.25rem, 4vw, 2.75rem);
-  border: 1px solid var(--autores-border);
-  border-radius: var(--autores-radius-card);
-  background: var(--autores-page-surface);
+  width: min(100% - 2.5rem, 74rem);
+  margin: 0 auto;
+  padding: 3rem 0 0;
 }
 
 .page-header {
@@ -16,11 +13,17 @@
   margin-bottom: 1.75rem;
 }
 
+.acciones-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 .page-header h1 {
   margin: 0.35rem 0 0.5rem;
   color: var(--autores-ink);
   font-size: clamp(2rem, 5vw, 3rem);
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
   line-height: 1.1;
 }
 
@@ -30,17 +33,10 @@
 }
 
 .page-header .eyebrow {
-  display: inline-flex;
-  align-items: center;
-  margin: 0 0 0.55rem;
-  padding: 0.25rem 0.7rem;
-  border: 1px solid var(--autores-border);
-  border-radius: 999px;
-  background: var(--autores-surface);
+  margin: 0 0 0.75rem;
   color: var(--autores-primary);
   font-size: 0.75rem;
-  font-weight: 750;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
@@ -88,15 +84,15 @@
 .busqueda input:focus-visible {
   border-color: var(--autores-focus);
   outline: none;
-  box-shadow: 0 0 0 3px rgb(91 148 209 / 20%);
+  box-shadow: 0 0 0 3px rgb(226 182 91 / 20%);
 }
 
 .busqueda button,
 .paginacion button {
   min-height: 2.9rem;
-  padding: 0.65rem 1.1rem;
+  padding: 0.65rem 1.3rem;
   border: 1px solid var(--autores-primary);
-  border-radius: var(--autores-radius-control);
+  border-radius: 999px;
   background: var(--autores-primary);
   color: var(--autores-surface);
   cursor: pointer;
@@ -155,12 +151,12 @@ button:disabled {
 }
 
 .eliminar-autor {
-  border: 1px solid #c43d3d;
-  background: #fff6f5;
-  min-height: 2.6rem;
-  margin: 0 0.75rem 0.75rem;
-  padding: 0.55rem 0.9rem;
-  border-radius: var(--autores-radius-control);
+  border: 1px solid rgb(242 149 138 / 35%);
+  background: transparent;
+  min-height: 2.4rem;
+  margin: 0 1.3rem 1rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
   color: var(--autores-error);
   cursor: pointer;
   font: inherit;
@@ -188,8 +184,8 @@ button:disabled {
 }
 
 .estado.error {
-  border-color: #eac9c7;
-  background: #fff6f5;
+  border-color: rgb(242 149 138 / 30%);
+  background: var(--design-error-surface);
   color: var(--autores-error);
 }
 

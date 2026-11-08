@@ -1,0 +1,27 @@
+.no-encontrada {
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: 5rem 1.25rem 0;
+  text-align: center;
+}
+
+.numero {
+  margin: 0;
+  color: var(--design-primary);
+  font: italic 400 clamp(5rem, 18vw, 8rem) / 1 var(--design-font-titulos);
+  opacity: 0.9;
+}
+
+h1 {
+  margin: 1rem 0 0.75rem;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+}
+
+h1 em {
+  color: var(--design-primary);
+}
+
+p:not(.numero) {
+  margin: 0 0 2rem;
+  color: var(--design-ink-muted);
+}

@@ -179,7 +179,17 @@ label {
   cursor: pointer;
   font-weight: 700;
   text-decoration: none;
+  white-space: nowrap;
   transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+/* En el celular los botones de paginación son más compactos para que entren en una fila */
+@media (max-width: 34rem) {
+  .paginacion .boton-secundario {
+    min-height: 2.4rem;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.85rem;
+  }
 }
 
 .boton-principal {

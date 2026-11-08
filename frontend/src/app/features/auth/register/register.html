@@ -1,19 +1,31 @@
-<form [formGroup]="formulario" (ngSubmit)="alEnviar()">
-    
-    <label for="nombre">Nombre</label>
-    <input type="text" id="nombre" formControlName="nombre" autocomplete="name">
-    @if (formulario.controls.nombre.touched && formulario.controls.nombre.invalid) {
-      <p class="error">Ingresá un nombre de hasta 50 caracteres.</p>
-    }
+<main class="auth">
+  <header class="auth-cabecera">
+    <p class="eyebrow">Nueva cuenta</p>
+    <h1>Creá tu <em>cuenta</em></h1>
+    <p>Con tu cuenta comprás libros digitales que quedan para siempre en tu biblioteca.</p>
+  </header>
 
-    <label for="edad">Edad</label>
-    <input type="number" formControlName="edad" id="edad" min="1">
-    @if (formulario.controls.edad.touched && formulario.controls.edad.invalid) {
-      <p class="error">La edad debe ser mayor que cero.</p>
-    }
+  <form [formGroup]="formulario" (ngSubmit)="alEnviar()">
+    <div class="fila">
+      <div class="campo">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" formControlName="nombre" autocomplete="name">
+        @if (formulario.controls.nombre.touched && formulario.controls.nombre.invalid) {
+          <p class="error">Ingresá un nombre de hasta 50 caracteres.</p>
+        }
+      </div>
+
+      <div class="campo campo-edad">
+        <label for="edad">Edad</label>
+        <input type="number" formControlName="edad" id="edad" min="1">
+        @if (formulario.controls.edad.touched && formulario.controls.edad.invalid) {
+          <p class="error">La edad debe ser mayor que cero.</p>
+        }
+      </div>
+    </div>
 
     <label for="email">Email</label>
-    <input type="email" formControlName="email" id="email" autocomplete="email">
+    <input type="email" formControlName="email" id="email" autocomplete="email" placeholder="nombre@correo.com">
     @if (mensajeErrorEmail(formulario.controls.email); as error) {
       <p class="error">{{ error }}</p>
     }
@@ -22,20 +34,24 @@
     <input type="password" formControlName="password" id="password" autocomplete="new-password">
     @if (mensajeErrorPassword(formulario.controls.password); as error) {
       <p class="error">{{ error }}</p>
+    } @else {
+      <p class="ayuda">Al menos 6 caracteres, con una letra y un número.</p>
     }
 
-    <label for="confirmarPassword">Confirmar Contraseña</label>
+    <label for="confirmarPassword">Confirmar contraseña</label>
     <input type="password" formControlName="confirmarPassword" id="confirmarPassword" autocomplete="new-password">
     @if (formulario.hasError('noCoinciden') && formulario.controls.confirmarPassword.touched) {
       <p class="error">Las contraseñas no coinciden</p>
     }
-    
-    <button type="submit" [disabled]="formulario.invalid || cargando() ">@if (cargando()) { Registrando... } @else { Registrarse }</button>
 
+    <button type="submit" [disabled]="formulario.invalid || cargando()">
+      @if (cargando()) { Registrando... } @else { Crear cuenta }
+    </button>
 
     @if (mensajeError()) {
-     <p>{{ mensajeError() }}</p>
+      <p class="alerta error" role="alert">{{ mensajeError() }}</p>
     }
+  </form>
 
-    
-</form>
+  <p class="cambiar">¿Ya tenés cuenta? <a routerLink="/login">Iniciá sesión</a></p>
+</main>

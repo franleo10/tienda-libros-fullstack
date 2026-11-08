@@ -1,18 +1,76 @@
-@if (cargando()) { <p>Cargando...</p> }
-@if (mensajeError()) { <p>{{ mensajeError() }}</p> }
-<div class="tabla-scroll">
-<table> 
-  <thead>
-    <tr>
-      <th>ID</th> <th>Título</th> <th>Autor</th> <th>Precio</th> <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    @for (libro of libros(); track libro.id) {
-      <tr>
-        <td>{{ libro.id }}</td> <td> {{libro.titulo}} </td><td>{{libro.autores[0]?.nombre}} {{libro.autores[0]?.apellido}}</td><td>{{libro.precio}}</td><td><a [routerLink]="['/libros' , libro.id]">Ver </a><a [routerLink]="['/admin/libros', libro.id, 'editar']"> Editar</a> <button (click)="eliminar(libro)">Eliminar</button> </td>
-      </tr>
+<main class="pagina">
+  <header class="pagina-cabecera cabecera-admin">
+    <div>
+      <p class="eyebrow">Administración</p>
+      <h1>Libros</h1>
+      @if (totalLibros()) {
+        <p>{{ totalLibros() }} {{ totalLibros() === 1 ? 'libro' : 'libros' }} en el catálogo.</p>
+      }
+    </div>
+    <a class="boton-principal" routerLink="/admin/libros/nuevo">+ Nuevo libro</a>
+  </header>
+
+  @if (mensajeError()) {
+    <p class="alerta error" role="alert">{{ mensajeError() }}</p>
+  }
+
+  @if (cargando() && libros().length === 0) {
+    <p class="alerta" role="status">Cargando libros...</p>
+  } @else {
+    <div class="tabla-scroll">
+      <table [class.cargando]="cargando()">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Título</th>
+            <th scope="col">Autor</th>
+            <th scope="col" class="numero">Precio</th>
+            <th scope="col"><span class="visualmente-oculto">Acciones</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (libro of libros(); track libro.id) {
+            <tr>
+              <td class="id">{{ libro.id }}</td>
+              <td>
+                <div class="libro">
+                  <app-portada [titulo]="libro.titulo" [urlPortada]="libro.urlPortada" [chica]="true" />
+                  <span class="titulo">{{ libro.titulo }}</span>
+                </div>
+              </td>
+              <td class="autor">{{ libro.autores[0]?.nombre }} {{ libro.autores[0]?.apellido }}</td>
+              <td class="numero">{{ formatearPrecio(libro.precio) }}</td>
+              <td class="acciones">
+                <a [routerLink]="['/libros', libro.id]">Ver</a>
+                <a [routerLink]="['/admin/libros', libro.id, 'editar']">Editar</a>
+                <button type="button" (click)="eliminar(libro)">Eliminar</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (totalPaginas() > 1) {
+      <nav class="paginacion" aria-label="Páginas de libros">
+        <button
+          type="button"
+          class="boton-secundario"
+          [disabled]="paginaActual() === 0 || cargando()"
+          (click)="cargarPagina(paginaActual() - 1)"
+        >
+          ← Anterior
+        </button>
+        <span>Página {{ paginaActual() + 1 }} de {{ totalPaginas() }}</span>
+        <button
+          type="button"
+          class="boton-secundario"
+          [disabled]="paginaActual() + 1 >= totalPaginas() || cargando()"
+          (click)="cargarPagina(paginaActual() + 1)"
+        >
+          Siguiente →
+        </button>
+      </nav>
     }
-  </tbody>
-</table>
-</div>
+  }
+</main>

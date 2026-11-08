@@ -9,14 +9,16 @@
           : 'Encontrá autores y descubrí cuántos libros tenemos de cada uno.' }}
       </p>
     </div>
-    @if (puedeEliminar()) {
-      <button type="button" class="boton-nuevo" (click)="alternarAutoresInactivos()">
-        {{ viendoInactivos() ? 'Ver autores activos' : 'Ver autores dados de baja' }}
-      </button>
-    }
-    @if (puedeAgregar()) {
-      <a class="boton-nuevo" routerLink="/autores/nuevo">Nuevo autor</a>
-    }
+    <div class="acciones-cabecera">
+      @if (puedeEliminar()) {
+        <button type="button" class="boton-nuevo" (click)="alternarAutoresInactivos()">
+          {{ viendoInactivos() ? 'Ver autores activos' : 'Ver autores dados de baja' }}
+        </button>
+      }
+      @if (puedeAgregar()) {
+        <a class="boton-nuevo" routerLink="/autores/nuevo">Nuevo autor</a>
+      }
+    </div>
   </header>
 
   @if (mensajeResultado()) {

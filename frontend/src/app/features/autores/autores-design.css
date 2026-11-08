@@ -55,40 +55,50 @@
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  min-height: 2.7rem;
-  padding: 0.6rem 1rem;
+  min-height: 2.75rem;
+  padding: 0.6rem 1.3rem;
   border: 1px solid var(--autores-primary);
-  border-radius: var(--autores-radius-control);
+  border-radius: 999px;
   background: var(--autores-primary);
-  color: var(--autores-surface);
+  color: var(--design-on-primary);
+  cursor: pointer;
+  font: inherit;
   font-weight: 700;
   text-decoration: none;
-  transition: background-color 140ms ease, border-color 140ms ease;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 
 .autores-page .boton-nuevo:hover,
-.autores-page .editar-autor:hover,
 .autor-detalle-page .editar-autor:hover {
   border-color: var(--autores-primary-hover);
   background: var(--autores-primary-hover);
 }
 
+/* "Ver autores dados de baja" y "Editar autor" en las tarjetas son acciones secundarias */
+.autores-page button.boton-nuevo,
 .autores-page .editar-autor {
-  min-height: 2.4rem;
-  margin: 0 1.3rem 1rem;
-  padding: 0.45rem 0.8rem;
-  background: var(--autores-surface);
+  border-color: var(--autores-border-strong);
+  background: transparent;
+  color: var(--autores-ink);
+}
+
+.autores-page button.boton-nuevo:hover,
+.autores-page .editar-autor:hover {
+  border-color: var(--autores-primary);
+  background: transparent;
   color: var(--autores-primary);
 }
 
-.autores-page .editar-autor:hover {
-  color: var(--autores-surface);
+.autores-page .editar-autor {
+  min-height: 2.4rem;
+  margin: 0 1.3rem 1rem;
+  padding: 0.45rem 0.9rem;
 }
 
 .autores-page .estado.exito {
-  border-color: #c6e5d1;
-  background: #f1fbf4;
-  color: #23633b;
+  border-color: rgb(143 209 166 / 30%);
+  background: var(--design-success-surface);
+  color: var(--design-success);
 }
 
 @media (prefers-reduced-motion: reduce) {

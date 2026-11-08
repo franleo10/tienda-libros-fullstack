@@ -1,0 +1,46 @@
+<dialog
+  #dialogo
+  class="vista-libro"
+  aria-labelledby="vista-libro-titulo"
+  (cancel)="alApretarEscape($event)"
+  (click)="alHacerClic($event)"
+>
+  @if (libro(); as libro) {
+    <div class="contenido">
+      <button type="button" class="cerrar-x" aria-label="Cerrar" (click)="cerrar.emit()">✕</button>
+
+      <app-portada
+        [titulo]="libro.titulo"
+        [autor]="nombreAutores(libro)"
+        [urlPortada]="libro.urlPortada"
+      />
+
+      <div class="datos">
+        @if (nombreGeneros(libro) || anio(libro)) {
+          <p class="eyebrow">
+            {{ nombreGeneros(libro) }}
+            @if (nombreGeneros(libro) && anio(libro)) {
+              &nbsp;·
+            }
+            {{ anio(libro) }}
+          </p>
+        }
+        <h2 id="vista-libro-titulo">{{ libro.titulo }}</h2>
+        @if (nombreAutores(libro)) {
+          <p class="autor">de {{ nombreAutores(libro) }}</p>
+        }
+        <p class="precio">{{ formatearPrecio(libro.precio) }}</p>
+        @if (libro.sinopsis) {
+          <p class="sinopsis">{{ libro.sinopsis }}</p>
+        }
+        <p class="id">ID {{ libro.id }}</p>
+      </div>
+    </div>
+
+    <div class="acciones">
+      <button type="button" class="boton-secundario" (click)="cerrar.emit()">Cerrar</button>
+      <a class="boton-secundario" [routerLink]="['/libros', libro.id]">Ver en la tienda</a>
+      <a class="boton-principal" [routerLink]="['/admin/libros', libro.id, 'editar']">Editar</a>
+    </div>
+  }
+</dialog>

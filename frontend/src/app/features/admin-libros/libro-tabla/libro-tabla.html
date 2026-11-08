@@ -41,9 +41,9 @@
               <td class="autor">{{ libro.autores[0]?.nombre }} {{ libro.autores[0]?.apellido }}</td>
               <td class="numero">{{ formatearPrecio(libro.precio) }}</td>
               <td class="acciones">
-                <a [routerLink]="['/libros', libro.id]">Ver</a>
+                <button type="button" (click)="ver(libro)">Ver</button>
                 <a [routerLink]="['/admin/libros', libro.id, 'editar']">Editar</a>
-                <button type="button" (click)="eliminar(libro)">Eliminar</button>
+                <button type="button" class="eliminar" (click)="eliminar(libro)">Eliminar</button>
               </td>
             </tr>
           }
@@ -73,4 +73,17 @@
       </nav>
     }
   }
+
+  <app-vista-libro [libro]="libroAVer()" (cerrar)="cerrarVista()" />
+
+  <app-confirmacion
+    [abierto]="libroAEliminar() !== null"
+    titulo="¿Eliminar este libro?"
+    [mensaje]="'«' + libroAEliminar()?.titulo + '» va a dejar de aparecer en el catálogo.'"
+    textoConfirmar="Eliminar"
+    [peligro]="true"
+    [procesando]="eliminando()"
+    (confirmar)="confirmarEliminar()"
+    (cancelar)="cancelarEliminar()"
+  />
 </main>

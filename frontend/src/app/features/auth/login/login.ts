@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Auth } from '../../../core/services/auth';
 import { ActivatedRoute, Router } from '@angular/router';
+import { mensajeErrorEmail, reglasEmail } from '../../../shared/validadores';
 
 @Component({
   selector: 'app-login',
@@ -19,9 +20,11 @@ export class Login {
   protected route = inject(ActivatedRoute);
 
   formulario = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', reglasEmail],
     password: ['', Validators.required],
   });
+
+  protected readonly mensajeErrorEmail = mensajeErrorEmail;
 
   protected alEnviar() {
     this.cargando.set(true);

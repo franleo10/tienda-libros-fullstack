@@ -1,5 +1,6 @@
 package org.utn.tpfinalprogramacion3.security.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +35,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> registerUser(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
 

@@ -10,3 +10,9 @@ form {
 input {
   padding: 0.5rem;
 }
+
+.error {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.875rem;
+}

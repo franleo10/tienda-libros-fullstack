@@ -1,9 +1,15 @@
 <form [formGroup]="formulario" (ngSubmit)="alEnviar()">
     <label for="email">Email</label>
-    <input type="email" formControlName="email" id="email">
+    <input type="email" formControlName="email" id="email" autocomplete="email">
+    @if (mensajeErrorEmail(formulario.controls.email); as error) {
+      <p class="error">{{ error }}</p>
+    }
 
     <label for="password">Contraseña</label>
-    <input type="password" formControlName="password" id="password">
+    <input type="password" formControlName="password" id="password" autocomplete="current-password">
+    @if (formulario.controls.password.touched && formulario.controls.password.invalid) {
+      <p class="error">Ingresá tu contraseña.</p>
+    }
     
     
     <button type="submit" [disabled]="formulario.invalid || cargando() ">@if (cargando()) { Ingresando... } @else { Ingresar }</button>

@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../../core/services/auth';
 import { PerfilService } from '../../../services/perfil';
+import { mensajeErrorEmail, reglasEmail } from '../../../shared/validadores';
 
 @Component({
   selector: 'app-perfil-editar',
@@ -23,9 +24,11 @@ export class PerfilEditar implements OnInit {
 
   protected readonly formulario = this.fb.nonNullable.group({
     nombre: ['', [Validators.required, Validators.maxLength(50)]],
-    email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
+    email: ['', reglasEmail],
     edad: [1, [Validators.required, Validators.min(1)]],
   });
+
+  protected readonly mensajeErrorEmail = mensajeErrorEmail;
 
   ngOnInit() {
     this.perfilService.obtenerPerfil().subscribe({

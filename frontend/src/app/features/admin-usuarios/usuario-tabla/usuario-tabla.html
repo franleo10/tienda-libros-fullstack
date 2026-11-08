@@ -1,15 +1,15 @@
-<main class="usuarios-page">
-  <header class="page-header">
+<main class="pagina usuarios-page">
+  <header class="pagina-cabecera">
     <p class="eyebrow">Administración</p>
     <h1>Usuarios</h1>
     <p>Buscá usuarios, filtralos por rol o estado y baneá a quien no deba usar la tienda.</p>
   </header>
 
   @if (mensajeResultado()) {
-    <p class="estado exito" role="status">{{ mensajeResultado() }}</p>
+    <p class="alerta exito" role="status">{{ mensajeResultado() }}</p>
   }
   @if (mensajeAccionError()) {
-    <p class="estado error" role="alert">{{ mensajeAccionError() }}</p>
+    <p class="alerta error" role="alert">{{ mensajeAccionError() }}</p>
   }
 
   <form class="filtros" [formGroup]="filtros" (ngSubmit)="buscar()">
@@ -39,9 +39,14 @@
       </select>
     </div>
     <div class="acciones-filtros">
-      <button type="submit" [disabled]="cargando()">Buscar</button>
+      <button type="submit" class="boton-principal" [disabled]="cargando()">Buscar</button>
       @if (hayFiltros()) {
-        <button type="button" class="secondary" [disabled]="cargando()" (click)="limpiarFiltros()">
+        <button
+          type="button"
+          class="boton-secundario"
+          [disabled]="cargando()"
+          (click)="limpiarFiltros()"
+        >
           Limpiar
         </button>
       }
@@ -49,11 +54,13 @@
   </form>
 
   @if (cargando() && usuarios().length === 0) {
-    <p class="estado" role="status">Cargando usuarios...</p>
+    <p class="alerta" role="status">Cargando usuarios...</p>
   } @else if (mensajeError()) {
-    <p class="estado error" role="alert">{{ mensajeError() }}</p>
+    <p class="alerta error" role="alert">{{ mensajeError() }}</p>
   } @else if (usuarios().length === 0) {
-    <p class="estado">No se encontraron usuarios con esos filtros.</p>
+    <div class="vacio">
+      <p>No se encontraron usuarios con esos filtros.</p>
+    </div>
   } @else {
     <p class="resumen">
       {{ totalUsuarios() }} {{ totalUsuarios() === 1 ? 'usuario' : 'usuarios' }}
@@ -90,7 +97,7 @@
                 } @else {
                   <span
                     class="etiqueta"
-                    [class.admin]="usuario.rol === 'ADMINISTRADOR'"
+                    [class.dorada]="usuario.rol === 'ADMINISTRADOR'"
                     [attr.title]="esUsuarioActual(usuario) ? 'No podés cambiar tu propio rol' : null"
                   >
                     {{ usuario.rol === 'ADMINISTRADOR' ? 'Administrador' : 'Usuario' }}
@@ -98,7 +105,7 @@
                 }
               </td>
               <td>
-                <span class="etiqueta" [class.activo]="usuario.activo" [class.baneado]="!usuario.activo">
+                <span class="etiqueta" [class.exito]="usuario.activo" [class.baneado]="!usuario.activo">
                   {{ usuario.activo ? 'Activo' : 'Baneado' }}
                 </span>
               </td>
@@ -135,7 +142,7 @@
       <nav class="paginacion" aria-label="Paginación de usuarios">
         <button
           type="button"
-          class="secondary"
+          class="boton-secundario"
           [disabled]="paginaActual() === 0 || cargando()"
           (click)="cambiarPagina(paginaActual() - 1)"
         >
@@ -144,7 +151,7 @@
         <span>Página {{ paginaActual() + 1 }} de {{ totalPaginas() }}</span>
         <button
           type="button"
-          class="secondary"
+          class="boton-secundario"
           [disabled]="paginaActual() + 1 >= totalPaginas() || cargando()"
           (click)="cambiarPagina(paginaActual() + 1)"
         >

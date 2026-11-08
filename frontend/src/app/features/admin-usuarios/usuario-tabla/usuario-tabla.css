@@ -1,49 +1,6 @@
+/* El contenedor, la cabecera, los botones, las alertas y las etiquetas vienen de styles.css */
 .usuarios-page {
-  box-sizing: border-box;
-  width: min(100% - 2rem, 74rem);
-  margin: clamp(1.5rem, 4vw, 3rem) auto;
-  padding: clamp(1.25rem, 4vw, 2.75rem);
-  border: 1px solid var(--design-border);
-  border-radius: var(--design-radius-card);
-  background: var(--design-page-surface);
-  color: var(--design-ink);
-  font-family: var(--design-font);
-  line-height: 1.55;
-}
-
-.usuarios-page :focus-visible {
-  outline: 3px solid var(--design-focus);
-  outline-offset: 3px;
-}
-
-.page-header {
-  margin-bottom: 1.75rem;
-}
-
-.page-header h1 {
-  margin: 0.35rem 0 0.5rem;
-  font-size: clamp(2rem, 5vw, 3rem);
-  letter-spacing: -0.045em;
-  line-height: 1.1;
-}
-
-.page-header p {
-  margin: 0;
-  color: var(--design-ink-muted);
-}
-
-.page-header .eyebrow {
-  display: inline-flex;
-  margin: 0 0 0.55rem;
-  padding: 0.25rem 0.7rem;
-  border: 1px solid var(--design-border);
-  border-radius: 999px;
-  background: var(--design-surface);
-  color: var(--design-primary);
-  font-size: 0.75rem;
-  font-weight: 750;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
+  max-width: 74rem;
 }
 
 .filtros {
@@ -51,12 +8,9 @@
   flex-wrap: wrap;
   align-items: flex-end;
   gap: 0.9rem;
-  margin-bottom: 1.5rem;
-  padding: clamp(1rem, 3vw, 1.4rem);
-  border: 1px solid var(--design-border);
-  border-radius: var(--design-radius-card);
-  background: var(--design-surface);
-  box-shadow: var(--design-shadow-card);
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--design-border);
 }
 
 .campo {
@@ -72,26 +26,11 @@
 
 .campo label {
   margin-bottom: 0.4rem;
-  font-size: 0.92rem;
-  font-weight: 700;
 }
 
 .campo input,
 .campo select {
-  min-height: 2.9rem;
-  padding: 0.6rem 0.9rem;
-  border: 1px solid var(--design-border-strong);
-  border-radius: var(--design-radius-control);
-  background: var(--design-surface);
-  color: var(--design-ink);
-  font: inherit;
-}
-
-.campo input:focus-visible,
-.campo select:focus-visible {
-  border-color: var(--design-focus);
-  outline: none;
-  box-shadow: 0 0 0 3px rgb(91 148 209 / 20%);
+  min-height: 2.75rem;
 }
 
 .acciones-filtros {
@@ -99,46 +38,12 @@
   gap: 0.75rem;
 }
 
-.filtros button,
-.paginacion button {
-  min-height: 2.9rem;
-  padding: 0.65rem 1.1rem;
-  border: 1px solid var(--design-primary);
-  border-radius: var(--design-radius-control);
-  background: var(--design-primary);
-  color: var(--design-surface);
-  cursor: pointer;
-  font: inherit;
-  font-weight: 700;
-}
-
-.filtros button:hover:not(:disabled),
-.paginacion button:hover:not(:disabled) {
-  background: var(--design-primary-hover);
-}
-
-.filtros button.secondary,
-.paginacion button.secondary {
-  border-color: var(--design-border-strong);
-  background: var(--design-surface);
-  color: var(--design-primary);
-}
-
-.filtros button.secondary:hover:not(:disabled),
-.paginacion button.secondary:hover:not(:disabled) {
-  border-color: var(--design-primary);
-  background: var(--design-surface-muted);
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-
 .resumen {
-  margin: 0 0 0.6rem;
+  margin: 0 0 0.75rem;
   color: var(--design-ink-muted);
-  font-size: 0.9rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .tabla-contenedor {
@@ -146,7 +51,6 @@ button:disabled {
   border: 1px solid var(--design-border);
   border-radius: var(--design-radius-card);
   background: var(--design-surface);
-  box-shadow: var(--design-shadow-card);
 }
 
 table {
@@ -156,18 +60,17 @@ table {
 
 th,
 td {
-  padding: 0.8rem 1rem;
+  padding: 0.85rem 1.1rem;
   border-bottom: 1px solid var(--design-border);
   text-align: left;
   vertical-align: middle;
 }
 
 th {
-  background: var(--design-surface-muted);
   color: var(--design-ink-muted);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -176,11 +79,11 @@ tbody tr:last-child td {
 }
 
 tbody tr:hover {
-  background: var(--design-page-surface);
+  background: var(--design-surface-muted);
 }
 
 td.nombre {
-  font-weight: 650;
+  font-weight: 600;
 }
 
 td.email {
@@ -199,47 +102,23 @@ td.acciones {
   white-space: nowrap;
 }
 
-.etiqueta {
-  display: inline-block;
-  padding: 0.15rem 0.6rem;
-  border: 1px solid var(--design-border);
-  border-radius: 999px;
-  background: var(--design-surface-muted);
-  color: var(--design-ink-muted);
-  font-size: 0.8rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.etiqueta.admin {
-  border-color: #e7d3b8;
-  background: #fbf4ea;
-  color: #8a5a22;
+.etiqueta.baneado {
+  border-color: rgb(242 149 138 / 35%);
+  background: var(--design-error-surface);
+  color: var(--design-error);
 }
 
 .selector-rol {
   min-height: 2.2rem;
-  padding: 0.25rem 0.5rem;
-  border: 1px solid var(--design-border-strong);
-  border-radius: var(--design-radius-control);
-  background: var(--design-surface);
-  color: var(--design-ink);
+  padding: 0.25rem 0.6rem;
   cursor: pointer;
-  font: inherit;
   font-size: 0.85rem;
   font-weight: 700;
 }
 
 .selector-rol.admin {
-  border-color: #e7d3b8;
-  background: #fbf4ea;
-  color: #8a5a22;
-}
-
-.selector-rol:focus-visible {
-  border-color: var(--design-focus);
-  outline: none;
-  box-shadow: 0 0 0 3px rgb(91 148 209 / 20%);
+  border-color: rgb(226 182 91 / 40%);
+  color: var(--design-primary);
 }
 
 .selector-rol:disabled {
@@ -249,73 +128,42 @@ td.acciones {
 
 .vos {
   color: var(--design-ink-muted);
-  font-size: 0.85rem;
-  font-style: italic;
-}
-
-.etiqueta.activo {
-  border-color: #c6e5d1;
-  background: #f1fbf4;
-  color: var(--design-success);
-}
-
-.etiqueta.baneado {
-  border-color: #eac9c7;
-  background: #fff6f5;
-  color: var(--design-error);
+  font: italic 400 1rem var(--design-font-titulos);
 }
 
 .acciones button {
-  min-height: 2.4rem;
-  padding: 0.45rem 0.9rem;
-  border-radius: var(--design-radius-control);
+  min-height: 2.3rem;
+  padding: 0.4rem 1rem;
+  border: 1px solid;
+  border-radius: 999px;
+  background: transparent;
   cursor: pointer;
-  font: inherit;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
+  transition: background-color 140ms ease, color 140ms ease;
 }
 
 .acciones .banear {
-  border: 1px solid #c43d3d;
-  background: #fff6f5;
+  border-color: rgb(242 149 138 / 40%);
   color: var(--design-error);
 }
 
 .acciones .banear:hover:not(:disabled) {
-  background: var(--design-error);
-  color: #fff;
+  background: var(--design-error-surface);
 }
 
 .acciones .reactivar {
-  border: 1px solid var(--design-border-strong);
-  background: var(--design-surface);
-  color: var(--design-primary);
+  border-color: rgb(143 209 166 / 40%);
+  color: var(--design-success);
 }
 
 .acciones .reactivar:hover:not(:disabled) {
-  border-color: var(--design-primary);
-  background: var(--design-primary);
-  color: #fff;
+  background: var(--design-success-surface);
 }
 
-.estado {
-  padding: 1rem 1.1rem;
-  border: 1px solid var(--design-border);
-  border-radius: var(--design-radius-control);
-  background: var(--design-surface);
-  color: var(--design-ink-muted);
-}
-
-.estado.error {
-  border-color: #eac9c7;
-  background: #fff6f5;
-  color: var(--design-error);
-}
-
-.estado.exito {
-  border-color: #c6e5d1;
-  background: #f1fbf4;
-  color: #23633b;
+.acciones button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 .paginacion {
@@ -324,9 +172,9 @@ td.acciones {
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
-  margin-top: 1.5rem;
+  margin-top: 1.75rem;
   color: var(--design-ink-muted);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
 }
 
 .visualmente-oculto {
@@ -349,7 +197,6 @@ td.acciones {
   .tabla-contenedor {
     border: 0;
     background: transparent;
-    box-shadow: none;
   }
 
   thead {

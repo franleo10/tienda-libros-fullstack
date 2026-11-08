@@ -27,20 +27,30 @@ import org.utn.tpfinalprogramacion3.entities.UsuarioEntity;
 import org.utn.tpfinalprogramacion3.enums.Rol;
 import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
 import org.utn.tpfinalprogramacion3.security.entities.CredencialEntity;
+import org.utn.tpfinalprogramacion3.security.entities.RoleEntity;
+import org.utn.tpfinalprogramacion3.security.repositories.CredentialsRepository;
+import org.utn.tpfinalprogramacion3.security.repositories.RoleRepository;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UsuarioService {
 
     private final UsuarioRepository repository;
     private final ModelMapper modelMapper;
+    private final CredentialsRepository credentialsRepository;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public UsuarioService(UsuarioRepository repository, ModelMapper modelMapper) {
+    public UsuarioService(UsuarioRepository repository, ModelMapper modelMapper,
+                          CredentialsRepository credentialsRepository, RoleRepository roleRepository) {
         this.repository = repository;
         this.modelMapper = modelMapper;
+        this.credentialsRepository = credentialsRepository;
+        this.roleRepository = roleRepository;
     }
 
     @PreAuthorize("hasAuthority('ELIMINAR_USUARIOS')")
@@ -181,6 +191,45 @@ public class UsuarioService {
         repository.save(usuarioBuscado);
 
         return "Usuario dado de alta existosamente";
+    }
+
+    // Todos los usuarios tienen el rol USUARIO; ser administrador es tener además el rol ADMINISTRADOR
+    @PreAuthorize("hasAuthority('ELIMINAR_USUARIOS')")
+    public String cambiarRol(int idUsuario, Rol rol) {
+
+        UsuarioEntity usuario = repository.findById(idUsuario)
+                .orElseThrow(() -> new UsuarioInexistenteException("No hay un usuario con el id indicado en el sistema"));
+
+        // Así nunca se queda la tienda sin administradores
+        if (idUsuario == idUsuarioActual()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "No podés cambiar tu propio rol.");
+        }
+
+        CredencialEntity credencial = usuario.getCredencialEntity();
+        if (credencial == null) {
+            throw new UsuarioInexistenteException("El usuario no tiene una cuenta para iniciar sesión.");
+        }
+
+        if (rolDe(usuario) == rol) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El usuario ya tiene ese rol.");
+        }
+
+        Set<RoleEntity> roles = new HashSet<>();
+        roles.add(buscarRol(Rol.USUARIO));
+        if (rol == Rol.ADMINISTRADOR) {
+            roles.add(buscarRol(Rol.ADMINISTRADOR));
+        }
+        credencial.setRoles(roles);
+        credentialsRepository.save(credencial);
+
+        return rol == Rol.ADMINISTRADOR
+                ? usuario.getNombre() + " ahora es administrador."
+                : usuario.getNombre() + " ahora es usuario.";
+    }
+
+    private RoleEntity buscarRol(Rol rol) {
+        return roleRepository.findByRole(rol)
+                .orElseThrow(() -> new IllegalStateException("No existe el rol " + rol));
     }
 
     // Tabla del panel de admin: búsqueda por nombre o email, filtro por rol y por estado.

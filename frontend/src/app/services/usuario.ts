@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Pagina } from '../models/autor';
-import { FiltrosUsuarios, UsuarioAdmin } from '../models/usuario';
+import { FiltrosUsuarios, RolUsuario, UsuarioAdmin } from '../models/usuario';
 
 @Injectable({
   providedIn: 'root',
@@ -25,5 +25,12 @@ export class Usuario {
 
   darDeAlta(id: number) {
     return this.http.put(`${this.apiUrl}/alta/${id}`, null, { responseType: 'text' });
+  }
+
+  cambiarRol(id: number, rol: RolUsuario) {
+    return this.http.put(`${this.apiUrl}/rol/${id}`, null, {
+      params: new HttpParams().set('rol', rol),
+      responseType: 'text',
+    });
   }
 }

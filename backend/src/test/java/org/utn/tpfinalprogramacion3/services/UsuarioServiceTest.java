@@ -16,10 +16,13 @@ import org.utn.tpfinalprogramacion3.enums.Rol;
 import org.utn.tpfinalprogramacion3.repository.UsuarioRepository;
 import org.utn.tpfinalprogramacion3.security.entities.CredencialEntity;
 import org.utn.tpfinalprogramacion3.security.entities.RoleEntity;
+import org.utn.tpfinalprogramacion3.security.repositories.CredentialsRepository;
+import org.utn.tpfinalprogramacion3.security.repositories.RoleRepository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -33,6 +36,9 @@ import static org.mockito.Mockito.when;
 
 class UsuarioServiceTest {
 
+    private final CredentialsRepository credentialsRepository = mock(CredentialsRepository.class);
+    private final RoleRepository roleRepository = mock(RoleRepository.class);
+
     @AfterEach
     void limpiarContexto() {
         SecurityContextHolder.clearContext();
@@ -41,7 +47,7 @@ class UsuarioServiceTest {
     @Test
     void listarParaAdminNormalizaFiltrosYDevuelveRolYEstado() {
         UsuarioRepository repository = mock(UsuarioRepository.class);
-        UsuarioService service = new UsuarioService(repository, new ModelMapper());
+        UsuarioService service = servicio(repository);
 
         UsuarioEntity admin = usuario(1, "Ana", Rol.ADMINISTRADOR);
         UsuarioEntity baneado = usuario(2, "Beto", Rol.USUARIO);
@@ -66,7 +72,7 @@ class UsuarioServiceTest {
     @Test
     void listarParaAdminIgnoraBusquedaVaciaYRolNulo() {
         UsuarioRepository repository = mock(UsuarioRepository.class);
-        UsuarioService service = new UsuarioService(repository, new ModelMapper());
+        UsuarioService service = servicio(repository);
 
         when(repository.buscarParaAdmin(null, false, null, PageRequest.of(1, 10)))
                 .thenReturn(Page.empty(PageRequest.of(1, 10)));
@@ -79,7 +85,7 @@ class UsuarioServiceTest {
     @Test
     void bajaUsuarioMarcaAlUsuarioComoInactivo() {
         UsuarioRepository repository = mock(UsuarioRepository.class);
-        UsuarioService service = new UsuarioService(repository, new ModelMapper());
+        UsuarioService service = servicio(repository);
         loguearComo(usuario(1, "Ana", Rol.ADMINISTRADOR));
 
         UsuarioEntity objetivo = usuario(2, "Beto", Rol.USUARIO);
@@ -95,7 +101,7 @@ class UsuarioServiceTest {
     @Test
     void bajaUsuarioNoPermiteQueElAdminSeDeDeBajaASiMismo() {
         UsuarioRepository repository = mock(UsuarioRepository.class);
-        UsuarioService service = new UsuarioService(repository, new ModelMapper());
+        UsuarioService service = servicio(repository);
         UsuarioEntity admin = usuario(1, "Ana", Rol.ADMINISTRADOR);
         loguearComo(admin);
 
@@ -118,6 +124,74 @@ class UsuarioServiceTest {
         usuario.setActivo(false);
 
         assertFalse(credencial.isEnabled());
+    }
+
+    @Test
+    void cambiarRolHaceAdministradorAUnUsuarioComun() {
+        UsuarioRepository repository = mock(UsuarioRepository.class);
+        UsuarioService service = servicio(repository);
+        loguearComo(usuario(1, "Ana", Rol.ADMINISTRADOR));
+        rolesEnLaBase();
+
+        UsuarioEntity objetivo = usuario(2, "Beto", Rol.USUARIO);
+        when(repository.findById(2)).thenReturn(Optional.of(objetivo));
+
+        String mensaje = service.cambiarRol(2, Rol.ADMINISTRADOR);
+
+        assertEquals("Beto ahora es administrador.", mensaje);
+        assertEquals(Set.of(Rol.USUARIO, Rol.ADMINISTRADOR), rolesDe(objetivo));
+        verify(credentialsRepository).save(objetivo.getCredencialEntity());
+    }
+
+    @Test
+    void cambiarRolLeQuitaElRolDeAdministrador() {
+        UsuarioRepository repository = mock(UsuarioRepository.class);
+        UsuarioService service = servicio(repository);
+        loguearComo(usuario(1, "Ana", Rol.ADMINISTRADOR));
+        rolesEnLaBase();
+
+        UsuarioEntity objetivo = usuario(2, "Beto", Rol.ADMINISTRADOR);
+        when(repository.findById(2)).thenReturn(Optional.of(objetivo));
+
+        String mensaje = service.cambiarRol(2, Rol.USUARIO);
+
+        assertEquals("Beto ahora es usuario.", mensaje);
+        assertEquals(Set.of(Rol.USUARIO), rolesDe(objetivo));
+        verify(credentialsRepository).save(objetivo.getCredencialEntity());
+    }
+
+    @Test
+    void cambiarRolNoPermiteQueElAdminCambieSuPropioRol() {
+        UsuarioRepository repository = mock(UsuarioRepository.class);
+        UsuarioService service = servicio(repository);
+        UsuarioEntity admin = usuario(1, "Ana", Rol.ADMINISTRADOR);
+        loguearComo(admin);
+
+        when(repository.findById(1)).thenReturn(Optional.of(admin));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> service.cambiarRol(1, Rol.USUARIO));
+
+        assertEquals(HttpStatus.CONFLICT, ex.getStatusCode());
+        assertEquals(Set.of(Rol.ADMINISTRADOR), rolesDe(admin));
+        verify(credentialsRepository, never()).save(any());
+    }
+
+    private UsuarioService servicio(UsuarioRepository repository) {
+        return new UsuarioService(repository, new ModelMapper(), credentialsRepository, roleRepository);
+    }
+
+    private void rolesEnLaBase() {
+        when(roleRepository.findByRole(Rol.USUARIO))
+                .thenReturn(Optional.of(RoleEntity.builder().role(Rol.USUARIO).build()));
+        when(roleRepository.findByRole(Rol.ADMINISTRADOR))
+                .thenReturn(Optional.of(RoleEntity.builder().role(Rol.ADMINISTRADOR).build()));
+    }
+
+    private static Set<Rol> rolesDe(UsuarioEntity usuario) {
+        return usuario.getCredencialEntity().getRoles().stream()
+                .map(RoleEntity::getRole)
+                .collect(Collectors.toSet());
     }
 
     private static UsuarioEntity usuario(int id, String nombre, Rol rol) {

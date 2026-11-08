@@ -217,6 +217,42 @@ td.acciones {
   color: #8a5a22;
 }
 
+.selector-rol {
+  min-height: 2.2rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--design-border-strong);
+  border-radius: var(--design-radius-control);
+  background: var(--design-surface);
+  color: var(--design-ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.selector-rol.admin {
+  border-color: #e7d3b8;
+  background: #fbf4ea;
+  color: #8a5a22;
+}
+
+.selector-rol:focus-visible {
+  border-color: var(--design-focus);
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(91 148 209 / 20%);
+}
+
+.selector-rol:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.vos {
+  color: var(--design-ink-muted);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
 .etiqueta.activo {
   border-color: #c6e5d1;
   background: #f1fbf4;

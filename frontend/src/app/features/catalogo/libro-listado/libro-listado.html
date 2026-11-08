@@ -1,19 +1,66 @@
-@if (cargando()) {
-  <p class="estado">Cargando...</p>
-}
-<div class="grilla">
-  @for (libro of libros(); track libro.id) {
-    <article class="tarjeta">
-      @if (libro.urlPortada) {
-        <img [src]="libro.urlPortada" [alt]="libro.titulo" class="portada">
-      } @else {
-        <div class="portada">{{ libro.titulo[0] }}</div>
+<main class="catalogo">
+  <header class="cabecera">
+    <p class="eyebrow">
+      Catálogo
+      @if (totalLibros()) {
+        · {{ totalLibros() }} {{ totalLibros() === 1 ? 'título' : 'títulos' }}
       }
-      <a class="titulo" [routerLink]="['/libros', libro.id]">
-        <h2>{{ libro.titulo }}</h2>
-      </a>
-      <p class="autor">{{ libro.autores[0]?.nombre }} {{ libro.autores[0]?.apellido }}</p>
-      <p class="precio">$ {{ libro.precio }}</p>
-    </article>
+    </p>
+    <h1>Libros que se quedan <em>con vos</em>.</h1>
+    <p class="bajada">
+      Literatura en formato digital. Comprás una vez y queda para siempre en tu biblioteca.
+    </p>
+  </header>
+
+  @if (cargando() && libros().length === 0) {
+    <p class="estado" role="status">Cargando libros...</p>
+  } @else if (mensajeError()) {
+    <p class="estado error" role="alert">{{ mensajeError() }}</p>
+  } @else if (libros().length === 0) {
+    <p class="estado">Todavía no hay libros en el catálogo.</p>
+  } @else {
+    <section class="grilla" [class.cargando]="cargando()" aria-label="Libros">
+      @for (libro of libros(); track libro.id; let primero = $first) {
+        <a
+          class="libro"
+          [class.destacado]="primero && paginaActual() === 0"
+          [routerLink]="['/libros', libro.id]"
+        >
+          <app-portada
+            [titulo]="libro.titulo"
+            [autor]="nombreAutor(libro)"
+            [urlPortada]="libro.urlPortada"
+          />
+          <div class="info">
+            @if (libro.generos.length) {
+              <span class="genero">{{ libro.generos[0].nombre }}</span>
+            }
+            <h2>{{ libro.titulo }}</h2>
+            <p class="autor">{{ nombreAutor(libro) }}</p>
+            <p class="precio">{{ formatearPrecio(libro.precio) }}</p>
+          </div>
+        </a>
+      }
+    </section>
+
+    @if (totalPaginas() > 1) {
+      <nav class="paginacion" aria-label="Páginas del catálogo">
+        <button
+          type="button"
+          [disabled]="paginaActual() === 0 || cargando()"
+          (click)="cargarPagina(paginaActual() - 1)"
+        >
+          ← Anterior
+        </button>
+        <span>Página {{ paginaActual() + 1 }} de {{ totalPaginas() }}</span>
+        <button
+          type="button"
+          [disabled]="paginaActual() + 1 >= totalPaginas() || cargando()"
+          (click)="cargarPagina(paginaActual() + 1)"
+        >
+          Siguiente →
+        </button>
+      </nav>
+    }
   }
-</div>
+</main>

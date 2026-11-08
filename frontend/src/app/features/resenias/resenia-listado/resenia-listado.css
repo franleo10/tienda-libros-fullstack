@@ -1,31 +1,44 @@
-.listado {
-  margin-top: 2rem;
-  font-family: var(--design-font);
-  color: var(--design-ink);
+h3 {
+  margin: 0 0 1.5rem;
+  font-size: 1.9rem;
+}
+
+.listado > p {
+  color: var(--design-ink-muted);
 }
 
 .resenia {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  padding: 1rem;
-  margin-bottom: 0.8rem;
-  background: var(--design-surface);
-  border: 1px solid var(--design-border);
-  border-radius: var(--design-radius-card);
-  box-shadow: var(--design-shadow-card);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem 1rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--design-border);
+}
+
+.resenia:first-of-type {
+  border-top: 1px solid var(--design-border);
+}
+
+app-estrellas {
+  grid-column: 1 / -1;
+  --estrella-tamano: 1rem;
 }
 
 .autor {
+  color: var(--design-ink);
   font-weight: 600;
 }
 
 .fecha {
   color: var(--design-ink-muted);
+  font-size: 0.82rem;
 }
 
 .resenia p {
-  margin: 0;
+  grid-column: 1 / -1;
+  margin: 0.25rem 0 0;
+  color: var(--design-ink);
+  line-height: 1.65;
 }
 
 .error {
@@ -36,19 +49,27 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  color: var(--design-ink-muted);
+  font-size: 0.9rem;
 }
 
 .paginacion button {
-  padding: 0.5rem 1rem;
-  background: var(--design-primary);
-  color: #fff;
-  border: 0;
-  border-radius: var(--design-radius-control);
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--design-border-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--design-ink);
   cursor: pointer;
+  font-weight: 600;
+}
+
+.paginacion button:hover:not(:disabled) {
+  border-color: var(--design-primary);
+  color: var(--design-primary);
 }
 
 .paginacion button:disabled {
-  opacity: 0.5;
   cursor: not-allowed;
+  opacity: 0.4;
 }

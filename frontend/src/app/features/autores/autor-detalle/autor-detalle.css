@@ -1,10 +1,7 @@
 .autor-detalle-page {
-  width: min(100% - 2rem, 74rem);
-  margin: clamp(1.5rem, 4vw, 3rem) auto;
-  padding: clamp(1.25rem, 4vw, 2.75rem);
-  border: 1px solid var(--autores-border);
-  border-radius: var(--autores-radius-card);
-  background: var(--autores-page-surface);
+  width: min(100% - 2.5rem, 74rem);
+  margin: 0 auto;
+  padding: 3rem 0 0;
 }
 
 .volver {
@@ -30,7 +27,7 @@
   margin: 0.35rem 0 0.5rem;
   color: var(--autores-ink);
   font-size: clamp(2rem, 5vw, 3rem);
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
   line-height: 1.1;
 }
 
@@ -44,17 +41,10 @@
 }
 
 .eyebrow {
-  display: inline-flex;
-  align-items: center;
-  margin: 0 0 0.55rem;
-  padding: 0.25rem 0.7rem;
-  border: 1px solid var(--autores-border);
-  border-radius: 999px;
-  background: var(--autores-surface);
+  margin: 0 0 0.75rem;
   color: var(--autores-primary);
   font-size: 0.75rem;
-  font-weight: 750;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
@@ -93,12 +83,8 @@
 
 .precio {
   margin: 0;
-  padding: 0.4rem 0.7rem;
-  border-radius: var(--autores-radius-control);
-  background: #edf6f0;
-  color: var(--autores-success);
-  font-size: 1.1rem;
-  font-weight: 750;
+  color: var(--autores-primary);
+  font: 500 1.6rem/1 var(--design-font-titulos);
   white-space: nowrap;
 }
 
@@ -111,10 +97,11 @@
 
 .datos-libro h3,
 .resenias h3 {
-  margin: 0 0 0.4rem;
-  color: var(--autores-ink);
-  font-size: 1rem;
-  font-weight: 750;
+  margin: 0 0 0.5rem;
+  color: var(--autores-ink-muted);
+  font: 600 0.72rem var(--design-font);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .datos-libro p,
@@ -135,9 +122,9 @@
 
 .generos li {
   padding: 0.25rem 0.6rem;
+  border: 1px solid var(--autores-border-strong);
   border-radius: 999px;
-  background: #eaf0f6;
-  color: var(--autores-primary);
+  color: var(--autores-ink);
   font-size: 0.9rem;
   font-weight: 600;
 }
@@ -175,7 +162,7 @@
 }
 
 .resenias .calificacion {
-  color: #805b00;
+  color: var(--autores-primary);
   font-weight: 700;
 }
 
@@ -193,8 +180,8 @@
 }
 
 .estado.error {
-  border-color: #eac9c7;
-  background: #fff6f5;
+  border-color: rgb(242 149 138 / 30%);
+  background: var(--design-error-surface);
   color: var(--autores-error);
 }
 

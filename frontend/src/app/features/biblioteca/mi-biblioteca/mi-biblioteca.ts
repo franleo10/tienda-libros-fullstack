@@ -3,10 +3,11 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LibroEnBiblioteca } from '../../../models/biblioteca';
 import { Biblioteca } from '../../../services/biblioteca';
+import { Portada } from '../../../shared/portada/portada';
 
 @Component({
   selector: 'app-mi-biblioteca',
-  imports: [RouterLink],
+  imports: [RouterLink, Portada],
   templateUrl: './mi-biblioteca.html',
   styleUrl: './mi-biblioteca.css',
 })

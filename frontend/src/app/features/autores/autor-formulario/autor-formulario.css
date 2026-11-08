@@ -3,12 +3,9 @@
 }
 
 .autor-formulario-page {
-  width: min(100% - 2rem, 42rem);
-  margin: clamp(1.5rem, 4vw, 3rem) auto;
-  padding: clamp(1.25rem, 4vw, 2.75rem);
-  border: 1px solid var(--autores-border);
-  border-radius: var(--autores-radius-card);
-  background: var(--autores-page-surface);
+  width: min(100% - 2.5rem, 42rem);
+  margin: 0 auto;
+  padding: 3rem 0 0;
 }
 
 .volver {
@@ -32,7 +29,7 @@
   margin: 0.35rem 0 0.5rem;
   color: var(--autores-ink);
   font-size: clamp(2rem, 5vw, 3rem);
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
   line-height: 1.1;
 }
 
@@ -41,16 +38,10 @@
 }
 
 .page-header .eyebrow {
-  display: inline-flex;
-  margin: 0 0 0.55rem;
-  padding: 0.25rem 0.7rem;
-  border: 1px solid var(--autores-border);
-  border-radius: 999px;
-  background: var(--autores-surface);
+  margin: 0 0 0.75rem;
   color: var(--autores-primary);
   font-size: 0.75rem;
-  font-weight: 750;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
@@ -93,7 +84,7 @@ form {
 .campo input:focus-visible {
   border-color: var(--autores-focus);
   outline: none;
-  box-shadow: 0 0 0 3px rgb(91 148 209 / 20%);
+  box-shadow: 0 0 0 3px rgb(226 182 91 / 20%);
 }
 
 .campo input[aria-invalid='true'] {
@@ -115,8 +106,8 @@ form {
 }
 
 .estado.error {
-  border-color: #eac9c7;
-  background: #fff6f5;
+  border-color: rgb(242 149 138 / 30%);
+  background: var(--design-error-surface);
   color: var(--autores-error);
 }
 
@@ -133,9 +124,9 @@ form {
   justify-content: center;
   align-items: center;
   min-height: 2.9rem;
-  padding: 0.65rem 1.1rem;
+  padding: 0.65rem 1.3rem;
   border: 1px solid var(--autores-primary);
-  border-radius: var(--autores-radius-control);
+  border-radius: 999px;
   cursor: pointer;
   font: inherit;
   font-weight: 700;

@@ -1,65 +1,93 @@
+.volver {
+  display: inline-block;
+  margin-bottom: 2rem;
+  color: var(--design-ink-muted);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.volver:hover {
+  color: var(--design-primary);
+}
+
 form {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  max-width: 520px;
-  margin: 2rem auto;
-  padding: 1.5rem;
-  background: var(--design-surface);
-  border: 1px solid var(--design-border);
-  border-radius: var(--design-radius-card);
-  box-shadow: var(--design-shadow-card);
-  font-family: var(--design-font);
-  color: var(--design-ink);
-}
-
-h1 {
-  margin: 0 0 0.5rem;
-  font-size: 1.5rem;
+  gap: 0.45rem;
 }
 
 label {
-  font-size: 0.9rem;
-  font-weight: 600;
+  margin-top: 0.85rem;
 }
 
-input, textarea, select {
-  padding: 0.55rem 0.7rem;
-  border: 1px solid var(--design-border-strong);
-  border-radius: var(--design-radius-control);
-  font: inherit;
+form > label:first-child,
+.fila label {
+  margin-top: 0;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
 }
 
 textarea {
-  min-height: 110px;
+  min-height: 8rem;
   resize: vertical;
 }
 
-input:focus, textarea:focus, select:focus {
-  outline: 2px solid var(--design-focus);
-  outline-offset: 1px;
+.fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 0.85rem;
 }
 
-button {
-  align-self: flex-start;
-  padding: 0.65rem 1.4rem;
-  background: var(--design-primary);
-  color: #fff;
-  border: 0;
-  border-radius: var(--design-radius-control);
-  font-size: 1rem;
-  cursor: pointer;
+.campo {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.45rem;
 }
 
-button:hover:not(:disabled) {
-  background: var(--design-primary-hover);
+.fijos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 0.85rem 0 0;
+  padding: 1rem 0;
+  border-top: 1px solid var(--design-border);
+  border-bottom: 1px solid var(--design-border);
 }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.fijos dt {
+  color: var(--design-ink-muted);
+  font-size: 0.8rem;
 }
 
-p {
-  margin: 0;
+.fijos dd {
+  margin: 0.2rem 0 0;
+  font-weight: 600;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+.alerta {
+  margin-top: 1rem;
+}
+
+@media (max-width: 34rem) {
+  .fila,
+  .fijos {
+    grid-template-columns: 1fr;
+  }
+
+  .acciones > * {
+    flex: 1 1 100%;
+  }
 }

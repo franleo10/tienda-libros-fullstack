@@ -3,13 +3,13 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Libro } from '../../../services/libro';
 import { Autor } from '../../../services/autor';
 import { Generos } from '../../../services/generos';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AutorResumen } from '../../../models/autor';
 import { LibroDato, LibroGuardado } from '../../../models/libro';
 
 @Component({
   selector: 'app-libro-formulario',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './libro-formulario.html',
   styleUrl: './libro-formulario.css',
 })

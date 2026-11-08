@@ -1,6 +1,13 @@
-<form [formGroup]="formulario" (ngSubmit)="alEnviar()">
+<main class="auth">
+  <header class="auth-cabecera">
+    <p class="eyebrow">Bienvenido de vuelta</p>
+    <h1>Iniciá <em>sesión</em></h1>
+    <p>Entrá para ver tu biblioteca y seguir comprando.</p>
+  </header>
+
+  <form [formGroup]="formulario" (ngSubmit)="alEnviar()">
     <label for="email">Email</label>
-    <input type="email" formControlName="email" id="email" autocomplete="email">
+    <input type="email" formControlName="email" id="email" autocomplete="email" placeholder="nombre@correo.com">
     @if (mensajeErrorEmail(formulario.controls.email); as error) {
       <p class="error">{{ error }}</p>
     }
@@ -10,14 +17,15 @@
     @if (formulario.controls.password.touched && formulario.controls.password.invalid) {
       <p class="error">Ingresá tu contraseña.</p>
     }
-    
-    
-    <button type="submit" [disabled]="formulario.invalid || cargando() ">@if (cargando()) { Ingresando... } @else { Ingresar }</button>
 
+    <button type="submit" [disabled]="formulario.invalid || cargando()">
+      @if (cargando()) { Ingresando... } @else { Ingresar }
+    </button>
 
     @if (mensajeError()) {
-     <p>{{ mensajeError() }}</p>
+      <p class="alerta error" role="alert">{{ mensajeError() }}</p>
     }
+  </form>
 
-    
-</form>
+  <p class="cambiar">¿Todavía no tenés cuenta? <a routerLink="/registro">Creá una</a></p>
+</main>

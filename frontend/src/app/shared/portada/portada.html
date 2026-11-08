@@ -1,0 +1,12 @@
+@if (urlPortada()) {
+  <img class="imagen" [src]="urlPortada()" [alt]="'Portada de ' + titulo()" loading="lazy" />
+} @else {
+  <div class="tapa" [style.background]="color()" role="img" [attr.aria-label]="'Portada de ' + titulo()">
+    @if (!chica()) {
+      <p class="titulo">{{ titulo() }}</p>
+      @if (autor()) {
+        <span class="autor">{{ autor() }}</span>
+      }
+    }
+  </div>
+}

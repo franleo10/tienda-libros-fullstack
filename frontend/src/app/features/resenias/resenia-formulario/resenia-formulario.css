@@ -1,44 +1,38 @@
 form {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  margin-top: 1.25rem;
-  padding: 1rem;
-  background: var(--design-surface-muted);
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+  padding: 1.5rem;
   border: 1px solid var(--design-border);
   border-radius: var(--design-radius-card);
-  font-family: var(--design-font);
+  background: var(--design-surface);
+}
+
+form > span {
   color: var(--design-ink);
+  font: 400 1.35rem var(--design-font-titulos);
 }
 
 label {
-  font-size: 0.9rem;
-  font-weight: 600;
+  margin-top: 0.25rem;
 }
 
 textarea {
-  min-height: 90px;
-  padding: 0.55rem 0.7rem;
-  border: 1px solid var(--design-border-strong);
-  border-radius: var(--design-radius-control);
-  font: inherit;
+  min-height: 7rem;
   resize: vertical;
-}
-
-textarea:focus {
-  outline: 2px solid var(--design-focus);
-  outline-offset: 1px;
+  background: var(--design-page-surface);
 }
 
 button[type='submit'] {
   align-self: flex-start;
-  padding: 0.6rem 1.3rem;
-  background: var(--design-primary);
-  color: #fff;
+  padding: 0.7rem 1.4rem;
   border: 0;
-  border-radius: var(--design-radius-control);
-  font-size: 1rem;
+  border-radius: 999px;
+  background: var(--design-primary);
+  color: var(--design-on-primary);
   cursor: pointer;
+  font-weight: 700;
 }
 
 button[type='submit']:hover:not(:disabled) {
@@ -46,8 +40,8 @@ button[type='submit']:hover:not(:disabled) {
 }
 
 button[type='submit']:disabled {
-  opacity: 0.5;
   cursor: not-allowed;
+  opacity: 0.45;
 }
 
 p {

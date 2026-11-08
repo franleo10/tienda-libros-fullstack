@@ -1,0 +1,73 @@
+/* Quien usa la portada puede ajustar estas variables:
+   --portada-titulo (tamaño del título), --portada-relleno (margen interior),
+   --portada-marco (distancia del marco al borde) y --portada-ajuste (cover o contain para la imagen) */
+:host {
+  position: relative;
+  display: block;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--design-surface);
+  box-shadow: 0 20px 40px -20px rgb(0 0 0 / 80%);
+}
+
+.imagen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: var(--portada-ajuste, cover);
+}
+
+.tapa {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--portada-relleno, 1.5rem 1.3rem);
+}
+
+/* Marco dorado de las tapas armadas */
+.tapa::after {
+  content: '';
+  position: absolute;
+  inset: var(--portada-marco, 0.55rem);
+  border: 1px solid rgb(226 182 91 / 45%);
+  pointer-events: none;
+}
+
+.titulo {
+  margin: 0;
+  overflow-wrap: break-word;
+  color: #f6ecd9;
+  font: 400 var(--portada-titulo, 1.3rem) / 1.05 var(--design-font-titulos);
+}
+
+.autor {
+  color: var(--design-primary);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Sobre una tapa real no va el marco interior (taparía el diseño): un borde fino por fuera */
+:host(.con-imagen:not(.chica)) {
+  overflow: visible;
+  outline: 1px solid rgb(226 182 91 / 30%);
+  outline-offset: 4px;
+}
+
+:host(.con-imagen) .imagen {
+  border-radius: inherit;
+}
+
+/* Miniatura: solo el color y un marco más cerca del borde */
+:host(.chica) {
+  border-radius: 2px;
+  box-shadow: 0 6px 14px -8px rgb(0 0 0 / 80%);
+}
+
+:host(.chica) .tapa::after {
+  inset: 0.25rem;
+}

@@ -48,12 +48,17 @@ public class LibroEntityController {
         return new ResponseEntity<>(libroService.getAllLibros(numeroPagina), HttpStatus.OK);
     }
 
-    @Operation(summary = "Buscar libros activos por título o autor", description = "Devuelve una página de libros activos cuyo título o autor contiene el texto indicado. Sin texto devuelve todos.")
+    @Operation(summary = "Buscar, filtrar y ordenar libros activos", description = "Devuelve una página de libros activos cuyo título o autor contiene el texto indicado, con filtros opcionales por género y rango de precio. El orden puede ser titulo_asc, titulo_desc, precio_asc o precio_desc. Sin parámetros devuelve todos.")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(array = @ArraySchema(schema = @Schema(implementation = LibroDTO.class))))
     @GetMapping("/catalogo")
     public ResponseEntity<Page<LibroDTO>> buscarLibros(@RequestParam(defaultValue = "") String texto,
+                                                       @RequestParam(required = false) Integer idGenero,
+                                                       @RequestParam(required = false) Float precioMin,
+                                                       @RequestParam(required = false) Float precioMax,
+                                                       @RequestParam(required = false) String orden,
                                                        @RequestParam(defaultValue = "0") int pagina) {
-        return new ResponseEntity<>(libroService.buscarLibros(texto, pagina), HttpStatus.OK);
+        return new ResponseEntity<>(
+                libroService.buscarLibros(texto, idGenero, precioMin, precioMax, orden, pagina), HttpStatus.OK);
     }
 
     @Operation(summary = "Listar libros inactivos paginados", description = "Devuelve una lista paginada de libros dados de baja.")

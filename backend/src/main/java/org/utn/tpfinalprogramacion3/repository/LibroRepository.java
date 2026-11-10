@@ -18,15 +18,24 @@ public interface LibroRepository extends JpaRepository<LibroEntity, Integer> {
     Page<LibroEntity> findAllByActivoTrue(Pageable pageable);
     Page<LibroEntity> findAllByActivoFalse(Pageable pageable);
 
-    // Busca entre los libros activos por parte del título o del nombre completo de algún autor.
-    // El patrón ya viene armado (por ejemplo "%borges%"); con "%%" devuelve todos.
+    // Busca entre los libros activos por parte del título o del nombre completo de algún autor,
+    // y los filtra por género y rango de precio. Los parámetros ya vienen resueltos por el servicio:
+    // el patrón con "%%" devuelve todos, idGenero 0 no filtra por género y el rango de precios cubre todo.
     @Query("""
             SELECT l FROM LibroEntity l
             WHERE l.activo = true
               AND (LOWER(l.titulo) LIKE :patron
                    OR EXISTS (SELECT a FROM l.autores a
                               WHERE LOWER(CONCAT(a.nombre, ' ', a.apellido)) LIKE :patron))
+              AND (:idGenero = 0
+                   OR EXISTS (SELECT g FROM l.generos g WHERE g.idGenero = :idGenero))
+              AND l.precio >= :precioMin
+              AND l.precio <= :precioMax
             """)
-    Page<LibroEntity> buscarActivos(@Param("patron") String patron, Pageable pageable);
+    Page<LibroEntity> buscarActivos(@Param("patron") String patron,
+                                    @Param("idGenero") int idGenero,
+                                    @Param("precioMin") float precioMin,
+                                    @Param("precioMax") float precioMax,
+                                    Pageable pageable);
 
 }

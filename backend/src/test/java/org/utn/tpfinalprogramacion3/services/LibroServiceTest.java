@@ -1,11 +1,13 @@
 package org.utn.tpfinalprogramacion3.services;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.utn.tpfinalprogramacion3.dtos.LibroDTO;
 import org.utn.tpfinalprogramacion3.entities.LibroEntity;
 import org.utn.tpfinalprogramacion3.repository.AutorRepository;
@@ -19,8 +21,12 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -99,27 +105,58 @@ class LibroServiceTest {
     void buscarLibrosArmaElPatronEnMinusculasYSinEspacios() {
         LibroRepository repository = mock(LibroRepository.class);
         LibroService service = servicio(repository);
-        Pageable primeraPagina = PageRequest.of(0, 5);
-        when(repository.buscarActivos("%borges%", primeraPagina))
+        Pageable primeraPagina = PageRequest.of(0, 5, Sort.by("idLibro"));
+        when(repository.buscarActivos(eq("%borges%"), anyInt(), anyFloat(), anyFloat(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(libro(1)), primeraPagina, 1));
 
-        Page<LibroDTO> pagina = service.buscarLibros("  BORGes ", 0);
+        Page<LibroDTO> pagina = service.buscarLibros("  BORGes ", null, null, null, null, 0);
 
         assertEquals(1, pagina.getTotalElements());
-        verify(repository).buscarActivos("%borges%", primeraPagina);
     }
 
     @Test
-    void buscarLibrosSinResultadosDevuelvePaginaVaciaEnVezDeFallar() {
+    void buscarLibrosSinFiltrosNoRestringeGeneroNiPrecio() {
         LibroRepository repository = mock(LibroRepository.class);
         LibroService service = servicio(repository);
         Pageable primeraPagina = PageRequest.of(0, 5);
-        when(repository.buscarActivos("%%", primeraPagina))
+        when(repository.buscarActivos(any(), anyInt(), anyFloat(), anyFloat(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(), primeraPagina, 0));
 
-        Page<LibroDTO> pagina = service.buscarLibros(null, 0);
+        Page<LibroDTO> pagina = service.buscarLibros(null, null, null, null, null, 0);
 
+        // Página vacía en vez de un error, y los valores por defecto no filtran nada
         assertEquals(0, pagina.getTotalElements());
+        verify(repository).buscarActivos(eq("%%"), eq(0), eq(0f), eq(999_999_999f), any(Pageable.class));
+    }
+
+    @Test
+    void buscarLibrosPasaGeneroYRangoDePrecio() {
+        LibroRepository repository = mock(LibroRepository.class);
+        LibroService service = servicio(repository);
+        when(repository.buscarActivos(any(), anyInt(), anyFloat(), anyFloat(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of()));
+
+        service.buscarLibros("", 3, 100f, 500f, null, 0);
+
+        verify(repository).buscarActivos(eq("%%"), eq(3), eq(100f), eq(500f), any(Pageable.class));
+    }
+
+    @Test
+    void buscarLibrosOrdenaSoloPorLosCriteriosConocidos() {
+        LibroRepository repository = mock(LibroRepository.class);
+        LibroService service = servicio(repository);
+        when(repository.buscarActivos(any(), anyInt(), anyFloat(), anyFloat(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of()));
+        ArgumentCaptor<Pageable> pageable = ArgumentCaptor.forClass(Pageable.class);
+
+        service.buscarLibros("", null, null, null, "precio_desc", 0);
+        service.buscarLibros("", null, null, null, "; DROP TABLE libros", 0);
+
+        verify(repository, times(2)).buscarActivos(any(), anyInt(), anyFloat(), anyFloat(), pageable.capture());
+        // El criterio pedido va primero y el id desempata
+        assertEquals("precio: DESC,idLibro: ASC", pageable.getAllValues().get(0).getSort().toString());
+        // Un valor desconocido se ignora y queda el orden por defecto
+        assertEquals("idLibro: ASC", pageable.getAllValues().get(1).getSort().toString());
     }
 
     private LibroRepository repositorioConLibro(LibroEntity libro) {

@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { LibroDato, LibroGuardado } from '../models/libro';
+import { FiltrosCatalogo, LibroDato, LibroGuardado } from '../models/libro';
 import { Pagina } from '../models/autor';
 
 
@@ -16,8 +16,12 @@ export class Libro {
     return this.http.get<Pagina<LibroDato>>(`${this.apiUrl}/libro/listar/${pagina}`);
   }
 
-  buscarLibros(texto: string, pagina: number) {
-    const params = new HttpParams().set('texto', texto).set('pagina', pagina);
+  buscarLibros(filtros: FiltrosCatalogo, pagina: number) {
+    let params = new HttpParams().set('texto', filtros.texto).set('pagina', pagina);
+    if (filtros.idGenero !== null) params = params.set('idGenero', filtros.idGenero);
+    if (filtros.precioMin !== null) params = params.set('precioMin', filtros.precioMin);
+    if (filtros.precioMax !== null) params = params.set('precioMax', filtros.precioMax);
+    if (filtros.orden) params = params.set('orden', filtros.orden);
     return this.http.get<Pagina<LibroDato>>(`${this.apiUrl}/libro/catalogo`, { params });
   }
 

@@ -27,6 +27,44 @@
     }
   </form>
 
+  <form class="filtros" [formGroup]="formularioFiltros" (ngSubmit)="aplicarFiltros()">
+    <div class="campo">
+      <label for="idGenero">Género</label>
+      <select id="idGenero" formControlName="idGenero">
+        <option [ngValue]="null">Todos</option>
+        @for (genero of generos(); track genero.idGenero) {
+          <option [ngValue]="genero.idGenero">{{ genero.nombre }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="precioMin">Precio desde</label>
+      <input type="number" id="precioMin" formControlName="precioMin" min="0" placeholder="0">
+    </div>
+
+    <div class="campo">
+      <label for="precioMax">Precio hasta</label>
+      <input type="number" id="precioMax" formControlName="precioMax" min="0" placeholder="Sin tope">
+    </div>
+
+    <div class="campo">
+      <label for="orden">Ordenar por</label>
+      <select id="orden" formControlName="orden">
+        <option value="">Sin ordenar</option>
+        <option value="titulo_asc">Título (A → Z)</option>
+        <option value="titulo_desc">Título (Z → A)</option>
+        <option value="precio_asc">Precio (menor a mayor)</option>
+        <option value="precio_desc">Precio (mayor a menor)</option>
+      </select>
+    </div>
+
+    <div class="acciones-filtros">
+      <button type="submit" class="boton-principal">Aplicar</button>
+      <button type="button" class="boton-secundario" (click)="quitarFiltros()">Quitar filtros</button>
+    </div>
+  </form>
+
   @if (cargando() && libros().length === 0) {
     <p class="estado" role="status">Cargando libros...</p>
   } @else if (mensajeError()) {
@@ -35,6 +73,8 @@
     <p class="estado">
       @if (textoBuscado()) {
         No encontramos libros para «{{ textoBuscado() }}».
+      } @else if (hayFiltros()) {
+        No hay libros que cumplan con los filtros elegidos.
       } @else {
         Todavía no hay libros en el catálogo.
       }

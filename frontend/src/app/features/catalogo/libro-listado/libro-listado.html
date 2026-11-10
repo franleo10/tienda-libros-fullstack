@@ -12,12 +12,33 @@
     </p>
   </header>
 
+  <form class="buscador" role="search" (submit)="$event.preventDefault(); buscar(texto.value)">
+    <input
+      #texto
+      type="search"
+      name="texto"
+      placeholder="Buscar por título o autor"
+      aria-label="Buscar por título o autor"
+      [value]="textoBuscado()"
+    >
+    <button type="submit" class="boton-principal">Buscar</button>
+    @if (textoBuscado()) {
+      <button type="button" class="boton-secundario" (click)="texto.value = ''; buscar('')">Limpiar</button>
+    }
+  </form>
+
   @if (cargando() && libros().length === 0) {
     <p class="estado" role="status">Cargando libros...</p>
   } @else if (mensajeError()) {
     <p class="estado error" role="alert">{{ mensajeError() }}</p>
   } @else if (libros().length === 0) {
-    <p class="estado">Todavía no hay libros en el catálogo.</p>
+    <p class="estado">
+      @if (textoBuscado()) {
+        No encontramos libros para «{{ textoBuscado() }}».
+      } @else {
+        Todavía no hay libros en el catálogo.
+      }
+    </p>
   } @else {
     <section class="grilla" [class.cargando]="cargando()" aria-label="Libros">
       @for (libro of libros(); track libro.id; let primero = $first) {

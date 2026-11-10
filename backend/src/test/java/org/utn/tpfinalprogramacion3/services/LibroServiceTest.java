@@ -95,6 +95,33 @@ class LibroServiceTest {
         assertNull(modificado.getUrlPortada());
     }
 
+    @Test
+    void buscarLibrosArmaElPatronEnMinusculasYSinEspacios() {
+        LibroRepository repository = mock(LibroRepository.class);
+        LibroService service = servicio(repository);
+        Pageable primeraPagina = PageRequest.of(0, 5);
+        when(repository.buscarActivos("%borges%", primeraPagina))
+                .thenReturn(new PageImpl<>(List.of(libro(1)), primeraPagina, 1));
+
+        Page<LibroDTO> pagina = service.buscarLibros("  BORGes ", 0);
+
+        assertEquals(1, pagina.getTotalElements());
+        verify(repository).buscarActivos("%borges%", primeraPagina);
+    }
+
+    @Test
+    void buscarLibrosSinResultadosDevuelvePaginaVaciaEnVezDeFallar() {
+        LibroRepository repository = mock(LibroRepository.class);
+        LibroService service = servicio(repository);
+        Pageable primeraPagina = PageRequest.of(0, 5);
+        when(repository.buscarActivos("%%", primeraPagina))
+                .thenReturn(new PageImpl<>(List.of(), primeraPagina, 0));
+
+        Page<LibroDTO> pagina = service.buscarLibros(null, 0);
+
+        assertEquals(0, pagina.getTotalElements());
+    }
+
     private LibroRepository repositorioConLibro(LibroEntity libro) {
         LibroRepository repository = mock(LibroRepository.class);
         when(repository.findById(libro.getIdLibro())).thenReturn(Optional.of(libro));

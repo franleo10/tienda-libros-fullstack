@@ -3,10 +3,11 @@ import { Libro } from '../../../services/libro';
 import { LibroDato } from '../../../models/libro';
 import { RouterLink } from '@angular/router';
 import { Portada } from '../../../shared/portada/portada';
+import { PromedioPuntuacion } from '../../../shared/promedio-puntuacion/promedio-puntuacion';
 
 @Component({
   selector: 'app-libro-listado',
-  imports: [RouterLink, Portada],
+  imports: [RouterLink, Portada, PromedioPuntuacion],
   templateUrl: './libro-listado.html',
   styleUrl: './libro-listado.css',
 })

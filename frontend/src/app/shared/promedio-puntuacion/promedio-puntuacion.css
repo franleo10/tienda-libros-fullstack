@@ -1,0 +1,22 @@
+:host {
+  display: inline-block;
+  font-family: var(--design-font);
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+
+.promedio {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  color: var(--design-ink);
+}
+
+.estrella {
+  color: var(--design-accent);
+}
+
+.cantidad,
+.sin-resenias {
+  color: var(--design-ink-muted);
+}

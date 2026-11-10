@@ -8,10 +8,11 @@ import { RouterLink } from '@angular/router';
 import { ReseniaFormulario } from '../../resenias/resenia-formulario/resenia-formulario';
 import { ReseniaListado } from '../../resenias/resenia-listado/resenia-listado';
 import { Portada } from '../../../shared/portada/portada';
+import { PromedioPuntuacion } from '../../../shared/promedio-puntuacion/promedio-puntuacion';
 
 @Component({
   selector: 'app-libro-detalle',
-  imports: [RouterLink, ReseniaFormulario, ReseniaListado, Portada],
+  imports: [RouterLink, ReseniaFormulario, ReseniaListado, Portada, PromedioPuntuacion],
   templateUrl: './libro-detalle.html',
   styleUrl: './libro-detalle.css',
 })
@@ -90,6 +91,15 @@ export class LibroDetalle implements OnInit {
       },
     });
 
+  }
+
+  protected recargarLibro() {
+    const libro = this.libro();
+    if (!libro) return;
+
+    this.libroService.obtenerLibro(libro.id).subscribe({
+      next: (actualizado) => this.libro.set(actualizado),
+    });
   }
 
 

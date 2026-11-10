@@ -1,0 +1,11 @@
+@if (cantidad() === 0) {
+  <span class="sin-resenias">Sin reseñas todavía</span>
+} @else {
+  <span class="promedio">
+    <span class="estrella" aria-hidden="true">★</span>
+    <strong>{{ formatear(promedio()) }}</strong>
+    <span class="cantidad">
+      · {{ cantidad() }} {{ cantidad() === 1 ? 'reseña' : 'reseñas' }}
+    </span>
+  </span>
+}

@@ -3,6 +3,13 @@ export interface AutorDato {
   apellido: string;
 }
 
+export interface ReseniaDeLibro {
+  id: number;
+  texto: string;
+  calificacion: number;
+  nombreUsuario: string;
+}
+
 export interface LibroDato {
   id: number;
   titulo: string;
@@ -12,6 +19,7 @@ export interface LibroDato {
   autores: AutorDato[];
   urlPortada?: string | null;
   generos: { nombre: string }[];
+  resenias: ReseniaDeLibro[];
 }
 
 export interface LibroGuardado {

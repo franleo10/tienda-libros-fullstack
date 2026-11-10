@@ -13,6 +13,7 @@ const libro = {
   fecha_lanzamiento: '1963-06-28',
   autores: [{ nombre: 'Julio', apellido: 'Cortázar' }],
   generos: [{ nombre: 'Novela' }],
+  resenias: [],
   urlPortada: null,
 };
 

@@ -37,6 +37,7 @@
             }
             <h2>{{ libro.titulo }}</h2>
             <p class="autor">{{ nombreAutor(libro) }}</p>
+            <app-promedio-puntuacion [resenias]="libro.resenias" />
             <p class="precio">{{ formatearPrecio(libro.precio) }}</p>
           </div>
         </a>

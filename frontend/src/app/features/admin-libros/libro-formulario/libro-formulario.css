@@ -81,6 +81,35 @@ textarea {
   margin-top: 1rem;
 }
 
+.ayuda {
+  margin: 0;
+  color: var(--design-ink-muted);
+  font-size: 0.85rem;
+}
+
+.ayuda-error {
+  color: var(--design-error);
+}
+
+.vista-previa {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.vista-previa img {
+  width: 140px;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border: 1px solid var(--design-border);
+  border-radius: 6px;
+}
+
+.vista-previa img.oculta {
+  display: none;
+}
+
 @media (max-width: 34rem) {
   .fila,
   .fijos {

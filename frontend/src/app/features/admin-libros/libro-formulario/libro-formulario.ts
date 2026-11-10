@@ -6,6 +6,7 @@ import { Generos } from '../../../services/generos';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AutorResumen } from '../../../models/autor';
 import { LibroDato, LibroGuardado } from '../../../models/libro';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-libro-formulario',
@@ -32,9 +33,15 @@ export class LibroFormulario implements OnInit {
     sinopsis: ['', Validators.required],
     precio: [null as number | null, [Validators.required, Validators.min(0)]],
     fecha_lanzamiento: ['', Validators.required],
+    urlPortada: ['', [Validators.maxLength(500), Validators.pattern(/^https?:\/\/\S+$/)]],
     idAutor: [null as number | null, Validators.required],
     idGenero: [null as number | null, Validators.required]
   });
+
+  protected readonly urlVista = toSignal(this.formulario.controls.urlPortada.valueChanges, {
+    initialValue: '',
+  });
+  protected readonly imagenConError = signal(false);
 
   ngOnInit(): void {
     this.autorService.listar(0).subscribe({
@@ -60,8 +67,8 @@ export class LibroFormulario implements OnInit {
             titulo: libro.titulo,
             sinopsis: libro.sinopsis,
             precio: libro.precio,
-            fecha_lanzamiento: libro.fecha_lanzamiento
-            
+            fecha_lanzamiento: libro.fecha_lanzamiento,
+            urlPortada: libro.urlPortada ?? ''
           });
         },
         error: (error) => { this.mensajeError.set('No se pudo cargar el libro') }
@@ -73,14 +80,17 @@ export class LibroFormulario implements OnInit {
   guardar() {
     if (this.formulario.invalid) return;
     const valores = this.formulario.value;
+    const id = this.idLibro();
+    const url = (valores.urlPortada ?? '').trim();
+
     const libro: LibroGuardado = {
       titulo: valores.titulo!,
       sinopsis: valores.sinopsis!,
       precio: valores.precio!,
-      fecha_lanzamiento: valores.fecha_lanzamiento!
+      fecha_lanzamiento: valores.fecha_lanzamiento!,
+      urlPortada: id ? url : url || null
     };
 
-    const id = this.idLibro();
     const pedido = id
       ? this.libroService.modificar(id, libro)
       : this.libroService.crear(valores.idAutor!, valores.idGenero!, libro);
@@ -89,7 +99,6 @@ export class LibroFormulario implements OnInit {
       next: () => { this.router.navigate(['/admin/libros']); },
       error: () => { this.mensajeError.set('No se pudo guardar el libro'); }
     });
-
   }
 
 

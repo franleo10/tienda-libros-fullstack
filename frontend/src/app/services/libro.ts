@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { LibroDato, LibroGuardado } from '../models/libro';
 import { Pagina } from '../models/autor';
@@ -14,6 +14,11 @@ export class Libro {
 
   obtenerLibros(pagina: number) {
     return this.http.get<Pagina<LibroDato>>(`${this.apiUrl}/libro/listar/${pagina}`);
+  }
+
+  buscarLibros(texto: string, pagina: number) {
+    const params = new HttpParams().set('texto', texto).set('pagina', pagina);
+    return this.http.get<Pagina<LibroDato>>(`${this.apiUrl}/libro/catalogo`, { params });
   }
 
   obtenerLibro(id: number) {

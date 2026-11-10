@@ -183,6 +183,18 @@ h2 {
   }
 }
 
+.buscador {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0 0 2rem;
+}
+
+.buscador input {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
 /* ---------- Celular ---------- */
 @media (max-width: 34rem) {
   /* minmax(0, 1fr): sin el 0, un título largo no deja que la columna se achique */

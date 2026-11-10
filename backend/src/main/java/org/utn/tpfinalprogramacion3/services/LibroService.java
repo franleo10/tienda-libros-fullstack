@@ -105,6 +105,17 @@ public class LibroService {
         return paginaLibros.map(libro -> modelMapper.map(libro, LibroDTO.class));
     }
 
+    // A diferencia de getAllLibros, una búsqueda sin resultados no es un error: devuelve una página vacía
+    @PreAuthorize("hasAuthority('VER_LIBROS')")
+    public Page<LibroDTO> buscarLibros(String texto, int numeroPagina) {
+        String buscado = texto == null ? "" : texto.trim().toLowerCase();
+        String patron = "%" + buscado + "%";
+        Pageable pageable = PageRequest.of(numeroPagina, 5);
+
+        return libroRepository.buscarActivos(patron, pageable)
+                .map(libro -> modelMapper.map(libro, LibroDTO.class));
+    }
+
     public Page<LibroDTO> getAllLibrosInactivos(int numeroPagina) {
         int tamañoPagina = 5;  // o el tamaño que quieras fijo
         Pageable pageable = PageRequest.of(numeroPagina, tamañoPagina);

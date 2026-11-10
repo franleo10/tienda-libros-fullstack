@@ -25,6 +25,7 @@ export class LibroListado implements OnInit{
   protected readonly paginaActual = signal(0);
   protected readonly totalPaginas = signal(0);
   protected readonly totalLibros = signal(0);
+  protected readonly textoBuscado = signal('');
 
   private readonly formatoPrecio = new Intl.NumberFormat('es-AR', {
     style: 'currency',
@@ -34,7 +35,7 @@ export class LibroListado implements OnInit{
   protected cargarPagina(pagina: number) {
     this.cargando.set(true);
     this.mensajeError.set('');
-    this.libroService.obtenerLibros(pagina).subscribe({
+    this.libroService.buscarLibros(this.textoBuscado(), pagina).subscribe({
       next: (resultado) => {
         this.libros.set(resultado.content);
         this.paginaActual.set(resultado.number);
@@ -47,6 +48,11 @@ export class LibroListado implements OnInit{
         this.mensajeError.set('No se pudieron cargar los libros. Intentá de nuevo.');
       },
     });
+  }
+
+  protected buscar(texto: string) {
+    this.textoBuscado.set(texto.trim());
+    this.cargarPagina(0);
   }
 
   protected formatearPrecio(precio: number) {

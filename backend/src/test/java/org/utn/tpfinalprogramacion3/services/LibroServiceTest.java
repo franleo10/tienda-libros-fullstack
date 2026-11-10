@@ -14,8 +14,10 @@ import org.utn.tpfinalprogramacion3.repository.LibroRepository;
 import org.utn.tpfinalprogramacion3.repository.ReseniaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -59,6 +61,54 @@ class LibroServiceTest {
         assertEquals(1, pagina.getContent().size());
         assertEquals(1, pagina.getTotalElements());
         verify(repository, never()).findAll(any(Pageable.class));
+    }
+
+    @Test
+    void modificarLibroConUrlPortadaActualizaLaPortada() {
+        LibroRepository repository = repositorioConLibro(libro(7));
+        LibroService service = servicio(repository);
+
+        LibroDTO modificado = service.modificarLibro(7, datosModificados("  https://ejemplo.com/tapa.jpg "));
+
+        assertEquals("https://ejemplo.com/tapa.jpg", modificado.getUrlPortada());
+    }
+
+    @Test
+    void modificarLibroSinUrlPortadaConservaLaPortadaActual() {
+        LibroEntity existente = libro(7);
+        existente.setUrlPortada("https://ejemplo.com/vieja.jpg");
+        LibroService service = servicio(repositorioConLibro(existente));
+
+        LibroDTO modificado = service.modificarLibro(7, datosModificados(null));
+
+        assertEquals("https://ejemplo.com/vieja.jpg", modificado.getUrlPortada());
+    }
+
+    @Test
+    void modificarLibroConUrlPortadaVaciaQuitaLaPortada() {
+        LibroEntity existente = libro(7);
+        existente.setUrlPortada("https://ejemplo.com/vieja.jpg");
+        LibroService service = servicio(repositorioConLibro(existente));
+
+        LibroDTO modificado = service.modificarLibro(7, datosModificados("   "));
+
+        assertNull(modificado.getUrlPortada());
+    }
+
+    private LibroRepository repositorioConLibro(LibroEntity libro) {
+        LibroRepository repository = mock(LibroRepository.class);
+        when(repository.findById(libro.getIdLibro())).thenReturn(Optional.of(libro));
+        when(repository.save(any(LibroEntity.class))).thenAnswer(invocacion -> invocacion.getArgument(0));
+        return repository;
+    }
+
+    private LibroDTO datosModificados(String urlPortada) {
+        LibroDTO dto = new LibroDTO();
+        dto.setTitulo("Titulo nuevo");
+        dto.setSinopsis("Sinopsis nueva");
+        dto.setPrecio(20f);
+        dto.setUrlPortada(urlPortada);
+        return dto;
     }
 
     private LibroService servicio(LibroRepository repository) {

@@ -27,4 +27,5 @@ export interface LibroGuardado {
   sinopsis: string;
   precio: number;
   fecha_lanzamiento: string;
+  urlPortada?: string | null;
 }

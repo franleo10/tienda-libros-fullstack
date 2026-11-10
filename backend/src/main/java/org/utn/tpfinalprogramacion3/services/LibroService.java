@@ -178,6 +178,11 @@ public class LibroService {
         if (libroDTO.getFecha_lanzamiento() != null) {
             libro.setFecha_lanzamiento(libroDTO.getFecha_lanzamiento());
         }
+        // Sin urlPortada en el pedido se conserva la portada actual; una urlPortada vacía la quita
+        if (libroDTO.getUrlPortada() != null) {
+            String urlPortada = libroDTO.getUrlPortada().trim();
+            libro.setUrlPortada(urlPortada.isEmpty() ? null : urlPortada);
+        }
 
         return modelMapper.map(libroRepository.save(libro), LibroDTO.class);
     }

@@ -24,6 +24,31 @@
       </div>
     </div>
 
+    <label for="urlPortada">URL de la portada (opcional)</label>
+    <input type="url" id="urlPortada" formControlName="urlPortada" placeholder="https://ejemplo.com/portada.jpg">
+    @if (formulario.controls.urlPortada.errors && formulario.controls.urlPortada.dirty) {
+      <p class="ayuda ayuda-error" role="alert">
+        @if (formulario.controls.urlPortada.errors['maxlength']) {
+          La URL no puede superar los 500 caracteres.
+        } @else {
+          Ingresá una URL que empiece con http:// o https://
+        }
+      </p>
+    }
+
+    @if (urlVista() && formulario.controls.urlPortada.valid) {
+      <div class="vista-previa">
+        <p class="ayuda">Vista previa</p>
+        <img [src]="urlVista()" alt="Vista previa de la portada"
+             [class.oculta]="imagenConError()"
+             (load)="imagenConError.set(false)"
+             (error)="imagenConError.set(true)">
+        @if (imagenConError()) {
+          <p class="ayuda ayuda-error">No se pudo cargar la imagen. Revisá que la URL sea correcta.</p>
+        }
+      </div>
+    }
+
     @if (!idLibro()) {
       <div class="fila">
         <div class="campo">

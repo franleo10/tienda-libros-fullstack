@@ -195,12 +195,58 @@ h2 {
   min-width: 0;
 }
 
+.filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 1rem;
+  align-items: end;
+  margin: 0 0 2rem;
+}
+
+.filtros .campo {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.filtros input,
+.filtros select {
+  width: 100%;
+}
+
+/* Los botones ocupan su propia fila, debajo de los campos */
+.acciones-filtros {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Con ancho de escritorio, los cuatro campos y los botones entran en una sola fila */
+@media (min-width: 56rem) {
+  .filtros {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  }
+
+  .acciones-filtros {
+    grid-column: auto;
+    flex-wrap: nowrap;
+  }
+}
+
 /* ---------- Celular ---------- */
 @media (max-width: 34rem) {
   /* minmax(0, 1fr): sin el 0, un título largo no deja que la columna se achique */
   .grilla {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.75rem 1rem;
+  }
+
+  /* Cada botón del formulario ocupa todo el ancho, uno debajo del otro */
+  .buscador > button,
+  .acciones-filtros > * {
+    flex: 1 1 100%;
   }
 
   app-portada {

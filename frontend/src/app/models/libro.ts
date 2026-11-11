@@ -29,3 +29,11 @@ export interface LibroGuardado {
   fecha_lanzamiento: string;
   urlPortada?: string | null;
 }
+
+export interface FiltrosCatalogo {
+  texto: string;
+  idGenero: number | null;
+  precioMin: number | null;
+  precioMax: number | null;
+  orden: string;
+}

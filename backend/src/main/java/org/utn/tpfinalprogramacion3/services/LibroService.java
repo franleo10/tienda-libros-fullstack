@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,6 +41,9 @@ import java.util.Optional;
 
 @Service
 public class LibroService {
+
+    // Tope del rango de precios cuando el pedido no indica un máximo
+    private static final float PRECIO_MAXIMO = 999_999_999f;
 
     private final LibroRepository libroRepository;
     private final AutorRepository autorRepository;
@@ -107,13 +111,34 @@ public class LibroService {
 
     // A diferencia de getAllLibros, una búsqueda sin resultados no es un error: devuelve una página vacía
     @PreAuthorize("hasAuthority('VER_LIBROS')")
-    public Page<LibroDTO> buscarLibros(String texto, int numeroPagina) {
+    // Todos los filtros son opcionales: sin ellos devuelve todo el catálogo activo
+    public Page<LibroDTO> buscarLibros(String texto, Integer idGenero, Float precioMin, Float precioMax,
+                                       String orden, int numeroPagina) {
         String buscado = texto == null ? "" : texto.trim().toLowerCase();
         String patron = "%" + buscado + "%";
-        Pageable pageable = PageRequest.of(numeroPagina, 5);
+        int genero = idGenero == null ? 0 : idGenero;
+        float minimo = precioMin == null ? 0f : precioMin;
+        float maximo = precioMax == null ? PRECIO_MAXIMO : precioMax;
+        Pageable pageable = PageRequest.of(numeroPagina, 5, ordenar(orden));
 
-        return libroRepository.buscarActivos(patron, pageable)
+        return libroRepository.buscarActivos(patron, genero, minimo, maximo, pageable)
                 .map(libro -> modelMapper.map(libro, LibroDTO.class));
+    }
+
+    // Solo se aceptan los órdenes conocidos; cualquier otro valor deja el orden por defecto (por id).
+    // El id como último criterio mantiene estable la paginación cuando hay precios o títulos repetidos.
+    private Sort ordenar(String orden) {
+        Sort porId = Sort.by("idLibro");
+        if (orden == null) {
+            return porId;
+        }
+        return switch (orden) {
+            case "titulo_asc" -> Sort.by("titulo").ascending().and(porId);
+            case "titulo_desc" -> Sort.by("titulo").descending().and(porId);
+            case "precio_asc" -> Sort.by("precio").ascending().and(porId);
+            case "precio_desc" -> Sort.by("precio").descending().and(porId);
+            default -> porId;
+        };
     }
 
     public Page<LibroDTO> getAllLibrosInactivos(int numeroPagina) {

@@ -29,23 +29,22 @@ Trabajo Práctico Final de **Programación IV** (UTN). El backend es la API desa
 
 ## Funcionalidades
 
-**Visitante (sin sesión)**
-- Registro e inicio de sesión
+La aplicación exige iniciar sesión. Sin sesión, solo están disponibles el registro y el login.
+
+**Usuario**
 - Catálogo de libros:
   - búsqueda por título o autor;
   - filtros por género y rango de precio;
   - ordenamiento y paginación.
 - Detalle de libro con sinopsis, portada, reseñas y puntuación promedio
 - Listado y detalle de autores
-
-**Usuario**
 - Carrito de compras y pago con MercadoPago
 - Historial de compras con el detalle de cada factura
 - Mi biblioteca, con los libros comprados
 - Reseñas con puntuación de 1 a 5 estrellas
 - Perfil: ver, editar y cambiar contraseña
 
-**Administrador**
+**Administrador** (además de todo lo del usuario)
 - CRUD de libros: alta, edición con portada por URL y baja lógica
 - CRUD de autores: alta, edición y baja
 - Gestión de usuarios:
@@ -59,6 +58,7 @@ Hay dos roles, **USUARIO** y **ADMINISTRADOR**. Cada rol tiene un conjunto de **
 
 - **Backend:** emite un **JWT** al iniciar sesión y valida cada endpoint con `@PreAuthorize`.
 - **Interceptor HTTP:** agrega el token a cada petición que hace el frontend.
+- **Guard `authGuard`:** protege todas las rutas salvo login y registro. Si no hay sesión vigente, redirige al login con `returnUrl`, para volver a la página pedida después de iniciar sesión.
 - **Guard `permisoGuard`:** protege las rutas de administración.
   - Si no hay sesión, redirige al login.
   - Si hay sesión, pide al backend los permisos del usuario. Deja pasar solo si el usuario tiene el permiso que la ruta declara en `data.permiso`.

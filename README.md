@@ -17,7 +17,6 @@ Trabajo Práctico Final de **Programación IV** (UTN). El backend es la API desa
 - Angular 20, con componentes standalone y signals
 - TypeScript 5.9 y RxJS 7.8
 - Formularios reactivos con validaciones propias
-- Jasmine y Karma para las pruebas unitarias
 
 **Backend**
 - Java 21 y Spring Boot 3.4
@@ -25,7 +24,6 @@ Trabajo Práctico Final de **Programación IV** (UTN). El backend es la API desa
 - Spring Data JPA con MySQL 8
 - SDK de MercadoPago para los pagos
 - Open Library para vincular cada libro con su versión digital
-- JUnit 5 y Mockito para las pruebas
 
 ## Funcionalidades
 

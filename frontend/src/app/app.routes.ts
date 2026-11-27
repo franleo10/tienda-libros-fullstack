@@ -20,13 +20,14 @@ import { PerfilEditar } from './features/perfil/perfil-editar/perfil-editar';
 import { CambiarPassword } from './features/perfil/cambiar-password/cambiar-password';
 import { UsuarioTabla } from './features/admin-usuarios/usuario-tabla/usuario-tabla';
 import { permisoGuard } from './core/guards/permiso.guard';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login },
   { path: 'registro', component: Register },
-  { path: 'libros/:id', component: LibroDetalle },
-  { path: 'libros', component: LibroListado },
+  { path: 'libros/:id', component: LibroDetalle, canActivate: [authGuard] },
+  { path: 'libros', component: LibroListado, canActivate: [authGuard] },
   {
     path: 'admin/libros/nuevo',
     component: LibroFormulario,
@@ -39,8 +40,7 @@ export const routes: Routes = [
     canActivate: [permisoGuard],
     data: { permiso: 'MODIFICAR_LIBRO' },
   },
-  { path: 'checkout', component: Checkout },
-  { path: 'autores', component: AutorListado },
+  { path: 'autores', component: AutorListado, canActivate: [authGuard] },
   {
     path: 'autores/nuevo',
     component: AutorFormulario,
@@ -53,7 +53,7 @@ export const routes: Routes = [
     canActivate: [permisoGuard],
     data: { permiso: 'MODIFICAR_AUTOR' },
   },
-  { path: 'autores/:id', component: AutorDetalle },
+  { path: 'autores/:id', component: AutorDetalle, canActivate: [authGuard] },
   {
     path: 'admin/autores/nuevo',
     redirectTo: 'autores/nuevo',
@@ -70,14 +70,15 @@ export const routes: Routes = [
     canActivate: [permisoGuard],
     data: { permiso: 'ELIMINAR_LIBRO' },
   },
-  { path: 'carrito', component: Carrito },
-  { path: 'compra-confirmada', component: CompraConfirmada },
-  { path: 'compras', component: HistorialCompras },
-  { path: 'compras/:id', component: CompraDetalle },
-  { path: 'mi-biblioteca', component: MiBiblioteca },
-  { path: 'perfil', component: Perfil },
-  { path: 'perfil/editar', component: PerfilEditar },
-  { path: 'perfil/cambiar-password', component: CambiarPassword },
+  { path: 'checkout', component: Checkout, canActivate: [authGuard] },
+  { path: 'carrito', component: Carrito, canActivate: [authGuard] },
+  { path: 'compra-confirmada', component: CompraConfirmada, canActivate: [authGuard] },
+  { path: 'compras', component: HistorialCompras, canActivate: [authGuard] },
+  { path: 'compras/:id', component: CompraDetalle, canActivate: [authGuard] },
+  { path: 'mi-biblioteca', component: MiBiblioteca, canActivate: [authGuard] },
+  { path: 'perfil', component: Perfil, canActivate: [authGuard] },
+  { path: 'perfil/editar', component: PerfilEditar, canActivate: [authGuard] },
+  { path: 'perfil/cambiar-password', component: CambiarPassword, canActivate: [authGuard] },
   {
     path: 'admin/usuarios',
     component: UsuarioTabla,

@@ -47,20 +47,24 @@ describe('LibroDetalle', () => {
     });
     httpTesting.expectOne('http://localhost:8080/libro/buscar/id/12').flush(libro);
     fixture.detectChanges();
+    httpTesting
+      .expectOne('http://localhost:8080/resenias/listar/12/pag/0')
+      .flush({ content: [], totalPages: 0, totalElements: 0, number: 0 });
+    fixture.detectChanges();
   }
 
   it('offers to add the book to the cart when the user does not own it', () => {
     responder([{ idLibro: 15 }]);
 
     expect(fixture.nativeElement.textContent).toContain('Rayuela');
-    expect(fixture.nativeElement.querySelector('button')?.textContent).toContain('Agregar al carrito');
+    expect(fixture.nativeElement.querySelector('button.agregar')?.textContent).toContain('Agregar al carrito');
     expect(fixture.nativeElement.querySelector('.ya-comprado')).toBeNull();
   });
 
   it('hides the add to cart button when the book is already in the library', () => {
     responder([{ idLibro: 12 }]);
 
-    expect(fixture.nativeElement.querySelector('button')).toBeNull();
+    expect(fixture.nativeElement.querySelector('button.agregar')).toBeNull();
     expect(fixture.nativeElement.querySelector('.ya-comprado')?.textContent).toContain(
       'Ya tenés este libro.'
     );

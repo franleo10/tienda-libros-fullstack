@@ -27,6 +27,11 @@ describe('CompraDetalle', () => {
   const texto = (fixture: ReturnType<typeof crear>) =>
     (fixture.nativeElement.textContent as string).replace(/\s+/g, ' ');
 
+  const responderPerfil = () =>
+    httpTesting
+      .expectOne('http://localhost:8080/me/perfil')
+      .flush({ id: 7, nombre: 'Ana', email: 'ana@correo.com', edad: 30 });
+
   afterEach(() => httpTesting.verify());
 
   it('muestra los libros, el total y los datos de la factura', () => {
@@ -41,6 +46,7 @@ describe('CompraDetalle', () => {
       idUsuario: 7,
       titulosLibrosComprados: ['Rayuela', 'Ficciones'],
     });
+    responderPerfil();
     fixture.detectChanges();
 
     const items = Array.from(fixture.nativeElement.querySelectorAll('.items li')).map(
@@ -66,6 +72,7 @@ describe('CompraDetalle', () => {
       idUsuario: 7,
       titulosLibrosComprados: ['Rayuela'],
     });
+    responderPerfil();
     fixture.detectChanges();
     const imprimir = spyOn(window, 'print');
 
@@ -80,6 +87,7 @@ describe('CompraDetalle', () => {
     httpTesting
       .expectOne('http://localhost:8080/factura/4')
       .flush('No encontramos esa compra.', { status: 404, statusText: 'Not Found' });
+    responderPerfil();
     fixture.detectChanges();
 
     expect(texto(fixture)).toContain('No encontramos esa compra.');
